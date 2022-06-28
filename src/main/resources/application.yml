@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: callisto-timecard-service
+
+server:
+  port: 8080
+  servlet:
+    context-path: /callisto-timecard-service
+  shutdown: "graceful"
