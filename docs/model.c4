@@ -1,0 +1,93 @@
+workspace {
+
+    model {
+		enterprise "Home Office" {
+			user = person "User" "" "User"
+			manager = person "Manager" "" "Manager"
+			planner = person "Planner" "" "Planner" 
+		
+			timecardSystem = softwaresystem "TimeCard service" "Allows users to record thier worked time and view their planned time. Managers can view team members worked and planned time." {
+				scheduledEventsProducer = container "Scheduled Events Producer" "Provides a stream of events detailing scheduling data"
+				personService = container "Person service" "Provides access to a person's meal-break entitelement"
+				timecardService = container "TimeCard API Application" "Provides timecard functionality via JSON/HTTPS API" "Java and SpringBoot" {
+					scheduledEventsConsumer = component "Scheduled Events Consumer" "Listens for ScheduledActivityEvent instances" "Kafka topic consumer"	
+					timecardController = component "TimeCard controller" "Orchastrates timecard activities" "Java"					
+				}	
+				database = container "Database" "Stores TimeCard, TimeCardEntry, Notes & FlexChange entities" "Tech TBC" "Database"			
+			}
+		}
+		
+		# relationships between people and software systems
+        user -> timecardSystem "records worked time, views planned time and makes flex changes using"
+		manager -> timecardSystem "views team members worked time, views planned time and makes flex changes using"
+		
+        # relationships to/from containers
+		planner -> scheduledEventsProducer "triggers the production of ScheduledActivityEvent instances"
+		user -> timecardService "records worked time, views planned time and makes flex changes"
+		manager -> timecardService "views team members worked time, views planned time and makes flex changes"
+
+		
+        # relationships to/from components
+		scheduledEventsConsumer -> scheduledEventsProducer "Consumes events from" "JSON/HTTPS"
+		scheduledEventsProducer -> timecardController "Uses"
+		timecardController -> personService "Makes API calls to" "JSON/HTTPS"	
+		timecardController -> database "Reads from and writes to" "JDBC"
+    }
+
+    views {
+	
+	    container timecardSystem "Containers" {
+            include *
+            animation {
+				timecardService
+				database
+				scheduledEventsProducer
+				personService
+            }
+            autoLayout
+        }	
+		
+        component timecardService "Components" {
+            include *
+            animation {
+				scheduledEventsProducer
+				personService   	
+				scheduledEventsConsumer
+				timecardController
+            }
+            autoLayout
+        }				
+    
+        styles {
+            element "Person" {
+                color #ffffff
+                fontSize 22
+                shape Person
+            }
+            element "User" {
+                background #08427b
+            }  
+            element "Manager" {
+                background #08427b
+            } 
+            element "Planner" {
+                background #08427b
+            }             
+            element "Software System" {
+                background #1168bd
+                color #ffffff
+            }			
+            element "Container" {
+                background #438dd5
+                color #ffffff
+            }
+            element "Database" {
+                shape Cylinder
+            }
+            element "Component" {
+                background #85bbf0
+                color #000000
+            }			
+        } 
+    }
+}
