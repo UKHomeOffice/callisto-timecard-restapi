@@ -24,5 +24,5 @@ The following data flows underpin the user stories that sit under the Record tim
 - [TimeCard.create timecard(TimeCardEntitiy)](../container-definition.md#create-timecard) - used to create a brand new TimeCard entity along with a new TimeEntry entitiy that is in part populated from the time period value that the user has chosen and the subsequent time or date values that they have entered
 
 **sequence diagrams**
-![View non-existing timecard](./images/view-non-existing-timecard.png)
+![View non-existing timecard](../images/view-non-existing-timecard.png)
 
