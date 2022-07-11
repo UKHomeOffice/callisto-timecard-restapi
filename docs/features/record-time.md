@@ -1,4 +1,5 @@
 
+
 # Record time
 
 [Feature defintion](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-925) (access required)
@@ -26,3 +27,78 @@ The following data flows underpin the user stories that sit under the Record tim
 **sequence diagrams**
 ![View non-existing timecard](../images/view-non-existing-timecard.png)
 
+### create time entry
+
+**user stories** 
+
+- [Manager Input Start and Finish Time (No Existing Entries)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1751) (access required)
+- [Manager Add On-call Period to Timecard (Existing Non On-Call Entry)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1788) (access required)
+- [Add On-call Period to Timecard (Existing On-Call Entry) - Validation Fail](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1762) (access required)
+- [Add Time Worked During On-call Period to Timecard](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1796) (access required)
+- [Input Finish Time - Day After Start Time Date (No Existing End Time)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-589) (access required)
+- [Input Start Time (No Existing Entries)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-513) (access required)
+- [Input Finish Time Same Day (No Existing Finish Time)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-521) (access required)
+- [Record Shift in Timecard (No Existing Entries)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1347) (access required)
+- [Record On-call Period in Timecard (Blank Timecard)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1350) (access required)
+- [Input Start and Finish Time (No Existing Entries)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1402) (access required)
+- [Add On-call Period to Timecard (Existing Non On-Call Entry)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1471) (access required)
+- [Add On-call Period to Timecard (Existing On-Call Entry)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1761) (access required)
+- [User Record an Ends night shift then starts a night shift in same day - System will identify them as separate shifts.](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-580) (access required)
+- [Manager Record On-Call Period in Timecard (Blank Timecard)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1685) (access required)
+- [Manager Record Shift in Timecard (No Existing Entries)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1686) (access required)
+- [Manager Input Finish Time Same Day (No Existing Finish Time)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1749) (access required)
+
+**inputs** 
+**container commands** 
+**sequence diagrams** 
+
+### remove time entry
+
+**user stories** 
+- [Remove Timecard Time Period (Existing Entry)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1353) (access required)
+- [Manager Remove Timecard Time Period (Existing Entry)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1869) (access required)
+
+**inputs** 
+**container commands** 
+**sequence diagrams** 
+
+### modify time entry
+
+**user stories** 
+- [User Can Edit Time Periods in their Timecard](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-864) (access required)
+- [Edit Finish Time in Timecard for Same Day - Change Indicator Visible](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1728) (access required)
+- [Edit Start Time in Timecard for Same Day - Change Indicator Visible](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1729) (access required)
+- [Edit Finish Time - Day After Start Time Date](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1724) (access required)
+- [Edit Start Time in Timecard for Same Day](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-609) (access required)
+- [Edit Finish Time in Timecard for Same Day](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1320) (access required)
+- [Edit Finish Time - 24Hrs+ after start time date](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-590) (access required)
+- [Edit Finish Time in Timecard for Same Day - Manager](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1678) (access required)
+- [Manager Edit Start Time in Timecard for Same Day](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1753) (access required)
+
+**inputs** 
+**container commands** 
+**sequence diagrams** 
+
+### create date entry
+
+**user stories** 
+
+- [Record SRD in Timecard (No Existing Entries)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1348) (access required)
+- [Record NWD in Timecard (No Existing Entries)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1349) (access required)
+- [Manager Record SRD in Timecard (No Existing Entries)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1683) (access required)
+- [Manager Record NWD in Timecard (No Existing Entries)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1684) (access required)
+
+**inputs** 
+**container commands** 
+**sequence diagrams** 
+
+### remove date entry
+
+**user stories** 
+- [Remove Timecard Time Period (Existing Entry)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1353) (access required)
+- [Manager Remove Timecard Time Period (Existing Entry)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1869) (access required)
+
+
+**inputs** 
+**container commands** 
+**sequence diagrams** 
