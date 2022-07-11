@@ -89,7 +89,7 @@ The following data flows underpin the user stories that sit under the Record tim
 **container commands** 
 
 - [TimeCard.get timecard(timecardDate, timecardOwnerId, tenantId)](../container-definition.md#get-timecard) - used to retrieve a timecard. Note that in this data flow the expectation is that this call will return a timecard now found status
-- [TimeCard.modify timecard(TimeCardEntitiy)](../container-definition.md#create-timecard) - used to modify an existing TimeEntry entity belonging to an existing TimeCard entitiy that is in part populated from the modified time or date values that they have entered
+- [TimeCard.modify timeentry(TimeEntryEntitiy)](../container-definition.md#create-timecard) - used to modify an existing TimeEntry entity belonging to an existing TimeCard entitiy that is in part populated from the modified time or date values that they have entered
 
 **sequence diagrams** 
 ![Modify an existing timeentry](../images/modifyTimeentry.png)
