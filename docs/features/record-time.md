@@ -49,8 +49,11 @@ The following data flows underpin the user stories that sit under the Record tim
 - [Manager Input Finish Time Same Day (No Existing Finish Time)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1749) (access required)
 
 **inputs** 
+
 **container commands** 
+
 **sequence diagrams** 
+
 
 ### remove time entry
 
@@ -59,7 +62,9 @@ The following data flows underpin the user stories that sit under the Record tim
 - [Manager Remove Timecard Time Period (Existing Entry)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1869) (access required)
 
 **inputs** 
+
 **container commands** 
+
 **sequence diagrams** 
 
 ### modify time entry
@@ -76,7 +81,9 @@ The following data flows underpin the user stories that sit under the Record tim
 - [Manager Edit Start Time in Timecard for Same Day](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1753) (access required)
 
 **inputs** 
+
 **container commands** 
+
 **sequence diagrams** 
 
 ### create date entry
@@ -89,7 +96,9 @@ The following data flows underpin the user stories that sit under the Record tim
 - [Manager Record NWD in Timecard (No Existing Entries)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1684) (access required)
 
 **inputs** 
+
 **container commands** 
+
 **sequence diagrams** 
 
 ### remove date entry
@@ -100,5 +109,7 @@ The following data flows underpin the user stories that sit under the Record tim
 
 
 **inputs** 
+
 **container commands** 
+
 **sequence diagrams** 
