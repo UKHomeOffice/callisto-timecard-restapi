@@ -145,12 +145,12 @@ This command causes an existing TimeEntry entity to be modifed. Note that if the
 #### inputs 
 - TimeEntryId - mandatory -  the identifier of the TimeEntry to modify
 - TenantId    - mandatory -  the tenant that holds the timecard
-- 
+
 #### output
  - success - see [standard command output](TODO)(**TODO**)  for how to report success output
  - business failure - see [Record Time](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-925) (access required) for business failure scenarios. Also see [standard command output](TODO) (**TODO**)  for how to report business failures
  - technical failure - see [standard command output](TODO) (**TODO**) for how to report technical failures
- - 
+ 
 ### get timecard
 This command retrieves a single timecard that matches the query parameters. Note that it is possible that no timecard can be found that matches the parameters however it should not be possible for multiple timecards to match the same set of parameters.
 
