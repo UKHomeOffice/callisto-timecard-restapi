@@ -20,7 +20,7 @@ The following data flows underpin the user stories that sit under the Record tim
 - tenantId - the identifier for the tenant that holds the timecard 
 
 **container commands**
-- ReferenceData.get time period enumeration(tennantId) - used to give the user a choice as to what type of time period they wish to enter
+- ReferenceData.get time period enumeration(tenantId) - used to give the user a choice as to what type of time period they wish to enter
 - [TimeCard.get timecard(timecardDate, timecardOwnerId, tenantId)](../container-definition.md#get-timecard) - used to retrieve a timecard. Note that in this data flow the expectation is that this call will return a timecard now found status
 - [TimeCard.create timecard(TimeCardEntitiy)](../container-definition.md#create-timecard) - used to create a brand new TimeCard entity along with a new TimeEntry entitiy that is in part populated from the time period value that the user has chosen and the subsequent time or date values that they have entered
 
@@ -82,9 +82,17 @@ The following data flows underpin the user stories that sit under the Record tim
 
 **inputs** 
 
+- timecardDate - the date that the timecard is associated with
+- timecardOwnerId - the primary key of the person who is the owner of the timecard
+- tenantId - the identifier for the tenant that holds the timecard 
+
 **container commands** 
 
+- [TimeCard.get timecard(timecardDate, timecardOwnerId, tenantId)](../container-definition.md#get-timecard) - used to retrieve a timecard. Note that in this data flow the expectation is that this call will return a timecard now found status
+- [TimeCard.modofy timecard(TimeCardEntitiy)](../container-definition.md#create-timecard) - used to modify an existing TimeEntry entity belonging to an existing TimeCard entitiy that is in part populated from the modified time or date values that they have entered
+
 **sequence diagrams** 
+![Modify an existing timeentry](../images/modifyTimeentry.png)
 
 ### create date entry
 
