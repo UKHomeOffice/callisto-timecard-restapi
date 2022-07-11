@@ -125,6 +125,23 @@ workspace {
             autoLayout
         }		
          
+	dynamic timecardAPIApplication "modifyTimePeriodExistingTimeCard" "Summarises how a time entry for a given day is modified (timecard)" {
+			user -> singlePageApplication "Submits request to view time for given timecardDate, timecardOwnerId and tenantId"
+            singlePageApplication -> referenceDataService "Submits request to get time period enumeration(tenantId) on"
+            referenceDataService -> singlePageApplication "returns time period enumeration"
+            singlePageApplication -> timecardController "Submits request to get timecard(timecardDate, timecardOwnerId, tenantId) command on"
+            timecardController -> singlePageApplication "Sends back timecard to" 
+			user -> singlePageApplication "selects time period and modifes time"
+			singlePageApplication -> singlePageApplication "assembles modifed time entry and associates with timeentry"
+            singlePageApplication -> timecardController "Submits request to modify timeentry(timecardId, timeentry) command on"     
+			timecardController -> timecardComponent "Validates new timeentry using"
+            timecardComponent -> database "UPDATE timeentry SET... WHERE timeentryid = ? AND tenantId = ?"
+            database -> timecardComponent "Returns success status to"
+            timecardComponent -> timecardController "Returns success status to"
+            timecardController -> singlePageApplication "Sends back success status and message to"
+			singlePageApplication -> user "Sends back success message to"
+            autoLayout
+        }	
         
         styles {
             element "Person" {
