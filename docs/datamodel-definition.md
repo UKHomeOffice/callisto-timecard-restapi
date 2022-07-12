@@ -3,7 +3,7 @@
 
 ## Entity
 
-###TimeEntry
+### TimeEntry
 
 **TimeEntry** 
 Used to record both planned and actual time. Encapsulates day and time (to the minute). In addition, the time entry captures the way that the time has been spent via the activity property
@@ -15,7 +15,7 @@ Used to record both planned and actual time. Encapsulates day and time (to the m
 | EndTime | 1..1 | DateTime | The end of the time period |
   
 
-###TimeCardNotes
+### TimeCardNotes
 
 **Notes** 
 Notes are associated with a TimeCard. Notes are used to communicate arbitrary information between individuals that relates to the TimeCard. Notes cannot exist on their own. 
@@ -25,12 +25,12 @@ Notes are associated with a TimeCard. Notes are used to communicate arbitrary in
 | Note| 1..1 | text (256)| The note itself |
 | Note| 1..1 | text (256)| The note itself |
 
-###TimeLine
+### TimeLine
 
 **TimeLine** 
 **TODO** – confirm that this is a separate entity 
 
-###TimeCard
+### TimeCard
 
 **TimeCard** 
 A TimeCard instance is for a given shift worker. It collects multiple TimeEntry instances and layers on the concept of approval.  A timecard maps to a single date.
@@ -45,7 +45,7 @@ A TimeCard instance is for a given shift worker. It collects multiple TimeEntry 
 | TimeEntries| 0..* | set of foreign keys| Time Entries |
 | Notes| 0..* | set of foreign keys| Notes |
 
-###FlexChange
+### FlexChange
 
 **FlexChange** 
 Encapsulates a change to one or more planned TimeEntry instances. It references TimeEntry by using the TimeEntry.id as a foreign key. There is a set of specific reasons that planned time can be changed and it must be approved. The FlexChange records this reason along with the new planned times for the associated TimeEntry instances.   
