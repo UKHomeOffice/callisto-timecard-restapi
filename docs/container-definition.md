@@ -32,7 +32,7 @@ Scheduler container – Timecard consumes ScheduledActivity events in order to c
 
 ## Model
 
-![Callisto containers](./docs/datamodel-definition.md)
+![Callisto containers](datamodel-definition.md)
 
 ### Entity
 
