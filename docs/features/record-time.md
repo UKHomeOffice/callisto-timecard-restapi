@@ -2,7 +2,7 @@
 
 # Record time
 
-[Feature defintion](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-925) (access required)
+[Feature definition](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-925) (access required)
 
 ## Data Flows
 The following data flows underpin the user stories that sit under the Record time feature. 
@@ -22,7 +22,7 @@ The following data flows underpin the user stories that sit under the Record tim
 **container commands**
 - ReferenceData.get time period enumeration(tenantId) - used to give the user a choice as to what type of time period they wish to enter
 - [TimeCard.get timecard(timecardDate, timecardOwnerId, tenantId)](../container-definition.md#get-timecard) - used to retrieve a timecard. Note that in this data flow the expectation is that this call will return a timecard now found status
-- [TimeCard.create timecard(TimeCardEntitiy)](../container-definition.md#create-timecard) - used to create a brand new TimeCard entity along with a new TimeEntry entitiy that is in part populated from the time period value that the user has chosen and the subsequent time or date values that they have entered
+- [TimeCard.create timecard(TimeCardEntity)](../container-definition.md#create-timecard) - used to create a brand new TimeCard entity along with a new TimeEntry entity that is in part populated from the time period value that the user has chosen and the subsequent time or date values that they have entered
 
 **sequence diagrams**
 ![View non-existing timecard](../images/view-non-existing-timecard.png)
