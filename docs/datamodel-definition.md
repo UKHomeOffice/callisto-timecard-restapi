@@ -5,7 +5,6 @@
 
 ### TimeEntry
 
-**TimeEntry** 
 Used to record both planned and actual time. Encapsulates day and time (to the minute). In addition, the time entry captures the way that the time has been spent via the activity property
 |Field|Type|Cardinality|Description|
 |--|--|--|--|
@@ -17,7 +16,6 @@ Used to record both planned and actual time. Encapsulates day and time (to the m
 
 ### TimeCardNotes
 
-**Notes** 
 Notes are associated with a TimeCard. Notes are used to communicate arbitrary information between individuals that relates to the TimeCard. Notes cannot exist on their own. 
 
 |Field|Type|Cardinality|Description|
@@ -27,12 +25,10 @@ Notes are associated with a TimeCard. Notes are used to communicate arbitrary in
 
 ### TimeLine
 
-**TimeLine** 
 **TODO** – confirm that this is a separate entity 
 
 ### TimeCard
 
-**TimeCard** 
 A TimeCard instance is for a given shift worker. It collects multiple TimeEntry instances and layers on the concept of approval.  A timecard maps to a single date.
 
 |Field|Type|Cardinality|Description|
@@ -47,7 +43,6 @@ A TimeCard instance is for a given shift worker. It collects multiple TimeEntry 
 
 ### FlexChange
 
-**FlexChange** 
 Encapsulates a change to one or more planned TimeEntry instances. It references TimeEntry by using the TimeEntry.id as a foreign key. There is a set of specific reasons that planned time can be changed and it must be approved. The FlexChange records this reason along with the new planned times for the associated TimeEntry instances.   
 
 A FlexChange can be created directly by a Shift worker on their TimeCard. A FlexChange can also come from the Scheduler container 
