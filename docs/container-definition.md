@@ -32,7 +32,7 @@ Scheduler container – Timecard consumes ScheduledActivity events in order to c
 
 ## Model
 
-![Model](https://github.com/UKHomeOffice/callisto-timecard-restapi/datamodel-definition.md)
+![Model](https://github.com/UKHomeOffice/callisto-timecard-restapi/docs/datamodel-definition.md)
 
 ### Entity
 
