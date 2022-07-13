@@ -9,8 +9,8 @@ workspace {
 			timecardSystem = softwaresystem "TimeCard service" "Allows users to record thier worked time and view their planned time. Managers can view team members worked and planned time." {
 				singlePageApplication = container "Single-Page Application" "Provides all of the Time card functionality to customers via their web browser." "React" "Web Browser"
 				scheduledEventsProducer = container "Scheduled Events Producer" "Provides a stream of events detailing scheduling data"
-				referenceDataService = container "Reference Data service" "Provides access time period and absence reference data"
-				personService = container "Person service" "Provides access to a person's meal-break entitelement"
+				referenceDataService = container "Reference Data service" "Provides access time entry and absence reference data"
+				personService = container "Person service" "Provides access to a person's meal-break entitlement"
 				timecardAPIApplication = container "TimeCard API Application" "Provides timecard functionality via JSON/HTTPS API" "Java and SpringBoot" {
 					scheduledEventsConsumer = component "Scheduled Events Consumer" "Listens for ScheduledActivityEvent instances" "Kafka topic consumer"	
 					timecardController = component "TimeCard controller" "Provides access to time card functionality via RESTful interface" "Spring REST Controller"					
@@ -25,7 +25,7 @@ workspace {
 		manager -> timecardSystem "views team members worked time, views planned time and makes flex changes using"
 		
         # relationships to/from containers
-        user -> singlePageApplication "Vrecords worked time, views planned time and makes flex changes using"
+        user -> singlePageApplication "records worked time, views planned time and makes flex changes using"
 		manager -> singlePageApplication "views team members worked time, views planned time and makes flex changes"
         planner -> scheduledEventsProducer "triggers the production of ScheduledActivityEvent instances"
 		
@@ -79,7 +79,7 @@ workspace {
 
 # timecard version?		
         
-         dynamic timecardAPIApplication "viewExistingTimeCard" "Summarises how recorded time is retreived for a given date" {
+         dynamic timecardAPIApplication "viewExistingTimeCard" "Summarises how recorded time is retrieved for a given date" {
             singlePageApplication -> timecardController "Submits request to get timecard(timecardDate, timecardOwnerId, tenantId) command on"
             timecardController -> timecardComponent "Validates date using"
             timecardComponent -> database "SELECT FROM timecards WHERE timecardDate = ? AND timecardOwnerId = ? AND tenantId = ?"
@@ -89,13 +89,13 @@ workspace {
             autoLayout
         }          
  
-        dynamic timecardAPIApplication "recordTimePeriodNewTimeCard" "Summarises how time is recorded for the first time against a given day (timecard)" {
+        dynamic timecardAPIApplication "recordTimeEntryNewTimeCard" "Summarises how time is recorded for the first time against a given day (timecard)" {
             user -> singlePageApplication "Submits request to enter time for given timecardDate, timecardOwnerId and tenantId"
-            singlePageApplication -> referenceDataService "Submits request to get time period enumeration(tenantId) on"
-            referenceDataService -> singlePageApplication "returns time period enumeration"
+            singlePageApplication -> referenceDataService "Submits request to get time entry enumeration(tenantId) on"
+            referenceDataService -> singlePageApplication "returns time entry enumeration"
             singlePageApplication -> timecardController "Submits request to get timecard(timecardDate, timecardOwnerId, tenantId) command on"
             timecardController -> singlePageApplication "Sends back timecard does not exist status to" 
-			user -> singlePageApplication "selects time period and enters time"
+			user -> singlePageApplication "selects time entry and enters time"
 			singlePageApplication -> singlePageApplication "Assembles new timecard for given timecardOwnerId and tenantId. Assembles a time entry and associates with new timecard"
             singlePageApplication -> timecardController "Submits request to create timecard(timecard) command on"       
 			timecardController -> timecardComponent "Validates new timecard using"
@@ -107,15 +107,15 @@ workspace {
             autoLayout
         } 
 
-        dynamic timecardAPIApplication "recordTimePeriodExistingTimeCard" "Summarises how additional time is recorded against a given day (timecard)" {
+        dynamic timecardAPIApplication "recordTimeEntryExistingTimeCard" "Summarises how additional time is recorded against a given day (timecard)" {
 			user -> singlePageApplication "Submits request to enter time for given timecardDate, timecardOwnerId and tenantId"
-            singlePageApplication -> referenceDataService "Submits request to get time period enumeration(tenantId) on"
-            referenceDataService -> singlePageApplication "returns time period enumeration"
+            singlePageApplication -> referenceDataService "Submits request to get time entry enumeration(tenantId) on"
+            referenceDataService -> singlePageApplication "returns time entry enumeration"
             singlePageApplication -> timecardController "Submits request to get timecard(timecardDate, timecardOwnerId, tenantId) command on"
             timecardController -> singlePageApplication "Sends back timecard to" 
-			user -> singlePageApplication "selects time period and enters time"
+			user -> singlePageApplication "selects time entry and enters time"
 			singlePageApplication -> singlePageApplication "assembles new time entry and associates with timecard"
-            singlePageApplication -> timecardController "Submits request to add timeentry(timecardId, timeentry) command on"     
+            singlePageApplication -> timecardController "Submits request to update timecard(timecard) command on"     
 			timecardController -> timecardComponent "Validates new timecard using"
             timecardComponent -> database "UPDATE timecards SET... WHERE timecardId = ? AND timecardOwnerId = ? AND tenantId = ?"
             database -> timecardComponent "Returns success status to"
@@ -125,14 +125,14 @@ workspace {
             autoLayout
         }		
          
-	dynamic timecardAPIApplication "modifyTimePeriodExistingTimeCard" "Summarises how a time entry for a given day is modified (timecard)" {
+	dynamic timecardAPIApplication "modifyTimeEntryExistingTimeCard" "Summarises how a time entry for a given day is modified (timecard)" {
 			user -> singlePageApplication "Submits request to view time for given timecardDate, timecardOwnerId and tenantId"
-            singlePageApplication -> referenceDataService "Submits request to get time period enumeration(tenantId) on"
-            referenceDataService -> singlePageApplication "returns time period enumeration"
+            singlePageApplication -> referenceDataService "Submits request to get time entry enumeration(tenantId) on"
+            referenceDataService -> singlePageApplication "returns time entry enumeration"
             singlePageApplication -> timecardController "Submits request to get timecard(timecardDate, timecardOwnerId, tenantId) command on"
             timecardController -> singlePageApplication "Sends back timecard to" 
-			user -> singlePageApplication "selects time period and modifes time"
-			singlePageApplication -> singlePageApplication "assembles modifed time entry and associates with timeentry"
+			user -> singlePageApplication "selects time entry and modifies time"
+			singlePageApplication -> singlePageApplication "assembles modified time entry and associates with timeentry"
             singlePageApplication -> timecardController "Submits request to modify timeentry(timecardId, timeentry) command on"     
 			timecardController -> timecardComponent "Validates new timeentry using"
             timecardComponent -> database "UPDATE timeentry SET... WHERE timeentryid = ? AND tenantId = ?"

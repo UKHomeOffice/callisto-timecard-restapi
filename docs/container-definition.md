@@ -54,26 +54,25 @@ Triggers the creation or update of a TimeEntry. The TimeEntry is linked to a par
 This command causes a new TimeCard entity to be created and stored. At a minimum one TimeEntry entity must be associated with the TimeCard for the creation to be successful. If no TimeEntry is passed with the TimeCard then the command invocation should fail. Ideally the creation of a TimeEntry and a brand new TimeCard should be atomic i.e. if the TimeCard creation fails then the command invocation should fail.
 
 #### inputs 
-- TimeEntry - mandatory - the TimeEntry entity to create
-- TimeCard - mandatory - the TimeCard entity to associate the TimeEntry with
+- timeCard - mandatory - the TimeCard entity
 
 #### output
  - success - see [standard command output](TODO)(**TODO**)  for how to report success output
  - business failure - see [Record Time](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-925) (access required) for business failure scenarios. Also see [standard command output](TODO) (**TODO**)  for how to report business failures
  - technical failure - see [standard command output](TODO) (**TODO**) for how to report technical failures
 
-### add timeentry
-This command causes a new TimeEntry entity to be created and associated with an existing TimeCard entity. Note that if the TimeCard does not already exist then the command invocation should fail.
+### update timecard
+This command causes an existing TimeCard entity to be updated and stored. 
 
 #### inputs 
-- TimeEntry - mandatory - the TimeEntry entity to create
-- TimeCardId - mandatory - the identifier of the TimeCard entity to associate the TimeEntry with
+- timeCard - mandatory - the TimeCard entity
+- tenantId - mandatory - the tenant that holds the timecard
 
 #### output
  - success - see [standard command output](TODO)(**TODO**)  for how to report success output
  - business failure - see [Record Time](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-925) (access required) for business failure scenarios. Also see [standard command output](TODO) (**TODO**)  for how to report business failures
- - technical failure - see [standard command output](TODO) (**TODO**) for how to report technical failures
- - 
+ - technical failure - see [standard command output](TODO) (**TODO**) for how to report technical failures **TODO** ETag for out of stale copy of timecard to update?
+
 ### get timecard
 This command retrieves a single timecard that matches the query parameters. Note that it is possible that no timecard can be found that matches the parameters however it should not be possible for multiple timecards to match the same set of parameters.
 

@@ -1,5 +1,6 @@
 
 
+
 # Record time
 
 [Feature definition](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-925) (access required)
@@ -15,9 +16,9 @@ The following data flows underpin the user stories that sit under the Record tim
 
 **input(s)** 
 
-- timecardDate - the date that the timecard is associated with
-- timecardOwnerId - the primary key of the person who is the owner of the timecard
-- tenantId - the identifier for the tenant that holds the timecard 
+- timecardDate - mandatory - the date that the timecard is associated with
+- timecardOwnerId - mandatory - the primary key of the person who is the owner of the timecard
+- tenantId - mandatory the identifier for the tenant that holds the timecard 
 
 **container commands**
 - ReferenceData.get time period enumeration(tenantId) - used to give the user a choice as to what type of time period they wish to enter
@@ -28,6 +29,11 @@ The following data flows underpin the user stories that sit under the Record tim
 ![View non-existing timecard](../images/view-non-existing-timecard.png)
 
 ### create time entry
+A timecard entry must be associated with a timecard, it cannot exist on its own. The association is made by the start date on the timecard entry matching the date on the timecard.
+
+It is possible to create a timecard entry and as a side-effect trigger the creation of the containing timecard if one does not already exist. 
+
+Alternatively the timecard may already exist in which case the addition of a new timecard entry will trigger an update to that existing timecard.
 
 **user stories** 
 
@@ -49,10 +55,25 @@ The following data flows underpin the user stories that sit under the Record tim
 - [Manager Input Finish Time Same Day (No Existing Finish Time)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1749) (access required)
 
 **inputs** 
+- timeEntryStartDateTime - mandatory - the date and time that the time entry begins at
+- timeEntryEndDateTime - mandatory - the date and time that the time entry ends at
+- timecardOwnerId - mandatory - the primary key of the person who is the owner of the timecard
+- tenantId - mandatory the identifier for the tenant that holds the timecard
 
 **container commands** 
+- ReferenceData.get time period enumeration(tenantId) - used to give the user a choice as to what type of time period they wish to enter
+- [TimeCard.get timecard(timecardDate, timecardOwnerId, tenantId)](../container-definition.md#get-timecard) - used to retrieve a timecard. Note that in this data flow the expectation is that this call will return a timecard now found status
+- [TimeCard.create timecard(TimeCardEntity)](../container-definition.md#create-timecard) - used to create a brand new TimeCard entity along with a new TimeEntry entity that is in part populated from the time period value that the user has chosen and the subsequent time or date values that they have entered
+- [TimeCard.create timecard(TimeCardEntity)](../container-definition.md#update-timecard) - used to create  a new TimeEntry entity that is in part populated from the time period value that the user has chosen and the subsequent time or date values that they have entered. The TimeEntry will be contained within the existing TimeCardEntity hence requiring an update to the TimeCardEntity
+
 
 **sequence diagrams** 
+![recordTimeEntryNewTimeCard](../images/record-timeentry-new-timecard.png)
+This diagram shows the data flow that takes place when  the user wishes to create a time entry for a date which has no timecard associated with it. The diagram shows that in creating the timeentry it is necessary to create a new timecard
+
+![recordTimeEntryExistingTimeCard](../images/record-timeentry-existing-timecard.png)
+This diagram shows the data flow that takes place when  the user wishes to create a time entry for a date which has a timecard associated with it. The diagram shows that in creating the timeentry it is necessary to update the existing timecard
+
 
 
 ### remove time entry
