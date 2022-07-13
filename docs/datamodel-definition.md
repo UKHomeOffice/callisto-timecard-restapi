@@ -1,5 +1,5 @@
 
-# Model
+# TimeCard Data Model
 
 ## Entity
 
