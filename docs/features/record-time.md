@@ -64,7 +64,7 @@ Alternatively the timecard may already exist in which case the addition of a new
 - ReferenceData.get time period enumeration(tenantId) - used to give the user a choice as to what type of time period they wish to enter
 - [TimeCard.get timecard(timecardDate, timecardOwnerId, tenantId)](../container-definition.md#get-timecard) - used to retrieve a timecard. Note that in this data flow the expectation is that this call will return a timecard now found status
 - [TimeCard.create timecard(TimeCardEntity)](../container-definition.md#create-timecard) - used to create a brand new TimeCard entity along with a new TimeEntry entity that is in part populated from the time period value that the user has chosen and the subsequent time or date values that they have entered
-- [TimeCard.create timecard(TimeCardEntity)](../container-definition.md#update-timecard) - used to create  a new TimeEntry entity that is in part populated from the time period value that the user has chosen and the subsequent time or date values that they have entered. The TimeEntry will be contained within the existing TimeCardEntity hence requiring an update to the TimeCardEntity
+- [TimeCard.update timecard(TimeCardEntity)](../container-definition.md#update-timecard) - used to create  a new TimeEntry entity that is in part populated from the time period value that the user has chosen and the subsequent time or date values that they have entered. The TimeEntry will be contained within the existing TimeCardEntity hence requiring an update to the TimeCardEntity
 
 
 **sequence diagrams** 
