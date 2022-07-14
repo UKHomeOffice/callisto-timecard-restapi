@@ -96,11 +96,19 @@ TimeCard or a TimeCard does not exist status message
 - ReferenceData.get timeentry descriptor(TimeEntryType) - used get a desciption of the data to capture when creating a TimeEntry instance corresponding to the given TimeEntryType
 
 ### Store TimeEntry
+TODO
 #### input(s)
 #### output(s)
 #### container command(s)
 
 ### Assemble TimeCard
+TODO
+#### input(s)
+#### output(s)
+#### container command(s)
+
+### Store TimeCard
+TODO
 #### input(s)
 #### output(s)
 #### container command(s)
