@@ -41,7 +41,7 @@ If one does not exist then it must be created as part of the process for creatin
 If one does exist then the new TimeEntry will be associated with that existing TimeCard
 
 `if TimeCard exists then`
-- [Assemble TimeEntry - Enter Time](#assemble-timeentry-enter-time) OR [Assemble TimeEntry - Enter Date](#assemble-timeentry-enter-date) - Depending upon the type of TimeEntry that the user wishes to create the type of data that they enter will vary.
+- [Assemble TimeEntry - Enter Time](#assemble-timeentry---enter-time) OR [Assemble TimeEntry - Enter Date](#assemble-timeentry---enter-date) - Depending upon the type of TimeEntry that the user wishes to create the type of data that they enter will vary.
 - [Store TimeEntry](#store-timeentry) - Once the TimeEntry has been created and initialised it needs to be persisted along with its association to the given TimeCard
 
 `else`
@@ -68,7 +68,7 @@ If one does exist then the new TimeEntry will be associated with that existing T
 TimeCard or a TimeCard does not exist status message 
 
 #### container command(s)
-- [TimeCard.get timecard(timecardDate, timecardOwnerId, tenantId)](../container-definition.md#get-timecard) - used to retrieve a timecard. Note that in this data flow the expectation is that this call will return a timecard now found status
+- [TimeCard.get timecard(timecardDate, timecardOwnerId, tenantId)](../../container-definition.md#get-timecard) - used to retrieve a timecard. Note that in this data flow the expectation is that this call will return a timecard now found status
 
 ### Assemble TimeEntry - Enter Time
 
@@ -100,5 +100,8 @@ TimeCard or a TimeCard does not exist status message
 #### output(s)
 #### container command(s)
 
-
+### Assemble TimeCard
+#### input(s)
+#### output(s)
+#### container command(s)
 
