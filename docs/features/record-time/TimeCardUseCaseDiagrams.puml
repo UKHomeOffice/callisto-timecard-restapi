@@ -1,0 +1,23 @@
+@startuml
+title Record Time Use Case diagram\n
+
+left to right direction
+
+  actor enduser
+  enduser -- (RecordTime)
+  (RecordTime) -- (Create TimeEntry) 
+  (Create TimeEntry) -- (View TimeCard) 
+  (Create TimeEntry) -- (Get TimePeriodType Config)
+  (Create TimeEntry) -- (Assemble TimeEntry)
+  (Create TimeEntry) -- (StoreTimeEntry)
+  (RecordTime) ---- (Modify TimeEntry) 
+  (Modify TimeEntry) -- (View TimeCard MTE) 
+  (Modify TimeEntry) -- (Choose TimeEntry MTE)
+  (Modify TimeEntry) -- (Get TimePeriodType Config MTE)
+  (Modify TimeEntry) -- (Assemble TimeEntry MTE)
+  (Modify TimeEntry) -- (StoreTimeEntry MTE)
+  (RecordTime) -- (Remove TimeEntry) 
+  (Remove TimeEntry) -- (View TimeCard RTE) 
+  (Remove TimeEntry) -- (Choose TimeEntry RTE)
+  (Remove TimeEntry) -- (Delete TimeEntry)
+@enduml

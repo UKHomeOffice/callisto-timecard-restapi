@@ -66,82 +66,58 @@ workspace {
             }
             autoLayout
         }
-        
-         dynamic timecardAPIApplication "viewNonExistantTimeCard" "Summarises attempt to retrieve no recorded time for a given date" {
+		
+         dynamic timecardAPIApplication "viewTimeCard" "Summarises attempt to retrieve a TimeCard for a given date" {
             singlePageApplication -> timecardController "Submits request to get timecard(timecardDate, timecardOwnerId, tenantId) command on"
             timecardController -> timecardComponent "Validates date using"
             timecardComponent -> database "SELECT FROM timecards WHERE timecardDate = ? AND timecardOwnerId = ? AND tenantId = ?"
-            database -> timecardComponent "Returns empty result set to"
-            timecardComponent -> timecardController "Returns back timecard does not exist status to"
-            timecardController -> singlePageApplication "Sends timecard does not exist status to"            
+            database -> timecardComponent "Returns result set with zero or one results"
+            timecardComponent -> timecardController "If zero results then returns back null timecard to. Else returns timecard to"
+            timecardController -> singlePageApplication "If null timecard then sends timecard does not exist status to. Else sends timecard to"            
             autoLayout
         }
-
-# timecard version?		
-        
-         dynamic timecardAPIApplication "viewExistingTimeCard" "Summarises how recorded time is retrieved for a given date" {
-            singlePageApplication -> timecardController "Submits request to get timecard(timecardDate, timecardOwnerId, tenantId) command on"
-            timecardController -> timecardComponent "Validates date using"
-            timecardComponent -> database "SELECT FROM timecards WHERE timecardDate = ? AND timecardOwnerId = ? AND tenantId = ?"
-            database -> timecardComponent "Returns timecard to"
-            timecardComponent -> timecardController "Returns timecard to"
-            timecardController -> singlePageApplication "Sends back timecard to"            
+		
+        dynamic timecardAPIApplication "getTimeEntryDescriptor" "Gets the description of what data types are needed to record a given TimeEntryType" {
+			singlePageApplication -> referenceDataService "Submits request to get timeentry descriptor(TimeEntryType) on"
+			referenceDataService -> singlePageApplication "returns TimeEntryDescriptor"        
             autoLayout
-        }          
- 
-        dynamic timecardAPIApplication "recordTimeEntryNewTimeCard" "Summarises how time is recorded for the first time against a given day (timecard)" {
-            user -> singlePageApplication "Submits request to enter time for given timecardDate, timecardOwnerId and tenantId"
-            singlePageApplication -> referenceDataService "Submits request to get time entry enumeration(tenantId) on"
-            referenceDataService -> singlePageApplication "returns time entry enumeration"
-            singlePageApplication -> timecardController "Submits request to get timecard(timecardDate, timecardOwnerId, tenantId) command on"
-            timecardController -> singlePageApplication "Sends back timecard does not exist status to" 
-			user -> singlePageApplication "selects time entry and enters time"
-			singlePageApplication -> singlePageApplication "Assembles new timecard for given timecardOwnerId and tenantId. Assembles a time entry and associates with new timecard"
-            singlePageApplication -> timecardController "Submits request to create timecard(timecard) command on"       
-			timecardController -> timecardComponent "Validates new timecard using"
-            timecardComponent -> database "INSERT INTO timecards VALUES..."
-            database -> timecardComponent "Returns success status and timecard ID to"
-            timecardComponent -> timecardController "Returns success status, and timecard ID to"
-            timecardController -> singlePageApplication "Sends back success status, timecard ID and message to"
-			singlePageApplication -> user "Sends back success message to"
-            autoLayout
-        } 
+        }	
 
-        dynamic timecardAPIApplication "recordTimeEntryExistingTimeCard" "Summarises how additional time is recorded against a given day (timecard)" {
-			user -> singlePageApplication "Submits request to enter time for given timecardDate, timecardOwnerId and tenantId"
-            singlePageApplication -> referenceDataService "Submits request to get time entry enumeration(tenantId) on"
-            referenceDataService -> singlePageApplication "returns time entry enumeration"
-            singlePageApplication -> timecardController "Submits request to get timecard(timecardDate, timecardOwnerId, tenantId) command on"
-            timecardController -> singlePageApplication "Sends back timecard to" 
-			user -> singlePageApplication "selects time entry and enters time"
-			singlePageApplication -> singlePageApplication "assembles new time entry and associates with timecard"
-            singlePageApplication -> timecardController "Submits request to update timecard(timecard) command on"     
-			timecardController -> timecardComponent "Validates new timecard using"
-            timecardComponent -> database "UPDATE timecards SET... WHERE timecardId = ? AND timecardOwnerId = ? AND tenantId = ?"
-            database -> timecardComponent "Returns success status to"
-            timecardComponent -> timecardController "Returns success status to"
-            timecardController -> singlePageApplication "Sends back success status and message to"
+		dynamic timecardAPIApplication "enterDateTime" "Creates a DateTime based TimeEntry " {
+			user -> singlePageApplication "selects TimeEntryType for a DateTime TimeEntry"
+			singlePageApplication -> referenceDataService "Submits request to get timeentry descriptor(TimeEntryType) on"
+			referenceDataService -> singlePageApplication "returns TimeEntryDescriptor" 
+			singlePageApplication -> singlePageApplication "Assembles DateTime entry fields based on TimeEntryDescriptor"
+			singlePageApplication -> user "Sends DateTime entry fields to"
+			user -> singlePageApplication "submits DateTime"
+			singlePageApplication -> singlePageApplication "Assembles TimeEntry based on DateTime"
+			singlePageApplication -> user "Sends back TimeEntry to"
+            autoLayout
+        }	
+
+        dynamic timecardAPIApplication "enterDate" "Creates a Date based TimeEntry " {
+			user -> singlePageApplication "selects TimeEntryType for a Date TimeEntry"
+			singlePageApplication -> referenceDataService "Submits request to get timeentry descriptor(TimeEntryType) on"
+			referenceDataService -> singlePageApplication "returns TimeEntryDescriptor" 
+			singlePageApplication -> singlePageApplication "Assembles Date entry fields based on TimeEntryDescriptor"
+			singlePageApplication -> user "Sends Date entry fields to"
+			user -> singlePageApplication "submits Date"
+			singlePageApplication -> singlePageApplication "Assembles TimeEntry based on Date"
+			singlePageApplication -> user "Sends back TimeEntry to"
+            autoLayout
+        }	
+
+        dynamic timecardAPIApplication "storeTimeEntry" "Persists a TimeEntry " {
+			user -> singlePageApplication "submits TimeEntry to be stored against a given TimeCard"
+			singlePageApplication -> timecardController "submits request to create timeentry(tenantId, timecardId, TimeEntry)"
+			timecardController -> timecardComponent "Validates new TimeEntry using"
+            timecardComponent -> database "If TimeEntry does not exist then INSERT INTO timeentrys VALUES... Else UPDATE timeentys SET... WHERE timeentryId = ? AND tenantId = ?""
+            database -> timecardComponent "Returns success status and TimeEntry ID to"
+            timecardComponent -> timecardController "Returns success status, and TimeEntry ID to"
+            timecardController -> singlePageApplication "Sends back success status, TimeEntry ID and message to"
 			singlePageApplication -> user "Sends back success message to"
             autoLayout
         }		
-         
-	dynamic timecardAPIApplication "modifyTimeEntryExistingTimeCard" "Summarises how a time entry for a given day is modified (timecard)" {
-			user -> singlePageApplication "Submits request to view time for given timecardDate, timecardOwnerId and tenantId"
-            singlePageApplication -> referenceDataService "Submits request to get time entry enumeration(tenantId) on"
-            referenceDataService -> singlePageApplication "returns time entry enumeration"
-            singlePageApplication -> timecardController "Submits request to get timecard(timecardDate, timecardOwnerId, tenantId) command on"
-            timecardController -> singlePageApplication "Sends back timecard to" 
-			user -> singlePageApplication "selects time entry and modifies time"
-			singlePageApplication -> singlePageApplication "assembles modified time entry and associates with timeentry"
-            singlePageApplication -> timecardController "Submits request to modify timeentry(timecardId, timeentry) command on"     
-			timecardController -> timecardComponent "Validates new timeentry using"
-            timecardComponent -> database "UPDATE timeentry SET... WHERE timeentryid = ? AND tenantId = ?"
-            database -> timecardComponent "Returns success status to"
-            timecardComponent -> timecardController "Returns success status to"
-            timecardController -> singlePageApplication "Sends back success status and message to"
-			singlePageApplication -> user "Sends back success message to"
-            autoLayout
-        }	
         
         styles {
             element "Person" {
