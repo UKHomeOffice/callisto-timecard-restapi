@@ -1,5 +1,6 @@
 
 
+
 # TimeCard container
 
 ## Executive summary
@@ -82,17 +83,17 @@ timecardOwnerId  - mandatory - the person who owns the timecard
 tenantId - mandatory - the tenant that holds the timecard
 
 #### output
- - success - see [standard command output](TODO)(**TODO**)  for how to report success output
- - business failure - see [Record Time](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-925) (access required) for business failure scenarios. Also see [standard command output](TODO) (**TODO**)  for how to report business failures
- - technical failure - see [standard command output](TODO) (**TODO**) for how to report technical failures
+- success - return [TimeCard](../src/main/avro/uk/gov/homeoffice/digital/sas/timecard/time_card.avsc). See [RESTFul endpoint blueprint](https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/restful-endpoint.md#handle-success-consistently)
+- business failure - see [Record Time](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-925) (access required) for business failure scenarios. Also see [RESTFul endpoint blueprint](https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/restful-endpoint.md#handle-errors-gracefully-and-return-standard-error-codes)  for how to report business failures
+ - technical failure - see [RESTFul endpoint blueprint](https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/restful-endpoint.md#handle-errors-gracefully-and-return-standard-error-codes) for how to report technical failures
 
 ### add timeentry
 This command causes a new TimeEntry entity to be created and associated with an existing TimeCard entity. Note that if the TimeCard does not already exist then the command invocation should fail.
 
 #### inputs 
-- TimeCardId - mandatory -  the identifier of the TimeCard that the new TimeEntry will be associated with
+- TimeCardId - mandatory -  the identifier of the  [TimeCard](../src/main/avro/uk/gov/homeoffice/digital/sas/timecard/time_card.avsc) that the new  TimeEntry will be associated with
 - TenantId    - mandatory -  the tenant that holds the TimeEntry (and associated TimeCard)
-- TimeEntry - mandatory - the TimeEntry that is to be created
+- TimeEntry - mandatory - the [TimeEntry](../src/main/avro/uk/gov/homeoffice/digital/sas/timecard/timeentry.avsc) that is to be created
 
 #### output
  - success - see [standard command output](TODO)(**TODO**)  for how to report success output
@@ -112,16 +113,3 @@ This command causes an existing TimeEntry entity to be modifed. Note that if the
  - business failure - see [Record Time](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-925) (access required) for business failure scenarios. Also see [standard command output](TODO) (**TODO**)  for how to report business failures
  - technical failure - see [standard command output](TODO) (**TODO**) for how to report technical failures
  
-### get timecard
-This command retrieves a single timecard that matches the query parameters. Note that it is possible that no timecard can be found that matches the parameters however it should not be possible for multiple timecards to match the same set of parameters.
-
-#### inputs 
-timecardDate - mandatory - the date that the timecard is associated with
-timecardOwnerId  - mandatory - the person who owns the timecard
-tenantId - mandatory - the tenant that holds the timecard
-
-#### output
- - success - see [standard command output](TODO)(**TODO**)  for how to report success output
- - business failure - see [Record Time](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-925) (access required) for business failure scenarios. Also see [standard command output](TODO) (**TODO**)  for how to report business failures
- - technical failure - see [standard command output](TODO) (**TODO**) for how to report technical failures
-

@@ -1,0 +1,49 @@
+{
+    "namespace": "uk.gov.homeoffice.digital.sas.timecard",
+    "type": "record",
+    "name": "TimeCard",
+    "doc": "A TimeCard instance is for a worker. It collects multiple TimeEntry instances and layers on the concept of approval. A TimeCard maps to a single date.",
+    "fields": [
+        {
+            "name": "timecard_date", 
+            "type": "date",
+            "doc": "The date that the TimeCard represents"
+        },
+        {
+            "name": "approval_status", 
+            "type": "uk.gov.homeoffice.digital.sas.timecard.CodedValue",
+            "doc": "Describes the approval status of the TimeCard"
+        },
+        {
+            "name": "owner", 
+            "type": ["uk.gov.homeoffice.digital.sas.timecard.Person", "null"],
+            "doc": "The person who owns this TimeCard i.e. who has performed the work that will be recorded against the time_entries field."
+        },        
+        {
+            "name": "approver", 
+            "type": ["uk.gov.homeoffice.digital.sas.timecard.Person", "null"],
+            "doc": "The person who approved this TimeCard"
+        },
+        {
+            "name": "approval_timestamp", 
+            "type": ["timestamp-millis", "null"],
+            "doc": "The date and time (in millisecond granularity) that this TimeCard was approved"
+        },
+        {
+            "name": "time_entries", 
+            "type": {
+                "type": ["array", "null"],
+                "items": "uk.gov.homeoffice.digital.sas.timecard.TimeEntry"
+            },
+            "doc": "The TimeEntries for this TimeCard. They should all start on the same date as is stored in the timecard_date field"
+        },
+        {
+            "name": "notes", 
+            "type": {
+                "type": ["array", "null"],
+                "items": "uk.gov.homeoffice.digital.sas.timecard.TimeEntry"
+            },
+            "doc": "The TimeEntries for this TimeCard. They should all start on the same date as is stored in the timecard_date field"
+        }
+ ]
+}
