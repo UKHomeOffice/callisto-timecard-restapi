@@ -86,6 +86,20 @@ tenantId - mandatory - the tenant that holds the timecard
  - business failure - see [Record Time](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-925) (access required) for business failure scenarios. Also see [standard command output](TODO) (**TODO**)  for how to report business failures
  - technical failure - see [standard command output](TODO) (**TODO**) for how to report technical failures
 
+### add timeentry
+This command causes a new TimeEntry entity to be created and associated with an existing TimeCard entity. Note that if the TimeCard does not already exist then the command invocation should fail.
+
+#### inputs 
+- TimeCardId - mandatory -  the identifier of the TimeCard that the new TimeEntry will be associated with
+- TenantId    - mandatory -  the tenant that holds the TimeEntry (and associated TimeCard)
+- TimeEntry - mandatory - the TimeEntry that is to be created
+
+#### output
+ - success - see [standard command output](TODO)(**TODO**)  for how to report success output
+ - business failure - see [Record Time](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-925) (access required) for business failure scenarios. Also see [standard command output](TODO) (**TODO**)  for how to report business failures
+ - technical failure - see [standard command output](TODO) (**TODO**) for how to report technical failures
+ 
+
 ### modify timeentry
 This command causes an existing TimeEntry entity to be modifed. Note that if the TimeCard does not already exist then the command invocation should fail.
 
