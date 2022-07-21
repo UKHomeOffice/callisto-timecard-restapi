@@ -1,9 +1,51 @@
 
 # TimeCard Data Model
 
+##Overview
+
+![Callisto containers](./images/timecard-container-data-model.jpg)
+
 ## Entity
 
+### TimeCard
+
+A TimeCard instance is for a given person. It is the containing Entity for all collects multiple TimeEntry instances and layers on the concept of approval.  A timecard maps to a single date.
+
+
+| Key | Column Name    | Type      | Description            |
+| --- | -------------- | --------- | ---------------------- |
+|     |                |           |                        |
+| Key | TimeCardId     | long      |                        |
+|     | TimeCardStatus | varchar   | Approved, Rejected     |
+|     | Date           | timestamp | Date shift started.    |
+|     | PersonId       | long      |                        |
+|     | SubmittedOn    | timestamp |                        |
+|     | ApprovedOn     | timestamp |                        |
+|     | RejectedOn     | timestamp |                        |
+|     | ApprovedBy     | long      |                        |
+|     | createdtadstp  | timestamp | Created timestamp      |
+|     | modifiedtadstp | timestamp | Last moified timestamp |
+|     | deleted        | bool      | Soft delete flag       |
+
 ### TimeEntry
+
+| Key | Column Name      | Type      | Description                   |
+| --- | ---------------- | --------- | ----------------------------- |
+|     |                  |           |                               |
+| Key | TimeEntryId      | long      |                               |
+|     | TimeCardId       | long      |                               |
+|     | TimeEntryStatus  | enum      | Planned, Booked,Cancelled     |
+|     | TimePeriodId     | int       | Shift, Absence, SRD, NWD, etc |
+|     | ShiftType        | varchar   | Early, Late, Day etc          |
+|     | ActivityId       | int       |                               |
+|     | ActualStartTime  | timestamp |                               |
+|     | ActualEndTime    | timestamp |                               |
+|     | PlannedStartTime | timestamp |                               |
+|     | PlannedEndTime   | timestamp |                               |
+|     | IsOverridden     | bool      |                               |
+|     | createdtadstp    | timestamp | Created timestamp             |
+|     | modifiedtadstp   | timestamp | Last moified timestamp        |
+|     | deleted          | bool      | Soft delete flag              |
 
 Used to record both planned and actual time. Encapsulates day and time (to the minute). In addition, the time entry captures the way that the time has been spent via the activity property
 |Field|Type|Cardinality|Description|
@@ -29,7 +71,6 @@ Notes are associated with a TimeCard. Notes are used to communicate arbitrary in
 
 ### TimeCard
 
-A TimeCard instance is for a given shift worker. It collects multiple TimeEntry instances and layers on the concept of approval.  A timecard maps to a single date.
 
 |Field|Type|Cardinality|Description|
 |--|--|--|--|
