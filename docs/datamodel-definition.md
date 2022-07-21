@@ -1,7 +1,9 @@
 
 # TimeCard Data Model
 
-##Overview
+## Overview
+
+The TimeCard container needs to persist the TimeCard 'containing' entity which manages the ownership and status of the time card and the children entities including TimeEntries, TimeCardNotes and FlexChanges.
 
 ![Callisto containers](./images/timecard-container-data-model.jpg)
 
@@ -24,7 +26,7 @@ A TimeCard instance is for a given person. It is the containing Entity for all c
 |     | RejectedOn     | timestamp |                        |
 |     | ApprovedBy     | long      |                        |
 |     | createdtadstp  | timestamp | Created timestamp      |
-|     | modifiedtadstp | timestamp | Last moified timestamp |
+|     | modifiedtadstp | timestamp | Last modified timestamp|
 |     | deleted        | bool      | Soft delete flag       |
 
 ### TimeEntry
@@ -44,7 +46,7 @@ A TimeCard instance is for a given person. It is the containing Entity for all c
 |     | PlannedEndTime   | timestamp |                               |
 |     | IsOverridden     | bool      |                               |
 |     | createdtadstp    | timestamp | Created timestamp             |
-|     | modifiedtadstp   | timestamp | Last moified timestamp        |
+|     | modifiedtadstp   | timestamp | Last modified timestamp       |
 |     | deleted          | bool      | Soft delete flag              |
 
 Used to record both planned and actual time. Encapsulates day and time (to the minute). In addition, the time entry captures the way that the time has been spent via the activity property
@@ -60,35 +62,46 @@ Used to record both planned and actual time. Encapsulates day and time (to the m
 
 Notes are associated with a TimeCard. Notes are used to communicate arbitrary information between individuals that relates to the TimeCard. Notes cannot exist on their own. 
 
-|Field|Type|Cardinality|Description|
-|--|--|--|--|
-| Note| 1..1 | text (256)| The note itself |
-| Note| 1..1 | text (256)| The note itself |
+| Key | Column Name    | Type      | Description             |
+| --- | -------------- | --------- | ----------------------- |
+|     |                |           |                         |
+| Key | TimeCardNoteID | long      |                         |
+|     | TimeCardId     | long      |                         |
+|     | content        | varchar   |                         |
+|     | createdtadstp  | timestamp | Created timestamp       |
+|     | modifiedtadstp | timestamp | Last modified timestamp |
+|     | deleted        | bool      | Soft delete flag        |
+|     |                |           |                         |
+|     |                |           |                         |
 
-### TimeLine
+### TimeCardEventLog
 
 **TODO** – confirm that this is a separate entity 
 
-### TimeCard
-
-
-|Field|Type|Cardinality|Description|
-|--|--|--|--|
-| TimeCardDate| 1..1 | date| The date that this timecard represents|
-| TimeCardStatus| 1..1 | Enumeration | Describes the approval status of the TimeCard |
-| Approver| 0..1 | foreign key| The person who approved this time card |
-| ApprovalDate| 0..1 | DateTime | When this timecard was approved |
-| Person| 1..1 | foreign key |The person who has spent the time that this TimeCard encapsulates|
-| TimeEntries| 0..* | set of foreign keys| Time Entries |
-| Notes| 0..* | set of foreign keys| Notes |
 
 ### FlexChange
 
-Encapsulates a change to one or more planned TimeEntry instances. It references TimeEntry by using the TimeEntry.id as a foreign key. There is a set of specific reasons that planned time can be changed and it must be approved. The FlexChange records this reason along with the new planned times for the associated TimeEntry instances.   
+A FlexChange entry records a change to one or more planned TimeEntry instances. It references TimeEntry by using the TimeEntry.id as a foreign key. There is a set of specific reasons that planned time can be changed and it must be approved. The FlexChange records this reason along with the new planned times for the associated TimeEntry instances.   
 
-A FlexChange can be created directly by a Shift worker on their TimeCard. A FlexChange can also come from the Scheduler container 
+A FlexChange can be created directly by an End user Shift worker on their TimeCard entry screen. A FlexChange can also come from the Scheduler container 
 
-### Enum
+| Key | Column Name      | Type      | Description                              |
+| --- | ---------------- | --------- | ---------------------------------------- |
+|     |                  |           |                                          |
+| Key | FlexChangeId     | long      |                                          |
+|     | TimeCardId       | long      |                                          |
+|     | TimeEntryId      | long      | Maybe zero or blank                      |
+|     | FlexChangeType   | enum      | WholesaleChange,Curtailment, ExtendShift |
+|     | EffectiveDate    | timestamp |                                          |
+|     | RequesterId      | int       | Who requested the flex change            |
+|     | ApproverId       | int       |                                          |
+|     | ApprovalDate     | timestamp |                                          |
+|     | FlexChangeReason | varchar   |                                          |
+|     | createdtadstp    | timestamp | Created timestamp                        |
+|     | modifiedtadstp   | timestamp | Last modified timestamp                  |
+|     | deleted          | bool      | Soft delete flag                         |
+
+### Enumerations
 
 **TimeCardStatus** 
 Describes the state that a TimeCard can be in. Covers the concept of planning time and then booking actual time. In addition, the status encapsulates TimeCard approval 
