@@ -43,7 +43,6 @@ Indicates that a new TimeEntry has been created (covers both planned or actual t
 **FlexChangeEvent** 
 Indicates that a new FlexChange has been created 
 
-**TODO** – how to model approval 
 
 ### Events consumed
 
