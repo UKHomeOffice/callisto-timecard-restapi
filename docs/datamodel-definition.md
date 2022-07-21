@@ -31,6 +31,8 @@ A TimeCard instance is for a given person. It is the containing Entity for all c
 
 ### TimeEntry
 
+Used to record both planned and actual time. Encapsulates day and time (to the minute). In addition, the time entry captures the way that the time has been spent via the activity property.
+
 | Key | Column Name      | Type      | Description                   |
 | --- | ---------------- | --------- | ----------------------------- |
 |     |                  |           |                               |
@@ -49,14 +51,6 @@ A TimeCard instance is for a given person. It is the containing Entity for all c
 |     | modifiedtadstp   | timestamp | Last modified timestamp       |
 |     | deleted          | bool      | Soft delete flag              |
 
-Used to record both planned and actual time. Encapsulates day and time (to the minute). In addition, the time entry captures the way that the time has been spent via the activity property
-|Field|Type|Cardinality|Description|
-|--|--|--|--|
-| TimePeriod | 1..1 | Enumeration |Describes how the person spent their time. Note that depending on which value is selected other data might become associated with the TimeEntry |
-| Activity| 1..1 | Enumeration |This may not be required as it is detailed by Scheduler and so would be a duplication|
-| StartTime| 1..1 | DateTime | The start of the time period |
-| EndTime | 1..1 | DateTime | The end of the time period |
-  
 
 ### TimeCardNotes
 
@@ -76,7 +70,19 @@ Notes are associated with a TimeCard. Notes are used to communicate arbitrary in
 
 ### TimeCardEventLog
 
-**TODO** – confirm that this is a separate entity 
+| Key | Column Name      | Type      | Description                                      |
+| --- | ---------------- | --------- | ------------------------------------------------ |
+|     |                  |           |                                                  |
+| Key | EventId          | long      |                                                  |
+|     | TimeCardId       | long      | Optional. TimeCardId to which the event belongs  |
+|     | TimeEntryId      | long      | Optional. TimeEntryId to which the event belongs |
+|     | EventDate        | timestamp | Event timestamp                                  |
+|     | EventInitiatorId | long      | Person (if applic able) that initiated event     |
+|     | EventTypeId      | long      | The type of Event.                               |
+|     | EventDescription | varchar   | Textual description of the event                 |
+|     | createdtadstp    | timestamp | Created timestamp                                |
+|     | modifiedtadstp   | timestamp | Last modified timestamp                          |
+|     | deleted          | bool      | Soft delete flag                                 |
 
 
 ### FlexChange
@@ -100,6 +106,18 @@ A FlexChange can be created directly by an End user Shift worker on their TimeCa
 |     | createdtadstp    | timestamp | Created timestamp                        |
 |     | modifiedtadstp   | timestamp | Last modified timestamp                  |
 |     | deleted          | bool      | Soft delete flag                         |
+
+### FlexChangeNote
+
+| Key | Column Name    | Type      | Description             |
+| --- | -------------- | --------- | ----------------------- |
+|     |                |           |                         |
+| Key | FlexChangeId   | long      |                         |
+|     | TimeCardId     | long      |                         |
+|     | content        | varchar   |                         |
+|     | createdtadstp  | timestamp | Created timestamp       |
+|     | modifiedtadstp | timestamp | Last modified timestamp |
+|     | deleted        | bool      | Soft delete flag        |
 
 ### Enumerations
 
