@@ -109,7 +109,7 @@ All significant events which impact a TimeCard are to be logged. These events as
 
 ### FlexChange
 
-A FlexChange entry will be created for all such short notice compulsory changes and under AHA Policy, these changes (Flexible Changes) must be authorised by a manager.  A FlexChange can be created directly by an End user Shift worker on their TimeCard entry screen or can be created by the Scheduler.
+A FlexChange entry will be created for all short notice compulsory shift changes and under AHA Policy, these changes (Flexible Changes) must be authorised by a manager.  A FlexChange can be created directly by an End user Shift worker on their TimeCard entry screen or can be created by the Scheduler.
 
 A FlexChange belongs to the containing TimeCard and may reference a TimeEntry by using the TimeEntryId.
 
