@@ -18,7 +18,7 @@ The TimeCard container needs to persist the TimeCard 'containing' entity which m
 
 ### TimeCard
 
-A TimeCard instance is for a given person. It is the containing Entity for all collects multiple TimeEntry instances and layers on the concept of approval.  
+A TimeCard instance is for a given person. It is the containing Entity for multiple TimeEntry instances as well as TimeCardNotes, FlexChanges etc.
 
 A timecard maps to a single date but if a continuous working TimeEntry spans two dates (e.q shift started at 10pm and ended at 5am) then the date in the time card is the date the shift started.
 
