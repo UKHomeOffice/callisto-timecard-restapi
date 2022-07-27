@@ -71,8 +71,7 @@ So a call to GetTimeCard will return the entire TimeCard instance including Time
 TimeCard or a TimeCard does not exist status message 
 
 #### container command(s)
-- [TimeCard.get timecard(timecardDate, timecardOwnerId, tenantId)](https://github.com/UKHomeOffice/callisto-timecard-restapi/docs/container-definition.md#gettimecard) - used to retrieve a timecard. 
-
+- [TimeCard.get timecard(timecardDate, timecardOwnerId, tenantId)](https://github.com/UKHomeOffice/callisto-timecard-restapi/blob/main/docs/container-definition.md#gettimecard) - used to retrieve a timecard. 
 
 ### Create or Modify a Time Entry
 
