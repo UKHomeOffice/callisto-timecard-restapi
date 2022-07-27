@@ -1,12 +1,17 @@
 
 # Record time
 
+This high-level design is intended to cover the Record Time Feature which includes the user stories listed below. It seeks to:
+
+1.  Guide the reader through the relevant parts of the container definitions which will be used to satisfy this feature.
+2.  Where required illustrate the high-level container orchestration.
+3.  Detail and explain the relevant parts of the data model impacting this feature.
+
 [Feature definition](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-925) (access required)
 
 
 ## User Stories
 
-This high-level design is intended to cover the following user stories.
 
 - [Manager Input Start and Finish Time (No Existing Entries)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1751) (access required)
 - [Manager Add On-call Period to Timecard (Existing Non On-Call Entry)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1788) (access required)
@@ -27,8 +32,7 @@ This high-level design is intended to cover the following user stories.
 
 ## Overview
 
-To understand the proposed high-level design, it is instructive to consider both the definition of the containers used to perform TimeCard actions as detailed below
-
+To understand the proposed high-level design, it is instructive to consider both the definition of the containers used to perform TimeCard actions and the appropriate parts of the data model.
 [TimeCard Container Definition](https://github.com/UKHomeOffice/callisto-timecard-restapi/container-definition.md)
 
 It is also useful to understand the terms used; in particular TimeCard and TimEntry. This is part is a repetition of the TimeCard Data Model but it bears repeating.
