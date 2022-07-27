@@ -73,7 +73,7 @@ This command causes an existing TimeCard entity to be updated and stored.
  - business failure - see [Record Time](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-925) (access required) for business failure scenarios. Also see [standard command output](TODO) (**TODO**)  for how to report business failures
  - technical failure - see [standard command output](TODO) (**TODO**) for how to report technical failures **TODO** ETag for out of stale copy of timecard to update?
 
-### get timecard
+### GetTimecard
 This command retrieves a single timecard that matches the query parameters. Note that it is possible that no timecard can be found that matches the parameters however it should not be possible for multiple timecards to match the same set of parameters.
 
 #### inputs 
