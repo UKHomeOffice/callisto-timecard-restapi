@@ -39,11 +39,12 @@ It is also useful to understand the terms used; in particular TimeCard and TimEn
 
 [TimeCard Data Model](https://github.com/UKHomeOffice/callisto-timecard-restapi/datamodel-definition.md)
 
+
 ## TimeCard
 
 A TimeCard instance is for a given person. It is the containing Entity for multiple TimeEntry instances as well as TimeCardNotes, FlexChanges as shown below
 
-![Callisto containers](https://github.com/UKHomeOffice/callisto-timecard-restapi/blob/main/docs/images/timecard-container-data-model.jpg)
+<img src="https://github.com/UKHomeOffice/callisto-timecard-restapi/blob/main/docs/images/timecard-container-data-model.jpg" width=500>
 
 Note that a TimeCard maps to a single date but if a continuous working TimeEntry spans two dates (e.q shift started at 10pm and ended at 5am) then the date in the TimeCard is the date the shift started.
 
