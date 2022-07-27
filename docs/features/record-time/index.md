@@ -3,18 +3,10 @@
 
 [Feature definition](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-925) (access required)
 
-## Use Cases
 
-![record-time-use-cases.png](../../images/record-time-use-cases.png)
+## User Stories
 
-### Create TimeEntry
-A timecard entry must be associated with a timecard, it cannot exist on its own. The association is made by the start date on the timecard entry matching the date on the timecard.
-
-It is possible to create a timecard entry and as a side-effect trigger the creation of the containing timecard if one does not already exist. 
-
-Alternatively the timecard may already exist in which case the addition of a new timecard entry will trigger an update to that existing timecard.
-
-#### user stories
+This high-level design is intended to cover the following user stories.
 
 - [Manager Input Start and Finish Time (No Existing Entries)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1751) (access required)
 - [Manager Add On-call Period to Timecard (Existing Non On-Call Entry)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1788) (access required)
@@ -33,31 +25,37 @@ Alternatively the timecard may already exist in which case the addition of a new
 - [Manager Record Shift in Timecard (No Existing Entries)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1686) (access required)
 - [Manager Input Finish Time Same Day (No Existing Finish Time)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1749) (access required)
 
-#### flow
-The starting point is [View TimeCard](#view-timecard). The user wishes to create a TimeEntry and that must be associated with a TimeCard. 
+## Overview
 
-If one does not exist then it must be created as part of the process for creating the TimeEntry. 
+To understand the proposed high-level design, it is instructive to consider both the definition of the containers used to perform TimeCard actions as detailed below
 
-If one does exist then the new TimeEntry will be associated with that existing TimeCard
+[TimeCard Container Definition](https://github.com/UKHomeOffice/callisto-timecard-restapi/container-definition.md)
 
-`if TimeCard exists then`
-- [Assemble TimeEntry - Enter Time](#assemble-timeentry---enter-time) OR [Assemble TimeEntry - Enter Date](#assemble-timeentry---enter-date) - Depending upon the type of TimeEntry that the user wishes to create the type of data that they enter will vary.
-- [Store TimeEntry](#store-timeentry) - Once the TimeEntry has been created and initialised it needs to be persisted along with its association to the given TimeCard
+It is also useful to understand the terms used; in particular TimeCard and TimEntry. This is part is a repetition of the TimeCard Data Model but it bears repeating.
 
-`else`
-- [Assemble TimeEntry - Enter Time](#assemble-timeentry-enter-time) OR [Assemble TimeEntry - Enter Date](#assemble-timeentry-enter-date) - Depending upon the type of TimeEntry that the user wishes to create the type of data that they enter will vary.
-- [Assemble TimeCard](#assemble-timecard) - creates an empty skeletal TimeCard and adds the TimeEntry created in the previous step. This is crucial as a new TimeCard is only valid if it has at least one TimeEntry
-- [Store TimeCard](#store-timecard) - Once the TimeCard has been created and initialised it needs to be persisted along. This will also persist the associated TimeEntry in the same transaction
+[TimeCard Data Model](https://github.com/UKHomeOffice/callisto-timecard-restapi/datamodel-definition.md)
 
-### Modify TimeEntry
+## TimeCard
 
-### Remove TimeEntry
+A TimeCard instance is for a given person. It is the containing Entity for multiple TimeEntry instances as well as TimeCardNotes, FlexChanges as shown below
 
-## Functions
+![Callisto containers](https://github.com/UKHomeOffice/callisto-timecard-restapi/blob/main/docs/images/timecard-container-data-model.jpg)
 
-### View Timecard
+Note that a TimeCard maps to a single date but if a continuous working TimeEntry spans two dates (e.q shift started at 10pm and ended at 5am) then the date in the TimeCard is the date the shift started.
 
-![view-timecard.png](../../images/view-timecard.png)
+## Time Entry
+
+A TimeEntry belongs to a TimeCard with an identical TimeCardId. When creating a TimeEntry it must be associated with a TimeCard, it cannot
+exist on its own.
+
+### Get TimeCard
+
+When an end user wants to record a time entry the starting point will be to choose a date and check whether there is a TimeCard already created
+for that date and to return the payload which will contain, amongst other things the TimeEntry records already created if any exist as illustrated below at a high level.
+
+![Callisto containers](https://github.com/UKHomeOffice/callisto-timecard-restapi/blob/main/docs/images/record-timeentry-high-level-sequence.jpg)
+
+So a call to GetTimeCard will return the entire TimeCard instance including TimeEntry records, FlexChanges, TimeCardNotes and TimeCardEvents for display.
 
 #### input(s)
 - timecardDate - mandatory - the date that the timecard is associated with
@@ -68,48 +66,52 @@ If one does exist then the new TimeEntry will be associated with that existing T
 TimeCard or a TimeCard does not exist status message 
 
 #### container command(s)
-- [TimeCard.get timecard(timecardDate, timecardOwnerId, tenantId)](../../container-definition.md#get-timecard) - used to retrieve a timecard. Note that in this data flow the expectation is that this call will return a timecard now found status
+- [TimeCard.get timecard(timecardDate, timecardOwnerId, tenantId)](../../container-definition.md#get-timecard) - used to retrieve a timecard. 
 
-### Assemble TimeEntry - Enter Time
 
-![assemble-timeentry-enter-time.png](../../images/assemble-timeentry-enter-time.png)
+### Create or Modify a Time Entry
 
-#### input(s)
-- timeEntryType - the type of TimeEntry that the user wants to create
-- startDateTime - the date and time that the time entry starts at
-- endDateTime - the date and time that the time entry ends at
+Once the payload has been returned or no TimeCard is returned the system
+is in a position to either display the returned payload and allow the
+end user to choose to modify an existing TimeCard or add a new TimeEntry
+but essentially all the options at this point boil down to one of:
 
-#### output(s)
-#### container command(s)
-- ReferenceData.get timeentry descriptor(TimeEntryType) - used get a desciption of the data to capture when creating a TimeEntry instance corresponding to the given TimeEntryType
+1.  Creating a Time Entry when there is no corresponding TimeCard (or
+    Entry) for that date.
 
-### Assemble TimeEntry - Enter Date
+2.  Creating a new Time Entry when a TimeCard exists.
 
-![assemble-timeentry-enter-date.png](../../images/assemble-timeentry-enter-date.png)
+3.  Modifying a previously entered TimeEntry.
 
-#### input(s)
-- timeEntryType - the type of TimeEntry that the user wants to create
-- date- the date that the TimeEntry covers
+When creating the first TimeEntry for a given day several entities will
+be created as follows:
 
-#### output(s)
-#### container command(s)
-- ReferenceData.get timeentry descriptor(TimeEntryType) - used get a desciption of the data to capture when creating a TimeEntry instance corresponding to the given TimeEntryType
+-   TimeCard -- containing entity
+
+-   TimeEntry -- detailing the time period to be recorded
+
+-   TimeCardEventLog -- A create timecard / time entry record
+
+When a timecard for that date already exists the addition of a new timecard entry will trigger an update to that existing timecard and its component parts.
+
+### Modify TimeEntry
+
+- [Update TimeCard](../../container-definition.md#update-timecard) - used to update an existing timecard. 
+
+
+### Remove TimeEntry
+
+- [Remove TimeEntry](../../container-definition.md#update-timecard) - used to remove an existing timeentry within an exisiting TimeCard. It will not delete the TimeCard
+
 
 ### Store TimeEntry
-TODO
-#### input(s)
-#### output(s)
-#### container command(s)
 
-### Assemble TimeCard
-TODO
-#### input(s)
-#### output(s)
-#### container command(s)
+- [Add TimeEntry](../../container-definition.md#update-timecard) - used to store a new timeentry.
 
-### Store TimeCard
-TODO
-#### input(s)
-#### output(s)
-#### container command(s)
+## Considerations
+
+1.  Locking. Whilst the TimeCard and its component parts are being viewed none of the records are locked. Therefore it is important that the client returns are token of some kind that would allow the service to check that the database record matches the one being updated. The modifiedtadstp is suggested.
+2.  The type of information collected to record a time entry varies according to the TimePeriodType (Shift, Standard Rest Day etc) selected by the user. For example for a SRD only a date is required but for a shift a start time and end time is collected.
+
+
 
