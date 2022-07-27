@@ -71,7 +71,7 @@ So a call to GetTimeCard will return the entire TimeCard instance including Time
 TimeCard or a TimeCard does not exist status message 
 
 #### container command(s)
-- [TimeCard.get timecard(timecardDate, timecardOwnerId, tenantId)](../../container-definition.md#get-timecard) - used to retrieve a timecard. 
+- [TimeCard.get timecard(timecardDate, timecardOwnerId, tenantId)](../../container-definition.md#gettimecard) - used to retrieve a timecard. 
 
 
 ### Create or Modify a Time Entry
