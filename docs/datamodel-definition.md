@@ -55,14 +55,13 @@ Used to record both planned and actual time. Encapsulates day and time (to the m
 | Key | TimeEntryId      | long      |                               |
 |     | TimeCardId       | long      |                               |
 |     | TimeEntryStatus  | enum      | Planned, Booked,Cancelled     |
-|     | TimePeriodId     | int       | Shift, Absence, SRD, NWD, etc |
+|     | TimePeriodType   | int       | Shift, Absence, SRD, NWD, etc |
 |     | ShiftType        | varchar   | Early, Late, Day etc          |
 |     | ActivityId       | int       |                               |
 |     | ActualStartTime  | timestamp |                               |
 |     | ActualEndTime    | timestamp |                               |
 |     | PlannedStartTime | timestamp |                               |
 |     | PlannedEndTime   | timestamp |                               |
-|     | IsOverridden     | bool      |                               |
 |     | createdtadstp    | timestamp | Created timestamp             |
 |     | modifiedtadstp   | timestamp | Last modified timestamp       |
 |     | deleted          | bool      | Soft delete flag              |
@@ -95,7 +94,7 @@ All significant events which impact a TimeCard are to be logged. These events as
 | Key | Column Name      | Type      | Description                                      |
 | --- | ---------------- | --------- | ------------------------------------------------ |
 |     |                  |           |                                                  |
-| Key | EventId          | long      |                                                  |
+| Key | TimeCardEventLogId | long      |                                                  |
 |     | TimeCardId       | long      | Optional. TimeCardId to which the event belongs  |
 |     | TimeEntryId      | long      | Optional. TimeEntryId to which the event belongs |
 |     | EventDate        | timestamp | Event timestamp                                  |
