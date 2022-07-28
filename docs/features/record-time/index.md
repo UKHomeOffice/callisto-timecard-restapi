@@ -20,7 +20,7 @@ This section describes which parts of the TimeCard data model are relevant when 
 
 Note that a TimeCard maps to a single date but if a continuous working TimeEntry spans two dates (e.q shift started at 10pm and ended at 5am) then the date in the TimeCard is the date the shift started.
 
-<img src="../../images/timecard-container-data-model.jpg" width=500>
+<img src="../../images/timecard-container-data-model.png">
 
 ## Key command sequences
 This section describes which commands need to be invoked and in what order so that an end user is able to record their time or remove any previously recorded time.
