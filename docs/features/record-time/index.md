@@ -10,7 +10,7 @@ This high-level design is intended to cover the Record Time Feature which includ
 
 The Record Time [feature definition](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-925) (access required) in Jira details the user stories that make up the feature. The user stories contain more detailed requirement around business rules and validation logic. The intention is that this document should be used as a guide when designing and implementing and testing against a given story from the record time feature
 
-To understand the proposed high-level design, it is instructive to consider both the definition of the [containers](../../container-definition.md) used to perform TimeCard actions and the appropriate parts of the [data model](../../datamodel-definition.md) specifically [TimeCard] (../../datamodel-definition.md#timecard) and [TimeEntry](../../datamodel-definition.md#timeentry).
+To understand the proposed high-level design, it is instructive to consider both the definition of the [containers](../../container-definition.md) used to perform TimeCard actions and the appropriate parts of the [data model](../../datamodel-definition.md) specifically [TimeCard](../../datamodel-definition.md#timecard) and [TimeEntry](../../datamodel-definition.md#timeentry).
 
 ## Key data models
 
@@ -49,8 +49,8 @@ end user to choose to modify an existing TimeEntry or add a new TimeEntry
 If the response code indicates that the TimeCard resource was [not found](https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/restful-endpoint.md#handle-errors-gracefully-and-return-standard-error-codes) then effectively the end user is creating the first TimeEntry for a given date. In this scenario two entities will
 be created as follows:
 
-- TimeCard -- containing entity
-- TimeEntry -- detailing the time period to be recorded
+- TimeCard - containing entity
+- TimeEntry - detailing the time period to be recorded
 
 ##### container command(s)
 - [TimeCard.create_timecard(timeCard, tenantId)](../../container-definition.md#create-timecard) - used to create a new TimeCard. Note that it must have at least one TimeEntry 
