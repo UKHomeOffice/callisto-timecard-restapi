@@ -155,6 +155,6 @@ Describes the state that a TimeCard can be in. There is a requirement for timeca
 **ActivityId** 
 A set of different types of work that an end user can record time against populated by the Scheduler. 
 
-**TimePeriodId**
+**TimePeriodType**
 Describes the way a person has spent their time eg shift, non-working day, standard rest day, absence. This will be populated from user choosing from a configured list which can vary by location, tenant etc.
 
