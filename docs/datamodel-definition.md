@@ -5,7 +5,7 @@
 
 The TimeCard container needs to persist the TimeCard 'containing' entity which manages the ownership and status of the time card and the children entities including TimeEntries, TimeCardNotes and FlexChanges. In this regard the TimeCard is the covering entity and the TimeEntry is the line item.
 
-![Callisto containers](./images/timecard-container-data-model.jpg)
+![Callisto containers](./images/timecard-container-data-model.png)
 
 
 ## TO DO
