@@ -55,14 +55,13 @@ Used to record both planned and actual time. Encapsulates day and time (to the m
 | Key | TimeEntryId      | long      |                               |
 |     | TimeCardId       | long      |                               |
 |     | TimeEntryStatus  | enum      | Planned, Booked,Cancelled     |
-|     | TimePeriodId     | int       | Shift, Absence, SRD, NWD, etc |
+|     | TimePeriodType   | int       | Shift, Absence, SRD, NWD, etc |
 |     | ShiftType        | varchar   | Early, Late, Day etc          |
 |     | ActivityId       | int       |                               |
 |     | ActualStartTime  | timestamp |                               |
 |     | ActualEndTime    | timestamp |                               |
 |     | PlannedStartTime | timestamp |                               |
 |     | PlannedEndTime   | timestamp |                               |
-|     | IsOverridden     | bool      |                               |
 |     | createdtadstp    | timestamp | Created timestamp             |
 |     | modifiedtadstp   | timestamp | Last modified timestamp       |
 |     | deleted          | bool      | Soft delete flag              |
@@ -95,7 +94,7 @@ All significant events which impact a TimeCard are to be logged. These events as
 | Key | Column Name      | Type      | Description                                      |
 | --- | ---------------- | --------- | ------------------------------------------------ |
 |     |                  |           |                                                  |
-| Key | EventId          | long      |                                                  |
+| Key | TimeCardEventLogId | long      |                                                  |
 |     | TimeCardId       | long      | Optional. TimeCardId to which the event belongs  |
 |     | TimeEntryId      | long      | Optional. TimeEntryId to which the event belongs |
 |     | EventDate        | timestamp | Event timestamp                                  |
@@ -156,6 +155,6 @@ Describes the state that a TimeCard can be in. There is a requirement for timeca
 **ActivityId** 
 A set of different types of work that an end user can record time against populated by the Scheduler. 
 
-**TimePeriodId**
+**TimePeriodType**
 Describes the way a person has spent their time eg shift, non-working day, standard rest day, absence. This will be populated from user choosing from a configured list which can vary by location, tenant etc.
 
