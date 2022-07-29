@@ -27,7 +27,7 @@ not null(TimeCardStatus) VARCHAR
 
 Table(TimeEntry, "TimeEntry\n(A period of Time planned or booked)") {
 primary_key(TimeEntryId) LONG
-not_null(unique(TimeCardId)) LONG
+not_null(unique(TimeEntryId)) LONG
 not_null(TimeEntryStatus) VARCHAR
 not_null(TimePeriodType) LONG
 ActualStartTime DATETIME
@@ -36,13 +36,12 @@ ActualFinishTime DATETIME
 
 Table(TimeCardNote, "TimeCardNote\n(A note belonging to the TimeCard)") {
 primary_key(TimeCardNoteId) LONG
-not_null(unique(TimeCardId)) LONG
+not_null(unique(TimeEntryId)) LONG
 not_null(Content) VARCHAR
 }
 
 Table(FlexChange, "FlexChange\n(A Flexible Change)") {
 primary_key(FlexChangeId) LONG
-not_null(unique(TimeCardId)) LONG
 not_null(unique(TimeEntryId)) LONG
 not_null(FlexChangeType) LONG
 not_null(FlexChangeReason) LONG
@@ -51,7 +50,7 @@ not_null(RequestorId) LONG
 
 Table(FlexChangeNote, "FlexChange\n(Note)") {
 primary_key(FlexChangeNoteId) LONG
-not_null(unique(TimeCardId)) LONG
+not_null(unique(TimeEntryId)) LONG
 not_null(Content) VARCHAR
 }
 
@@ -72,8 +71,8 @@ not_null(EventInitiator) LONG
 ' many to many relationship
 ' Add mark if you like
 TimeCard   "1" --> "0..N" TimeEntry : A TimeCard may have multiple TimeEntry records
-TimeCard   "1" --> "0..N" TimeCardNote : A TimeCard may have multiple notes
-TimeCard   "1" --> "0..N" FlexChange   : A TimeCard may have multiple FlexChanges
-TimeCard   "1" --> "0..N" TimeCardEventLog : A TimeCard may have multiple events
-FlexChange "1" --> "0..N" FlexChangeNote   : A FlexChange may have a note
+TimeEntry  "1" --> "0..N" TimeCardNote : A TimeCard may have multiple notes
+TimeEntry  "1" --> "0..N" FlexChange   : A TimeCard may have multiple FlexChanges
+TimeEntry  "1" --> "0..N" TimeCardEventLog : A TimeCard may have multiple events
+FlexChange "1" --> "0..N" FlexChangeNote   : A FlexChange may have multiple notes
 @enduml

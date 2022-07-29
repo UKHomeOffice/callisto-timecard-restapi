@@ -79,7 +79,7 @@ A notes option will be available and visible for a timecard time entry. Multiple
 | --- | -------------- | --------- | ----------------------- |
 |     |                |           |                         |
 | Key | TimeCardNoteID | long      |                         |
-|     | TimeCardId     | long      |                         |
+|     | TimeEntryId    | long      |                         |
 |     | content        | varchar   |                         |
 |     | createdtadstp  | timestamp | Created timestamp       |
 |     | modifiedtadstp | timestamp | Last modified timestamp |
@@ -94,7 +94,7 @@ All significant events which impact a TimeCard are to be logged. These events as
 | Key | Column Name      | Type      | Description                                      |
 | --- | ---------------- | --------- | ------------------------------------------------ |
 |     |                  |           |                                                  |
-| Key | TimeCardEventLogId | long      |                                                  |
+| Key | TimeCardEventLogId | long      |                                                |
 |     | TimeCardId       | long      | Optional. TimeCardId to which the event belongs  |
 |     | TimeEntryId      | long      | Optional. TimeEntryId to which the event belongs |
 |     | EventDate        | timestamp | Event timestamp                                  |
@@ -120,7 +120,6 @@ As they have a monetary value these should be auditable - record manager who app
 | --- | ---------------- | --------- | -------------------------------------------------- |
 |     |                  |           |                                                    |
 | Key | FlexChangeId     | long      |                                                    |
-|     | TimeCardId       | long      |                                                    |
 |     | TimeEntryId      | long      | Maybe zero or blank                                |
 |     | FlexChangeType   | enum      | WholesaleChange, Altered, Curtailed, ExtendedShift |
 |     | EffectiveDate    | timestamp |                                                    |
@@ -141,7 +140,7 @@ When a FlexChange is created an optional note maybe added allowing supporting in
 |     |                  |           |                         |
 | Key | FlexChangeNoteId | long      |                         |
 |     | FlexChangeId     | long      |                         |
-|     | TimeCardId       | long      |                         |
+|     |  TimeEntryId     | long      |                         |
 |     | content          | varchar   |                         |
 |     | createdtadstp    | timestamp | Created timestamp       |
 |     | modifiedtadstp   | timestamp | Last modified timestamp |
