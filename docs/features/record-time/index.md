@@ -54,7 +54,7 @@ The user wants to remove previously recorded time. Once the response has been re
 end user to choose to remove one or more existing `TimeEntry` instances
 
 ##### container command(s)
-- [Remove TimeEntry](../../container-definition.md#remove-timeentry) - used to remove an existing timeentry
+- [Remove TimeEntry(timeEntryId, tenantId](../../container-definition.md#remove-timeentry) - used to remove an existing timeentry
 
 #### No TimeEntry instances found
 If the response code indicates that `TimeEntry` resources were [not found](https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/restful-endpoint.md#handle-errors-gracefully-and-return-standard-error-codes) then effectively the end user is trying to delete something that does not exist therefore it is up to the client about how best to inform the user that their requested action cannot be completed
