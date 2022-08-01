@@ -4,6 +4,8 @@
 
 The TimeCard container exposes a number of models to clients. The TimeEntry is a key model from which most others hang
 
+![](./images/payload-model.png)
+
 # Schemas
 
 <h2 id="tocS_Note">Note</h2>
