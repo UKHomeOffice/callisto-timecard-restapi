@@ -70,6 +70,7 @@
 				</executions>
 			</plugin>
 		</plugins>
+		<finalName>timecard-api</finalName>
 	</build>
 
 </project>
