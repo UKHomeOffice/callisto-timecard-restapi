@@ -75,7 +75,7 @@ components:
         - actualEndTime
         - timePeriodType
         - activity
-        - personId
+        - owner
       properties:
         id:
           description: Assigned by the TimeCard container
@@ -83,7 +83,7 @@ components:
         version: 
           description: The version of the TimeEntry as assigned by the TimeCard container. This value changes when the resource is created, updated, or deleted.
           type: number
-        person:
+        owner:
             description: The Person who owns this TimeEntry i.e. the Person who has performed the activity in the given time period
             allOf:
               - $ref: '#/components/schemas/Person'

@@ -107,7 +107,7 @@ A Person is an authorised human user who is able to create or modify TimeCard co
 {
   "id": 0,
   "version": 0,
-  "person": {
+  "owner": {
     "id": 0,
     "firstName": [
       "string"
@@ -138,7 +138,7 @@ A TimeEntry carries the time periods during which employees have performed a bus
 |---|---|---|---|---|
 |id|number|false|none|Assigned by the TimeCard container|
 |version|number|false|none|The version of the TimeEntry as assigned by the TimeCard container. This value changes when the resource is created, updated, or deleted.|
-|person|[Person](#schemaperson)|false|none|The Person who owns this TimeEntry i.e. the Person who has performed the activity in the given time period|
+|owner|[Person](#schemaperson)|true|none|The Person who owns this TimeEntry i.e. the Person who has performed the activity in the given time period|
 |actualStartTime|string(date-time)|true|none|The start time of the activity that was worked (to the minute)|
 |actualEndTime|string(date-time)|true|none|The end time of the activity that was worked (to the minute)|
 |timePeriodType|[CodedValue](#schemacodedvalue)|true|none|The type of time entry (e.g. a shift, a standard rest day)|
