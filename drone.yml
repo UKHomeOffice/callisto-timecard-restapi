@@ -29,7 +29,7 @@ steps:
     commands:
       # wait for docker service to be up before running docker build
       - n=0; while [ "$n" -lt 60 ] && [ ! "$(docker stats --no-stream)" ]; do n=$(( n + 1 )); sleep 1; done
-      - docker build -t timecard-restapi:"$${VERSION}" .
+      - docker build -t timecard-rest-api:"$${VERSION}" .
     when:
       event:
         - push
