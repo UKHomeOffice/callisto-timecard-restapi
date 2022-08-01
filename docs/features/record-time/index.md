@@ -74,6 +74,9 @@ If the response code indicates that the TimeCard resource was [not found](https:
 
 1.  When updating TimeCard or any of its associated entities the system must prevent unintentional overwrites sometimes known as a [lost update](https://www.w3.org/1999/04/Editing/#3.1).  See [RESTful endpoint blueprint](https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/restful-endpoint.md#managing-resource-contention) for guidance on dealing with locking in a RESTful context for more details
 2.  The type of information collected to record a time entry varies according to the TimePeriodType (Shift, Standard Rest Day etc) selected by the user. For example for a SRD only a date is required but for a shift a start time and end time is collected. **WW - this needs more thought - we should add direction in this document for how to go about presenting this to the end user**
+3. Unique ID + tennqnt ID
+4. Version ID  should be possible to use version ID to determine chronoligical order of versions
+5. search by location
 
 
 

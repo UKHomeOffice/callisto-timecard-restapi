@@ -1,0 +1,108 @@
+
+<!-- Generator: Widdershins v4.0.1 -->
+
+<h1 id="timecard-api">TimeCard v0.1.0</h1>
+
+The TimeCard container exposes a number of models to clients. The TimeEntry is a key model from which most others hang
+
+![payload-model](./images/payload-model.png)
+
+# Schemas
+
+<h2 id="tocS_Note">Note</h2>
+<!-- backwards compatibility -->
+<a id="schemanote"></a>
+<a id="schema_Note"></a>
+<a id="tocSnote"></a>
+<a id="tocsnote"></a>
+
+```json
+{
+  "content": "string",
+  "created_at": "2019-08-24T14:15:22Z"
+}
+
+```
+
+A note is used to carry arbitrary textual information about a TimeEntry. Notes are immutable and cannot exist without an associated TimeEntry.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|content|string|true|none|Holds the note's text|
+|created_at|string(date-time)|false|none|Assigned by the TimeCard container when the note is persisted|
+
+<h2 id="tocS_CodedValue">CodedValue</h2>
+<!-- backwards compatibility -->
+<a id="schemacodedvalue"></a>
+<a id="schema_CodedValue"></a>
+<a id="tocScodedvalue"></a>
+<a id="tocscodedvalue"></a>
+
+```json
+{
+  "code": "string",
+  "namespace": "http://[tenantId].timecard.sas.digital.homeoffice.go.uk",
+  "display": "the value of the code property"
+}
+
+```
+
+A CodeValue encapsulates a code
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|code|string|true|none|The code itself|
+|namespace|string(uri)|false|none|The optional namespace that the code belongs to. The namespace and code together present a unique identifier for the CodedValue in the context of the TimeCard container|
+|display|string|false|none|The optional human-readable label for the code|
+
+<h2 id="tocS_TimeEntry">TimeEntry</h2>
+<!-- backwards compatibility -->
+<a id="schematimeentry"></a>
+<a id="schema_TimeEntry"></a>
+<a id="tocStimeentry"></a>
+<a id="tocstimeentry"></a>
+
+```json
+{
+  "id": 0,
+  "version": 0,
+  "actualStartTime": "2019-08-24T14:15:22Z",
+  "actualEndTime": "2019-08-24T14:15:22Z",
+  "timePeriodType": {
+    "code": "string",
+    "namespace": "http://[tenantId].timecard.sas.digital.homeoffice.go.uk",
+    "display": "the value of the code property"
+  },
+  "activity": {
+    "code": "string",
+    "namespace": "http://[tenantId].timecard.sas.digital.homeoffice.go.uk",
+    "display": "the value of the code property"
+  },
+  "notes": [
+    {
+      "content": "string",
+      "created_at": "2019-08-24T14:15:22Z"
+    }
+  ]
+}
+
+```
+
+A TimeEntry carries the time periods during which employees have performed a business activity (e.g. PCP, dog handling etc) or HR activity (e.g. leaves, training etc). TimeEntry is the actual recording of hours done by employees as per their roster. Encapsulates day and time (to the minute).
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|id|number|false|none|Assigned by the TimeCard container|
+|version|number|false|none|The version of the TimeEntry as assigned by the TimeCard container. This value changes when the resource is created, updated, or deleted.|
+|actualStartTime|string(date-time)|true|none|The start time of the activity that was worked (to the minute)|
+|actualEndTime|string(date-time)|true|none|The end time of the activity that was worked (to the minute)|
+|timePeriodType|[CodedValue](#schemacodedvalue)|true|none|The type of time entry (e.g. a shift, a standard rest day)|
+|activity|[CodedValue](#schemacodedvalue)|true|none|The type of work that has been carried out (e.g PCP)|
+|notes|[[Note](#schemanote)]|false|none|The set of Notes that have been recorded against this TimeEntry|
+
