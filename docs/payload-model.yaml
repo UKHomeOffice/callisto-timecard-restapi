@@ -8,17 +8,28 @@ components:
   schemas:
     Note:
       type: object
-      description: A note is used to carry arbirtiary textual information about a TimeEntry. Notes are immutable and cannot exist without an associated TimeEntry.
+      description: A note is used to carry arbitrary textual information about a date. Notes are immutable.
       required: 
         - content
+        - date
+        - author
       properties:
         content:
           description: Holds the note's text
           type: string
+        date:
+           description: The date that the note is associated with
+           type: string
+           format: date   
+           default: current date and time
         created_at:
-          description: Assiged by the TimeCard container when the note is persisted
+          description: Assigned by the TimeCard container when the note is persisted
           type: string
           format: date-time
+        author:
+            description: The person who wrote the note's content
+            allOf:
+              - $ref: '#/components/schemas/Person'          
     CodedValue:
       type: object
       description: A CodeValue encapsulates a code
@@ -37,6 +48,25 @@ components:
           description: The optional human-readable label for the code
           type: string
           default: the value of the code property
+    Person:
+      description: A Person is an authorised human user who is able to create or modify TimeCard container data
+      type: object
+      required:
+        - id
+        - firstName
+        - lastName
+      properties:
+        id:
+          description: Assigned by the TimeCard container
+          type: number
+        firstName:
+          description: Given names (not always 'first'). Includes middle names. Given Names appear in the correct order for presenting the name
+          type: array
+          items: 
+            type: string
+        lastName:
+          description: The person's last name. Often known as 'surname'
+          type: string          
     TimeEntry:
       description: A TimeEntry carries the time periods during which employees have performed a business activity (e.g. PCP, dog handling etc) or HR activity (e.g. leaves, training etc). TimeEntry is the actual recording of hours done by employees as per their roster. Encapsulates day and time (to the minute).
       type: object
@@ -45,19 +75,24 @@ components:
         - actualEndTime
         - timePeriodType
         - activity
+        - personId
       properties:
         id:
           description: Assigned by the TimeCard container
           type: number
         version: 
-          description: The version of the TimeEntry as assifned by the TimeCard container. This value changes when the resource is created, updated, or deleted.
+          description: The version of the TimeEntry as assigned by the TimeCard container. This value changes when the resource is created, updated, or deleted.
           type: number
+        person:
+            description: The Person who owns this TimeEntry i.e. the Person who has performed the activity in the given time period
+            allOf:
+              - $ref: '#/components/schemas/Person'
         actualStartTime: 
-          description: The start time of the acvitiy that was worked (to the minute)
+          description: The start time of the activity that was worked (to the minute)
           type: string
           format: date-time
         actualEndTime: 
-          description: The end time of the acvitiy that was worked (to the minute)
+          description: The end time of the activity that was worked (to the minute)
           type: string
           format: date-time
         timePeriodType:
@@ -68,8 +103,3 @@ components:
             description: The type of work that has been carried out (e.g PCP)
             allOf:
               - $ref: '#/components/schemas/CodedValue'
-        notes:
-          description: The set of Notes that have been recorded against this TimeEntry
-          type: array
-          items: 
-            $ref: '#/components/schemas/Note'

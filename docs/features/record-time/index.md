@@ -10,7 +10,7 @@ This high-level design is intended to cover the Record Time Feature which includ
 
 The Record Time [feature definition](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-925) (access required) in Jira details the user stories that make up the feature. The user stories contain more detailed requirement around business rules and validation logic. The intention is that this document should be used as a guide when designing and implementing and testing against a given story from the record time feature
 
-To understand the proposed high-level design, it is instructive to consider both the definition of the [containers](../../container-definition.md) used to perform TimeCard actions and the appropriate parts of the [data model](../../datamodel-definition.md) specifically [TimeCard](../../datamodel-definition.md#timecard) and [TimeEntry](../../datamodel-definition.md#timeentry).
+To understand the proposed high-level design, it is instructive to consider both the definition of the [containers](../../container-definition.md) used to perform TimeCard actions and the appropriate parts of the [payload model](../../payload.md) specifically [TimeEntry](../../payload.md#timeentry).
 
 ## Key data models
 
@@ -20,7 +20,7 @@ This section describes which parts of the TimeCard data model are relevant when 
 
 Note that a TimeCard maps to a single date but if a continuous working TimeEntry spans two dates (e.q shift started at 10pm and ended at 5am) then the date in the TimeCard is the date the shift started.
 
-<img src="../../images/timecard-container-data-model.png">
+![](../../images/payload-model.png)
 
 ## Key command sequences
 This section describes which commands need to be invoked and in what order so that an end user is able to record their time or remove any previously recorded time.
