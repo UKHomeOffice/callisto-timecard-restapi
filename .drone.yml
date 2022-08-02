@@ -49,7 +49,7 @@ steps:
         from_secret: AWS_ACCESS_KEY_ID
       secret_key:
         from_secret: AWS_SECRET_ACCESS_KEY
-      repo:
+      repo: callisto/timecard-restapi
       registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
       tags:
         - latest
