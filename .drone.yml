@@ -54,9 +54,9 @@ steps:
       tags:
         - latest
         - ${DRONE_TAG}
-    when:
-      event:
-        - tag
+#    when:
+#      branch:
+#        - main
 
 services:
   - name: docker
