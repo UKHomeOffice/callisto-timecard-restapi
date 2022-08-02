@@ -32,16 +32,15 @@ steps:
     environment:
       DOCKER_HOST: tcp://docker:2375
     commands:
-      # wait for docker service to be up before running docker build
-      - n=0; while [ "$n" -lt 60 ] && [ ! "$(docker stats --no-stream)" ]; do n=$(( n + 1 )); sleep 1; done
-      - docker build -t callisto-timecard-restapi:"$${VERSION}" .
+    # wait for docker service to be up before running docker build
+    - n=0; while [ "$n" -lt 60 ] && [ ! "$(docker stats --no-stream)" ]; do n=$(( n + 1 )); sleep 1; done
+    - docker build -t callisto-timecard-restapi:"$${VERSION}" .
     when:
       event:
-        - push
+      - push
 
-
-  services:
-    - name: docker
-      image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/dind
-      environment:
-        DOCKER_TLS_CERTDIR: ""
+services:
+  - name: docker
+    image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/dind
+    environment:
+      DOCKER_TLS_CERTDIR: ""
