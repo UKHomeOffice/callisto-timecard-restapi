@@ -52,11 +52,11 @@ components:
       description: A Person is an authorised human user who is able to create or modify TimeCard container data
       type: object
       required:
-        - id
+        - personId
         - firstName
         - lastName
       properties:
-        id:
+        personId:
           description: Assigned by the TimeCard container
           type: number
         firstName:
@@ -77,7 +77,7 @@ components:
         - activity
         - owner
       properties:
-        id:
+        timeEntryId:
           description: Assigned by the TimeCard container
           type: number
         version: 

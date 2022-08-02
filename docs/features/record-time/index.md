@@ -66,9 +66,9 @@ If the response code indicates that `TimeEntry` resources were [not found](https
 
 1.  When updating the TimeCard container's data the system must prevent unintentional overwrites sometimes known as a [lost update](https://www.w3.org/1999/04/Editing/#3.1).  See [RESTful endpoint blueprint](https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/restful-endpoint.md#managing-resource-contention) for guidance on dealing with locking in a RESTful context for more details
 2.  The type of information collected to record a time entry varies according to the TimePeriodType (Shift, Standard Rest Day etc) selected by the user. For example for a SRD only a date is required but for a shift a start time and end time is collected. **WW - this needs more thought - we should add direction in this document for how to go about presenting this to the end user**
-3. Unique ID + tenant ID
+3. Unique ID + tenant ID - TODO write up composite key decision and link to it
 4. Versioning - the `TimeEntry` is a versioned resource. More guidance can be found (here)[https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/entity-versioning.md]
-5. Storage - 
+5. Storage - TODO
 6. Person data - a `TimeEntry` is associated with a `Person`. Person data is mastered in the Person container (TBD). As per our [decision](https://github.com/UKHomeOffice/callisto-docs/blob/main/decisions/service-to-service-communication.md) around container to container communication the Person container will publish events related to the lifecycle of a Person. The TimeCard container must subscribe to those events in order to create its own internal representation of a [Person](../../payload.md#person). Note that at the time of writing (02 Aug 2022 more work is required to define the Person container, the events it produces and how the TimeCard container should respond to them)
 7. Reference data - There are a number of pieces of reference data that are used in the recording of time. Note that at the time of writing (02 Aug 2022 more work is required to define how reference data is maintained and accessed)
 
