@@ -4,8 +4,6 @@
 
 The TimeCard container exposes a number of models to clients. The TimeEntry is a key model from which most others hang
 
-![](./images/payload-model.png)
-
 # Schemas
 
 <h2 id="tocS_Note">Note</h2>
@@ -21,7 +19,7 @@ The TimeCard container exposes a number of models to clients. The TimeEntry is a
   "date": "current date and time",
   "created_at": "2019-08-24T14:15:22Z",
   "author": {
-    "id": 0,
+    "personId": 0,
     "firstName": [
       "string"
     ],
@@ -77,7 +75,7 @@ A CodeValue encapsulates a code
 
 ```json
 {
-  "id": 0,
+  "personId": 0,
   "firstName": [
     "string"
   ],
@@ -92,7 +90,7 @@ A Person is an authorised human user who is able to create or modify TimeCard co
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|id|number|true|none|Assigned by the TimeCard container|
+|personId|number|true|none|Assigned by the TimeCard container|
 |firstName|[string]|true|none|Given names (not always 'first'). Includes middle names. Given Names appear in the correct order for presenting the name|
 |lastName|string|true|none|The person's last name. Often known as 'surname'|
 
@@ -105,10 +103,10 @@ A Person is an authorised human user who is able to create or modify TimeCard co
 
 ```json
 {
-  "id": 0,
+  "timeEntryId": 0,
   "version": 0,
   "owner": {
-    "id": 0,
+    "personId": 0,
     "firstName": [
       "string"
     ],
@@ -136,7 +134,7 @@ A TimeEntry carries the time periods during which employees have performed a bus
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|id|number|false|none|Assigned by the TimeCard container|
+|timeEntryId|number|false|none|Assigned by the TimeCard container|
 |version|number|false|none|The version of the TimeEntry as assigned by the TimeCard container. This value changes when the resource is created, updated, or deleted.|
 |owner|[Person](#schemaperson)|true|none|The Person who owns this TimeEntry i.e. the Person who has performed the activity in the given time period|
 |actualStartTime|string(date-time)|true|none|The start time of the activity that was worked (to the minute)|

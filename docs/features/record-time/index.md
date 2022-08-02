@@ -71,6 +71,7 @@ If the response code indicates that `TimeEntry` resources were [not found](https
 5. Storage - TODO
 6. Person data - a `TimeEntry` is associated with a `Person`. Person data is mastered in the Person container (TBD). As per our [decision](https://github.com/UKHomeOffice/callisto-docs/blob/main/decisions/service-to-service-communication.md) around container to container communication the Person container will publish events related to the lifecycle of a Person. The TimeCard container must subscribe to those events in order to create its own internal representation of a [Person](../../payload.md#person). Note that at the time of writing (02 Aug 2022 more work is required to define the Person container, the events it produces and how the TimeCard container should respond to them)
 7. Reference data - There are a number of pieces of reference data that are used in the recording of time. Note that at the time of writing (02 Aug 2022 more work is required to define how reference data is maintained and accessed)
+8. Events - we know they'll be needed but not spec'd for now
 
 
 
