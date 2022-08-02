@@ -8,7 +8,7 @@ This high-level design is intended to cover the Record Time Feature which includ
 
 The Record Time [feature definition](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-925) (access required) in Jira details the user stories that make up the feature. The user stories contain more detailed requirement around business rules and validation logic. The intention is that this document should be used as a guide when designing and implementing and testing against a given story from the record time feature
 
-To understand the proposed high-level design, it is instructive to consider both the definition of the [containers](../../container-definition.md) used to perform the key actions and the appropriate parts of the [payload model](../../payload.md) specifically [TimeEntry](../../payload.md#timeentry).
+To understand the proposed high-level design, it is instructive to consider both the definition of the [containers](../../index.md) used to perform the key actions and the appropriate parts of the [payload model](../../payload.md) specifically [TimeEntry](../../payload.md#timeentry).
 
 ## Key data models
 
@@ -26,7 +26,7 @@ When an end user wants to record time worked then the starting point will be to 
 A call to `find TimeEntry by date` will return all `TimeEntry` instances where the recorded time overlaps with the given date
 
 ##### container command(s)
-- [TimeCard.find TimeEntry by date(timeentryDate, timeentryOwnerId, tenantId)](../../container-definition.md#get-timeentry-by-date) - used to retrieve `TimeEntry` instances. 
+- [TimeCard.find TimeEntry by date(timeentryDate, timeentryOwnerId, tenantId)](../../commands.md#get-timeentry-by-date) - used to retrieve `TimeEntry` instances. 
 
 ### Record time
 The user wants to record time. Once the response has been returned from the call to `find TimeEntry by date` the client has a choice to make depending upon whether or not any `TimeEntry` instances were found.
@@ -36,15 +36,15 @@ The user wants to record time. Once the response has been returned from the call
 end user to choose to modify an existing `TimeEntry` or create a new `TimeEntry`
 
 ##### container command(s)
-- [TimeCard.modify timeentry(timeEntry, tenantId)](../../container-definition.md#modify-timeentry) - used to modify an existing `TimeEntry`
-- [TimeCard.create timeentry(timeEntry, tenantId)](../../container-definition.md#create-timeentry) - used to create a new `TimeEntry`
+- [TimeCard.modify timeentry(timeEntry, tenantId)](../../commands.md#modify-timeentry) - used to modify an existing `TimeEntry`
+- [TimeCard.create timeentry(timeEntry, tenantId)](../../commands.md#create-timeentry) - used to create a new `TimeEntry`
 
 
 #### No TimeEntry instances found
 If the response code indicates that `TimeEntry` resources were [not found](https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/restful-endpoint.md#handle-errors-gracefully-and-return-standard-error-codes) then effectively the end user is creating the first `TimeEntry` for a given date. 
 
 ##### container command(s)
-- [TimeCard.create timeentry(timeEntry, tenantId)](../../container-definition.md#create-timeentry) - used to create a new `TimeEntry`
+- [TimeCard.create timeentry(timeEntry, tenantId)](../../commands.md#create-timeentry) - used to create a new `TimeEntry`
 
 ### Remove time
 The user wants to remove previously recorded time. Once the response has been returned from the call to `find TimeEntry by date` the client has a choice to make depending upon whether or any `TimeEntry` instances were found.
@@ -54,7 +54,7 @@ The user wants to remove previously recorded time. Once the response has been re
 end user to choose to remove one or more existing `TimeEntry` instances
 
 ##### container command(s)
-- [Remove TimeEntry(timeEntryId, tenantId](../../container-definition.md#remove-timeentry) - used to remove an existing timeentry
+- [Remove TimeEntry(timeEntryId, tenantId](../../commands.md#remove-timeentry) - used to remove an existing timeentry
 
 #### No TimeEntry instances found
 If the response code indicates that `TimeEntry` resources were [not found](https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/restful-endpoint.md#handle-errors-gracefully-and-return-standard-error-codes) then effectively the end user is trying to delete something that does not exist therefore it is up to the client about how best to inform the user that their requested action cannot be completed
