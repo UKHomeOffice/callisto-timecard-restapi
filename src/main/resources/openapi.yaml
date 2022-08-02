@@ -22,14 +22,13 @@ components:
            type: string
            format: date   
            default: current date and time
-        created_at:
+        createdAt:
           description: Assigned by the TimeCard container when the note is persisted
           type: string
           format: date-time
-        author:
-            description: The person who wrote the note's content
-            allOf:
-              - $ref: '#/components/schemas/Person'          
+        authorId:
+            description: The id of the Person who wrote the note's content
+            type: number        
     CodedValue:
       type: object
       description: A CodeValue encapsulates a code
@@ -47,26 +46,7 @@ components:
         display:
           description: The optional human-readable label for the code
           type: string
-          default: the value of the code property
-    Person:
-      description: A Person is an authorised human user who is able to create or modify TimeCard container data
-      type: object
-      required:
-        - personId
-        - firstName
-        - lastName
-      properties:
-        personId:
-          description: Assigned by the TimeCard container
-          type: number
-        firstName:
-          description: Given names (not always 'first'). Includes middle names. Given Names appear in the correct order for presenting the name
-          type: array
-          items: 
-            type: string
-        lastName:
-          description: The person's last name. Often known as 'surname'
-          type: string          
+          default: the value of the code property         
     TimeEntry:
       description: A TimeEntry carries the time periods during which employees have performed a business activity (e.g. PCP, dog handling etc) or HR activity (e.g. leaves, training etc). TimeEntry is the actual recording of hours done by employees as per their roster. Encapsulates day and time (to the minute).
       type: object
@@ -75,7 +55,7 @@ components:
         - actualEndTime
         - timePeriodType
         - activity
-        - owner
+        - ownerId
       properties:
         timeEntryId:
           description: Assigned by the TimeCard container
@@ -83,10 +63,9 @@ components:
         version: 
           description: The version of the TimeEntry as assigned by the TimeCard container. This value changes when the resource is created, updated, or deleted.
           type: number
-        owner:
-            description: The Person who owns this TimeEntry i.e. the Person who has performed the activity in the given time period
-            allOf:
-              - $ref: '#/components/schemas/Person'
+        ownerId:
+            description: The id of the Person who owns this TimeEntry i.e. the Person who has performed the activity in the given time period
+            type: number
         actualStartTime: 
           description: The start time of the activity that was worked (to the minute)
           type: string

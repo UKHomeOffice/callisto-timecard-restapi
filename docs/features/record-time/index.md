@@ -69,9 +69,9 @@ If the response code indicates that `TimeEntry` resources were [not found](https
 3. Unique ID + tenant ID - TODO write up composite key decision and link to it
 4. Versioning - the `TimeEntry` is a versioned resource. More guidance can be found (here)[https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/entity-versioning.md]
 5. Storage - TODO
-6. Person data - a `TimeEntry` is associated with a `Person`. Person data is mastered in the Person container (TBD). As per our [decision](https://github.com/UKHomeOffice/callisto-docs/blob/main/decisions/service-to-service-communication.md) around container to container communication the Person container will publish events related to the lifecycle of a Person. The TimeCard container must subscribe to those events in order to create its own internal representation of a [Person](../../payload.md#person). Note that at the time of writing (02 Aug 2022 more work is required to define the Person container, the events it produces and how the TimeCard container should respond to them)
-7. Reference data - There are a number of pieces of reference data that are used in the recording of time. Note that at the time of writing (02 Aug 2022 more work is required to define how reference data is maintained and accessed)
-8. Events - we know they'll be needed but not spec'd for now
+6. Person data - both the `TimeEntry` and `Note` resources contain a Person identifier which is assigned by the Person container. In order to access any TimeCard container functionality a user must be logged in. It is assumed that the client has the logged in user's Person identifier in scope. Therefore when creating a `TimeEntry` or a `Note` the client is able to populate the ownerId and authorId fields respectively using the in scope Person identifier
+7. Reference data - There are a number of pieces of reference data that are used in the recording of time. Note that at the time of writing (02 Aug 2022) more work is required to define how reference data is maintained and accessed
+8. Events - There will be a number of events that should be generated as part of recoding time. Note that at the time of writing (02 Aug 2022) more work is required to define what triggers these events are and what they contain. It is likely that they will not be elaborated until 
 
 
 
