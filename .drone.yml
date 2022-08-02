@@ -8,6 +8,11 @@ platform:
   arch: amd64
 
 steps:
+  - name: build
+    image: maven:3.8.3-openjdk-17
+    commands:
+      - mvn clean package
+
   - name: lint_dockerfile
     pull: if-not-exists
     image: hadolint/hadolint:latest-alpine
