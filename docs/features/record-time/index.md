@@ -35,6 +35,9 @@ If the response code indicates that `TimeEntry` resources were [not found](https
 ### Handling version conflicts
 When updating a `TimeEntry` (modify or remove) care must be taken to avoid overwritting changes. See [considerations](#considerations) for more detail on dealing with version conflicts
 
+### Date or Time entry
+The `timePeriodType` property on a [`TimeEntry`](../../payload.md#time-entry) governs howe granular the time entered by the user needs to be. Some kinds of `TimePeriodType` require the user to enter a period explicity down to the date, hour and minute. Others only require the user to enter a single date. On this basis the client must be capable of usibg the TimeEntryPeriod to determine what data entry fields to present the user with and then hook up the value(s) entered by the user to a `TimeEntry` instance. More information can be found in [considerations](#considerations).
+
 ### Create new Timeentry
 ![](../../images/recordTimeCreateTimeEntry.png)
 
