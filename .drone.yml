@@ -53,7 +53,6 @@ steps:
       registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
       tags:
         - latest
-        - ${DRONE_TAG}
 #    when:
 #      branch:
 #        - main
