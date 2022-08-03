@@ -1,3 +1,5 @@
+
+
 # Record time
 
 This high-level design is intended to cover the Record Time Feature which includes the user stories listed below. It seeks to:
@@ -10,12 +12,17 @@ The Record Time [feature definition](https://collaboration.homeoffice.gov.uk/jir
 
 To understand the proposed high-level design, it is instructive to consider both the definition of the [containers](../../index.md) used to perform the key actions and the appropriate parts of the [payload model](../../payload.md) specifically [TimeEntry](../../payload.md#timeentry).
 
+## Flows
+![](../../images/recordTimeCreateTimeEntry.png)
+![](../../images/recordTimeModifyTimeEntry.png)
+![](../../images/recordTimeRemoveTimeEntry.png)
+
 ## Key data models
 
 This section describes which parts of the TimeCard container's payload model are relevant when an end user wants to record their time.
 - A TimeEntry is used to record time worked
 
-![](../../images/payload-model.png)
+![payload-model](../../images/payload-model.png)
 
 ## Key command sequences
 This section describes which commands need to be invoked and in what order so that an end user is able to record their time or remove any previously recorded time.
@@ -65,13 +72,9 @@ If the response code indicates that `TimeEntry` resources were [not found](https
 ## Considerations
 
 1.  When updating the TimeCard container's data the system must prevent unintentional overwrites sometimes known as a [lost update](https://www.w3.org/1999/04/Editing/#3.1).  See [RESTful endpoint blueprint](https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/restful-endpoint.md#managing-resource-contention) for guidance on dealing with locking in a RESTful context for more details
-2.  The type of information collected to record a time entry varies according to the TimePeriodType (Shift, Standard Rest Day etc) selected by the user. For example for a SRD only a date is required but for a shift a start time and end time is collected. **WW - this needs more thought - we should add direction in this document for how to go about presenting this to the end user**
-3. Unique ID + tenant ID - TODO write up composite key decision and link to it
-4. Versioning - the `TimeEntry` is a versioned resource. More guidance can be found (here)[https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/entity-versioning.md]
-5. Storage - TODO
-6. Person data - both the `TimeEntry` and `Note` resources contain a Person identifier which is assigned by the Person container. In order to access any TimeCard container functionality a user must be logged in. It is assumed that the client has the logged in user's Person identifier in scope. Therefore when creating a `TimeEntry` or a `Note` the client is able to populate the ownerId and authorId fields respectively using the in scope Person identifier
-7. Reference data - There are a number of pieces of reference data that are used in the recording of time. Note that at the time of writing (02 Aug 2022) more work is required to define how reference data is maintained and accessed
-8. Events - There will be a number of events that should be generated as part of recoding time. Note that at the time of writing (02 Aug 2022) more work is required to define what triggers these events are and what they contain. It is likely that they will not be elaborated until 
-
-
-
+2. Unique ID + tenant ID - **TODO** write up composite key decision and link to it
+3. Versioning - the `TimeEntry` is a versioned resource. More guidance can be found [here](https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/entity-versioning.md)
+4. Person data - both the `TimeEntry` and `Note` resources contain a Person identifier which is assigned by the Person container. In order to access any TimeCard container functionality a user must be logged in. It is assumed that the client has the logged in user's Person identifier in scope. Therefore when creating a `TimeEntry` or a `Note` the client is able to populate the ownerId and authorId fields respectively using the in scope Person identifier
+5. Reference data - There are a number of pieces of reference data that are used in the recording of time. Note that at the time of writing (02 Aug 2022) more work is required to define how reference data is maintained and accessed
+6. `TimePeriodType` - the choice of` TimePeriodType` in turn drives what data the user needs to provide in order to create a `TimeEntry`. For example with a Standard Rest Day (SRD) the user need only provide the date however with a shift the user needs to provide both a start and end time. The client should be able to present the user with a means of them entering the minimum required data. Ultimately the client is responsible for populating the `TimeEntry` `actualStartTime` and `actualEndTime` fields but might only collect a date from the user and translate that into a start and end time when populating the `TimeEntry`
+7. Events - There will be a number of events that should be generated as part of recoding time. Note that at the time of writing (02 Aug 2022) more work is required to define what triggers these events are and what they contain. It is likely that they will not be elaborated until they are consumed as part of other features
