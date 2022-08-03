@@ -13,9 +13,18 @@ The Record Time [feature definition](https://collaboration.homeoffice.gov.uk/jir
 To understand the proposed high-level design, it is instructive to consider both the definition of the [containers](../../index.md) used to perform the key actions and the appropriate parts of the [payload model](../../payload.md) specifically [TimeEntry](../../payload.md#timeentry).
 
 ## Flows
+
+The key flows required to implement the feature tickets are described at a high level below. The sequence diagrams are intended to act as a 'map' to give the container commands context.
+
+### Create new Timeentry
 ![](../../images/recordTimeCreateTimeEntry.png)
+
+### Modify existing Timeentry
 ![](../../images/recordTimeModifyTimeEntry.png)
+
+### Remove existing Timeentry
 ![](../../images/recordTimeRemoveTimeEntry.png)
+
 
 ## Key data models
 
