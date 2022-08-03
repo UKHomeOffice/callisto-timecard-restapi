@@ -41,7 +41,7 @@ When updating a `TimeEntry` (modify or remove) care must be taken to avoid overw
 #### Container commands
 - [TimeCard.find TimeEntry by date(timeentryDate, timeentryOwnerId, tenantId)](../../commands.md#get-timeentry-by-date) - used to retrieve `TimeEntry` instances. 
 - [TimeCard.create timeentry(timeEntry, tenantId)](../../commands.md#create-timeentry) - used to create a new `TimeEntry`
-- TimeCard.get all TimeEntryType - TBC
+- TimeCard.get all TimeEntryType and Config - TBC
 
 ### Modify existing Timeentry
 ![](../../images/recordTimeModifyTimeEntry.png)
@@ -49,7 +49,7 @@ When updating a `TimeEntry` (modify or remove) care must be taken to avoid overw
 #### Container commands
 - [TimeCard.find TimeEntry by date(timeentryDate, timeentryOwnerId, tenantId)](../../commands.md#get-timeentry-by-date) - used to retrieve `TimeEntry` instances. 
 - [TimeCard.modify timeentry(timeEntry, tenantId)](../../commands.md#modify-timeentry) - used to modify an existing `TimeEntry`
-- TimeCard.get all TimeEntryType - TBC
+- TimeCard.get Config - TBC
 
 ### Remove existing Timeentry
 ![](../../images/recordTimeRemoveTimeEntry.png)
