@@ -52,7 +52,8 @@ steps:
       repo: callisto/timecard-restapi
       registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
       tags:
-        - latest
+      - latest
+      - ${DRONE_TAG}
 #    when:
 #      branch:
 #        - main
