@@ -54,7 +54,7 @@ When updating a `TimeEntry` (modify or remove) care must be taken to avoid overw
 - [TimeCard.find TimeEntry by date(timeentryDate, timeentryOwnerId, tenantId)](../../commands.md#get-timeentry-by-date) - used to retrieve `TimeEntry` instances. 
 - [TimeCard.remove timeentry(timeEntry, tenantId)](../../commands.md#remove-timeentry) - used to remove an existing `TimeEntry`
 
-## Key data models
+## Payload model
 
 This section describes which parts of the TimeCard container's payload model are relevant when an end user wants to record their time.
 - A TimeEntry is used to record time worked
