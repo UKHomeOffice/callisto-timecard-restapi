@@ -1,6 +1,6 @@
 ---
 kind: pipeline
-type: kubernetes
+type: docker
 name: callisto-timecard-restapi
 
 platform:
@@ -11,6 +11,13 @@ environment:
   VERSION: latest-20220802
 
 steps:
+  - name: debug
+    image: alpine
+    commands:
+      - echo "DRONE_TAG=$${DRONE_TAG}"
+      - echo "DRONE_TAG=$DRONE_TAG"
+      - echo "DRONE_TAG=${DRONE_TAG}"
+
   - name: build
     image: maven:3.8.3-openjdk-17
     commands:
@@ -53,7 +60,7 @@ steps:
       registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
       tags:
       - latest
-      - ${DRONE_TAG}
+      - $DRONE_TAG
 #    when:
 #      branch:
 #        - main
