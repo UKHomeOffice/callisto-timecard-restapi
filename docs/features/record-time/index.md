@@ -87,6 +87,15 @@ The following are elements of the record time feature that are required however 
 
 - business rule validation
 
+The following user stories though documented in the record time feature in Jira will not be considered in this design
+
+| user story | solution design |
+|------------|-----------------|
+| [Audit - Edit Start Time in Timecard for Same Day](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1754)           |    [audit - timecard](../audit-timecard/index.md)             |
+| [Audit - Record NWD in Timecard (No Existing Entries)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1892)           |    [audit - timecard](../audit-timecard/index.md)             |
+| [Update Timeline - Input Finish Time Same Day (No Existing Finish Time)](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1750)           |    [timecard - timeline](../timecard-timeline/index.md)             |
+| [Update Timeline - Edit Start Time in Timecard for Same Day](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-1755)           |    [timecard - timeline](../timecard-timeline/index.md)             |
+
 ## TODO
 The following functionality has not yet been designed
 
