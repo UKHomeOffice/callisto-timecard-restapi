@@ -58,6 +58,22 @@ steps:
 #      branch:
 #        - main
 
+services:
+  - name: docker
+    image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/dind
+    environment:
+      DOCKER_TLS_CERTDIR: ""
+
+---
+kind: pipeline
+type: kubernetes
+name: callisto-timecard-restapi-deploy
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
   - name: lint_helm_files
     image: pelotech/drone-helm3
     settings:
@@ -81,9 +97,4 @@ steps:
     when:
       event:
         - push
-
-services:
-  - name: docker
-    image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/dind
-    environment:
-      DOCKER_TLS_CERTDIR: ""
+        -
