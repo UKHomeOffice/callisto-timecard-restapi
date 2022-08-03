@@ -14,9 +14,13 @@ To understand the proposed high-level design, it is instructive to consider both
 
 ## Flows
 
-The key flows required to implement the feature tickets are described at a high level below. The sequence diagrams are intended to act as a 'map' to give the container commands context.
+The key flows required to implement the feature tickets are described at a high level below. The sequence diagrams describe which TimeCard container commands need to be invoked and in what order so that an end user is able to record their time or remove any previously recorded time.
 
-This section describes which commands need to be invoked and in what order so that an end user is able to record their time or remove any previously recorded time.
+There are three top level flows that make up record time - 
+
+- Create a new TimeEntry
+- Modifiy an existing TimeEntry
+- Remove an existing TimeEntry
 
 When an end user wants to record time worked then the starting point will be to choose a date and check whether there are any existing `TimeEntry` instances that should be updated to record the time that the user wants to enter.
 
@@ -58,7 +62,7 @@ When updating a `TimeEntry` (modify or remove) care must be taken to avoid overw
 
 ### Payload model
 
-This section describes which parts of the TimeCard container's payload model are relevant when an end user wants to record their time. More information can be found in the [payload model definition](../../payload.md)
+This section describes which parts of the TimeCard container's payload model are relevant when an end user wants to record their time. More information can be found in the [payload model definition](../../payload.md). The key resource for the record time feature is the [TimeEntry](../../payload.md#timeentry).
 
 ![payload-model](../../images/payload-model.png)
 
@@ -76,3 +80,10 @@ This section describes how the TimeCard container should store its data. More in
 5. Reference data - There are a number of pieces of reference data that are used in the recording of time. Note that at the time of writing (02 Aug 2022) more work is required to define how reference data is maintained and accessed
 6. `TimePeriodType` - the choice of` TimePeriodType` in turn drives what data the user needs to provide in order to create a `TimeEntry`. For example with a Standard Rest Day (SRD) the user need only provide the date however with a shift the user needs to provide both a start and end time. The client should be able to present the user with a means of them entering the minimum required data. Ultimately the client is responsible for populating the `TimeEntry` `actualStartTime` and `actualEndTime` fields but might only collect a date from the user and translate that into a start and end time when populating the `TimeEntry`
 7. Events - There will be a number of events that should be generated as part of recoding time. Note that at the time of writing (02 Aug 2022) more work is required to define what triggers these events are and what they contain. It is likely that they will not be elaborated until they are consumed as part of other features
+
+## TODO
+The following functionality has not yet been designed
+
+- Audit
+- TimeLine
+- Authorisation (manager and user access)
