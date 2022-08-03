@@ -28,7 +28,7 @@ end user to choose to modify an existing `TimeEntry` or create a new `TimeEntry`
 
 If the response code indicates that `TimeEntry` resources were [not found](https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/restful-endpoint.md#handle-errors-gracefully-and-return-standard-error-codes) then effectively the end user is trying to delete something that does not exist therefore it is up to the client about how best to inform the user that their requested action cannot be completed
 
-## Handling version conflicts
+### Handling version conflicts
 When updating a `TimeEntry` (modify or remove) care must be taken to avoid overwritting changes. See [considerations](#considerations) for more detail on dealing with version conflicts
 
 ### Create new Timeentry
