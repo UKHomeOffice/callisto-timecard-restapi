@@ -3,11 +3,11 @@ This is the place to find how user actions that start with timecard are realised
 
 - [Record time](./record-time/index.md)
 - Audit - Time Card
-- Public Holiday Credit
+- Public Holiday Credit (may not be a TimeCard responsbility)
 - Record Flexible Change In Timecard
 - Add Notes
 - Record Meal Breaks
-- Record Absences
+- Record Absences (may not be a TimeCard responsbility)
 - Record Overtime
 - Record On-Call Time
 - Record Scheduled Standard Rest Days (SRD)
