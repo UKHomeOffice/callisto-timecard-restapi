@@ -16,15 +16,43 @@ To understand the proposed high-level design, it is instructive to consider both
 
 The key flows required to implement the feature tickets are described at a high level below. The sequence diagrams are intended to act as a 'map' to give the container commands context.
 
+This section describes which commands need to be invoked and in what order so that an end user is able to record their time or remove any previously recorded time.
+
+When an end user wants to record time worked then the starting point will be to choose a date and check whether there are any existing `TimeEntry` instances that should be updated to record the time that the user wants to enter.
+
+A call to `find TimeEntry by date` will return all `TimeEntry` instances where the recorded time overlaps with the given date.
+
+### Handling responses
+If the response code indicates [success](https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/restful-endpoint.md#handle-success-consistently) and the payload contains one or more `TimeEntry` instances then the client can display them and allow the
+end user to choose to modify an existing `TimeEntry` or create a new `TimeEntry`
+
+If the response code indicates that `TimeEntry` resources were [not found](https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/restful-endpoint.md#handle-errors-gracefully-and-return-standard-error-codes) then effectively the end user is trying to delete something that does not exist therefore it is up to the client about how best to inform the user that their requested action cannot be completed
+
+## Handling version conflicts
+When updating a `TimeEntry` (modify or remove) care must be taken to avoid overwritting changes. See [considerations](#considerations) for more detail on dealing with version conflicts
+
 ### Create new Timeentry
 ![](../../images/recordTimeCreateTimeEntry.png)
+
+#### Container commands
+- [TimeCard.find TimeEntry by date(timeentryDate, timeentryOwnerId, tenantId)](../../commands.md#get-timeentry-by-date) - used to retrieve `TimeEntry` instances. 
+- [TimeCard.create timeentry(timeEntry, tenantId)](../../commands.md#create-timeentry) - used to create a new `TimeEntry`
+- TimeCard.get all TimeEntryType - TBC
 
 ### Modify existing Timeentry
 ![](../../images/recordTimeModifyTimeEntry.png)
 
+#### Container commands
+- [TimeCard.find TimeEntry by date(timeentryDate, timeentryOwnerId, tenantId)](../../commands.md#get-timeentry-by-date) - used to retrieve `TimeEntry` instances. 
+- [TimeCard.modify timeentry(timeEntry, tenantId)](../../commands.md#modify-timeentry) - used to modify an existing `TimeEntry`
+- TimeCard.get all TimeEntryType - TBC
+
 ### Remove existing Timeentry
 ![](../../images/recordTimeRemoveTimeEntry.png)
 
+#### Container commands
+- [TimeCard.find TimeEntry by date(timeentryDate, timeentryOwnerId, tenantId)](../../commands.md#get-timeentry-by-date) - used to retrieve `TimeEntry` instances. 
+- [TimeCard.remove timeentry(timeEntry, tenantId)](../../commands.md#remove-timeentry) - used to remove an existing `TimeEntry`
 
 ## Key data models
 
@@ -32,51 +60,6 @@ This section describes which parts of the TimeCard container's payload model are
 - A TimeEntry is used to record time worked
 
 ![payload-model](../../images/payload-model.png)
-
-## Key command sequences
-This section describes which commands need to be invoked and in what order so that an end user is able to record their time or remove any previously recorded time.
-
-### Get the TimeEntry instances for a given date
-When an end user wants to record time worked then the starting point will be to choose a date and check whether there are any existing `TimeEntry` instances that should be updated to record the time that the user wants to enter.
-
-A call to `find TimeEntry by date` will return all `TimeEntry` instances where the recorded time overlaps with the given date
-
-##### container command(s)
-- [TimeCard.find TimeEntry by date(timeentryDate, timeentryOwnerId, tenantId)](../../commands.md#get-timeentry-by-date) - used to retrieve `TimeEntry` instances. 
-
-### Record time
-The user wants to record time. Once the response has been returned from the call to `find TimeEntry by date` the client has a choice to make depending upon whether or not any `TimeEntry` instances were found.
-
-#### TimeEntry instances found
- If the response code indicates [success](https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/restful-endpoint.md#handle-success-consistently) and the payload contains one or more `TimeEntry` instances then the client can display them and allow the
-end user to choose to modify an existing `TimeEntry` or create a new `TimeEntry`
-
-##### container command(s)
-- [TimeCard.modify timeentry(timeEntry, tenantId)](../../commands.md#modify-timeentry) - used to modify an existing `TimeEntry`
-- [TimeCard.create timeentry(timeEntry, tenantId)](../../commands.md#create-timeentry) - used to create a new `TimeEntry`
-
-
-#### No TimeEntry instances found
-If the response code indicates that `TimeEntry` resources were [not found](https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/restful-endpoint.md#handle-errors-gracefully-and-return-standard-error-codes) then effectively the end user is creating the first `TimeEntry` for a given date. 
-
-##### container command(s)
-- [TimeCard.create timeentry(timeEntry, tenantId)](../../commands.md#create-timeentry) - used to create a new `TimeEntry`
-
-### Remove time
-The user wants to remove previously recorded time. Once the response has been returned from the call to `find TimeEntry by date` the client has a choice to make depending upon whether or any `TimeEntry` instances were found.
-
-#### TimeEntry instances found
- If the response code indicates [success](https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/restful-endpoint.md#handle-success-consistently) and the payload contains one or more `TimeEntry` instances then the client can display them and allow the
-end user to choose to remove one or more existing `TimeEntry` instances
-
-##### container command(s)
-- [Remove TimeEntry(timeEntryId, tenantId](../../commands.md#remove-timeentry) - used to remove an existing timeentry
-
-#### No TimeEntry instances found
-If the response code indicates that `TimeEntry` resources were [not found](https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/restful-endpoint.md#handle-errors-gracefully-and-return-standard-error-codes) then effectively the end user is trying to delete something that does not exist therefore it is up to the client about how best to inform the user that their requested action cannot be completed
-
-##### container command(s)
-- None
 
 ## Considerations
 
