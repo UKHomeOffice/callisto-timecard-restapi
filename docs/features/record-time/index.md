@@ -81,7 +81,11 @@ This section describes how the TimeCard container should store its data. More in
 3. Person data - both the `TimeEntry` and `Note` resources contain a Person identifier which is assigned by the Person container. In order to access any TimeCard container functionality a user must be logged in. It is assumed that the client has the logged in user's Person identifier in scope. Therefore when creating a `TimeEntry` or a `Note` the client is able to populate the ownerId and authorId fields respectively using the in scope Person identifier
 4. Reference data - There are a number of pieces of reference data that are used in the recording of time. Note that at the time of writing (02 Aug 2022) more work is required to define how reference data is maintained and accessed
 5. `TimePeriodType` - the choice of` TimePeriodType` in turn drives what data the user needs to provide in order to create a `TimeEntry`. For example with a Standard Rest Day (SRD) the user need only provide the date however with a shift the user needs to provide both a start and end time. The client should be able to present the user with a means of them entering the minimum required data. Ultimately the client is responsible for populating the `TimeEntry` `actualStartTime` and `actualEndTime` fields but might only collect a date from the user and translate that into a start and end time when populating the `TimeEntry`
-6. Events - There will be a number of events that should be generated as part of recoding time. Note that at the time of writing (02 Aug 2022) more work is required to define what triggers these events are and what they contain. It is likely that they will not be elaborated until they are consumed as part of other features
+
+## Out of scope
+The following are elements of the record time feature that are required however the solution design does not include them. Instead it is ancitpated that they will be dealt with at the component level
+
+- business rule validation
 
 ## TODO
 The following functionality has not yet been designed
@@ -89,3 +93,4 @@ The following functionality has not yet been designed
 - Audit
 - TimeLine
 - Authorisation (manager and user access)
+- Events - There will be a number of events that should be generated as part of recoding time. Note that at the time of writing (02 Aug 2022) more work is required to define what triggers these events are and what they contain. It is likely that they will not be elaborated until they are consumed as part of other features
