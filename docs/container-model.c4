@@ -69,7 +69,7 @@ workspace {
 		
 		dynamic timecardSystem "recordTimeCreateTimeEntry" "Creates a new TimeEntry " {
 			user -> singlePageApplication "navigates to record time"
-            singlePageApplication -> timecardAPIApplication "get TimeEntry set by date"
+            singlePageApplication -> timecardAPIApplication "find TimeEntry by date"
 			timecardAPIApplication -> singlePageApplication "return TimeEntry set"
 	        singlePageApplication -> user "display TimeEntry set"
 	        user -> singlePageApplication "navigates to enter new time entry"
@@ -87,7 +87,7 @@ workspace {
         
 		dynamic timecardSystem "recordTimeModifyTimeEntry" "Modifies an existing TimeEntry " {
 			user -> singlePageApplication "navigates to record time"
-            singlePageApplication -> timecardAPIApplication "get TimeEntry set by date"
+            singlePageApplication -> timecardAPIApplication "find TimeEntry by date"
 			timecardAPIApplication -> singlePageApplication "return TimeEntry set"
 	        singlePageApplication -> user "display TimeEntry set"
 	        user -> singlePageApplication "choose TimeEntry and navigates to modify time entry"
@@ -103,7 +103,7 @@ workspace {
         
 		dynamic timecardSystem "recordTimeRemoveTimeEntry" "Removes an existing TimeEntry " {
 			user -> singlePageApplication "navigates to record time"
-            singlePageApplication -> timecardAPIApplication "get TimeEntry set by date"
+            singlePageApplication -> timecardAPIApplication "find TimeEntry by date"
 			timecardAPIApplication -> singlePageApplication "return TimeEntry set"
 	        singlePageApplication -> user "display TimeEntry set"
 	        user -> singlePageApplication "choose TimeEntry and navigates to remove time entry"
