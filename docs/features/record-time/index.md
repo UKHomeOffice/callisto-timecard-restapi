@@ -83,11 +83,9 @@ This section describes how the TimeCard container should store its data. More in
 5. `TimePeriodType` - the choice of` TimePeriodType` in turn drives what data the user needs to provide in order to create a `TimeEntry`. For example with a Standard Rest Day (SRD) the user need only provide the date however with a shift the user needs to provide both a start and end time. The client should be able to present the user with a means of them entering the minimum required data. Ultimately the client is responsible for populating the `TimeEntry` `actualStartTime` and `actualEndTime` fields but might only collect a date from the user and translate that into a start and end time when populating the `TimeEntry`
 
 ## Out of scope
-The following are elements of the record time feature that are required however the solution design does not include them. Instead it is ancitpated that they will be dealt with at the component level
+It is ancitpated that *business rule* validation they will be dealt with at the component level
 
-- business rule validation
-
-The following user stories though documented in the record time feature in Jira will not be considered in this design
+Additionally, the following user stories though documented in the record time feature in Jira will not be considered in this design
 
 | user story | solution design |
 |------------|-----------------|
