@@ -51,10 +51,7 @@ This command retrieves a set of `TimeEntry` instances whose time period (time co
  - business failure - see [Record Time](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-925) (access required) for business failure scenarios. Also see [standard command output](TODO) (**TODO**)  for how to report business failures
  - technical failure - see [standard command output](TODO) (**TODO**) for how to report technical failures
 
-#### Payload
-Upon a successful call to GetAllTimeEntryType a payload containing a filtered list of all relevant TimeEntryTypes and their associated ValueType must be returned.
-
-## Get TimePeriodType Config
+## Get TimePeriodType
 This command will ultimately retrieve a filtered list of TimeEntryTypes appropriate for the Person for whom the TimeEntry is being entered. The requirements for this are evolving but some of the filters identified so far are below:
 
 1. Time Period Type should be dependent on profile of individual user.
@@ -63,15 +60,16 @@ This command will ultimately retrieve a filtered list of TimeEntryTypes appropri
 
 ### inputs 
 - TenantId    - mandatory -  the tenant whose `TimeEntry` instances will be searched
-- Person      - mandatory -  the Person for whom the TimeEntryTypes will be returned
+- PersonId      - mandatory -  the Person for whom the TimeEntryTypes will be returned
 
 ### output
  - success - see [standard command output](TODO)(**TODO**)  for how to report success output
  - business failure - see [standard command output](TODO) (**TODO**) for how to report technical failures
+ - response payload - upon a successful call to get TimePeriodType a payload containing a filtered list of all relevant TimeEntryTypes must be returned.
  
  ### Implementation Notes
  
- As the filtering logic and the Person profile to support such logic is not yet fully defined it is suggested that this initial implementaton returns a hard code list containing the following data:
+ As the filtering logic and the Person profile to support such logic is not yet fully defined (as of 04 Aug 2022) it is suggested that this initial implementaton returns a hard code list containing the following data:
  
 | TimePeriodId | Time Period Type   | ValueType |
 | ------------ | ------------------ | --------- |
