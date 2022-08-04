@@ -23,18 +23,18 @@ A TimeCard instance is for a given person. It is the containing Entity for multi
 
 A timecard maps to a single date but if a continuous working TimeEntry spans two dates (e.q shift started at 10pm and ended at 5am) then the date in the time card is the date the shift started.
 
-
-| Key | Column Name    | Type      | Description                                                                        |
-| --- | -------------- | --------- | ---------------------------------------------------------------------------------- |
-|     |                |           |                                                                                    |
-| Key | TimeCardId     | long      |                                                                                    |
-|     | TimeCardStatus | varchar   | Open, Locked                                                                       |
-|     | Date           | timestamp | The date for which this TimeCard is for taken from the date the 1st shift started. |
-|     | PersonId       | long      | The PersonId of the user to whom the TimeCard and child entities belong            |
-|     | LocationId     | long      | Index into the Location table for where an end user is Planned to work             |
-|     | CreatedAt      | timestamp | Created timestamp                                                                  |
-|     | ModifiedAt     | timestamp | Last modified timestamp                                                            |
-|     | deleted        | bool      | Soft delete flag                                                                   |
+| Key | Column Name      | Type      | Description                                                                        |
+| --- | ---------------- | --------- | ---------------------------------------------------------------------------------- |
+|     |                  |           |                                                                                    |
+| Key | TenantId         | long      | Tenant owning data                                                                 |
+| Key | TimeCardId       | long      |                                                                                    |
+|     | TimeCardStatus   | varchar   | Open, Locked                                                                       |
+|     | DateShiftStarted | date      | The date for which this TimeCard is for taken from the date the 1st shift started. |
+|     | PersonId         | long      | The PersonId of the user to whom the TimeCard and child entities belong            |
+|     | LocationId       | long      | Index into the Location table for where an end user is Planned to work             |
+|     | CreatedAt        | timestamp | Created timestamp                                                                  |
+|     | ModifiedAt       | timestamp | Last modified timestamp                                                            |
+|     | deleted          | bool      | Soft delete flag                                                                   |
 
 *Note*
 
@@ -54,6 +54,7 @@ Used to record both planned and actual time. Encapsulates day and time (to the m
 | Key | Column Name       | Type      | Description                                                                   |
 | --- | ----------------- | --------- | ----------------------------------------------------------------------------- |
 |     |                   |           |                                                                               |
+| Key | TenantId          | long      | Tenant owning data                                                            |
 | Key | TimeEntryId       | long      | Unique identifier for thie TimeEntry                                          |
 |     | TimeCardId        | long      | Unique identifier for the TimeCard to which this TimeEntry belongs            |
 |     | TimeEntryStatus   | enum      | Planned, Booked                                                               |
@@ -77,17 +78,16 @@ Notes are associated with a TimeCard and cannot exist on their own.
 
 A notes option will be available and visible for a timecard time entry. Multiple notes can be added and displayed. All saved notes will persist on the timecard timeline – notes cannot be edited or deleted. 
 
-
 | Key | Column Name    | Type      | Description                                                           |
 | --- | -------------- | --------- | --------------------------------------------------------------------- |
 |     |                |           |                                                                       |
+| Key | TenantId       | long      | Tenant owning data                                                    |
 | Key | TimeCardNoteID | long      | Unique identifier for this TimeCardNote                               |
 |     | TimeCardId     | long      | Unique identifier for the TimeCard to which this TimeCardNote belongs |
 |     | content        | varchar   |                                                                       |
 |     | CreatedAt      | timestamp | Created timestamp                                                     |
 |     | ModifiedAt     | timestamp | Last modified timestamp                                               |
 |     | deleted        | bool      | Soft delete flag                                                      |
-|     |                |           |                         |
 
 ### TimeCardEventLog
 
