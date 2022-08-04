@@ -24,18 +24,17 @@ A TimeCard instance is for a given person. It is the containing Entity for multi
 A timecard maps to a single date but if a continuous working TimeEntry spans two dates (e.q shift started at 10pm and ended at 5am) then the date in the time card is the date the shift started.
 
 
-| Key | Column Name    | Type      | Description                                                                   |
-| --- | -------------- | --------- | ----------------------------------------------------------------------------- |
-|     |                |           |                                                                               |
-| Key | TimeCardId     | long      |                                                                               |
-|     | TimeCardStatus | varchar   | Open, Locked                                                                  |
-|     | Date           | timestamp | Date shift started.                                                           |
-|     | OwnerId        | long      | The PersonId of the user to whom the TimeCard and child entities belongs      |
-|     | LocationId     | long      | Index into the Location table for where an end user is Planned to work        |
-|     | SubmittedOn    | timestamp |                                                                               |
-|     | createdAt      | timestamp | Created timestamp                                                             |
-|     | modifiedAt     | timestamp | Last modified timestamp                                                       |
-|     | deleted        | bool      | Soft delete flag                                                              |
+| Key | Column Name    | Type      | Description                                                                        |
+| --- | -------------- | --------- | ---------------------------------------------------------------------------------- |
+|     |                |           |                                                                                    |
+| Key | TimeCardId     | long      |                                                                                    |
+|     | TimeCardStatus | varchar   | Open, Locked                                                                       |
+|     | Date           | timestamp | The date for which this TimeCard is for taken from the date the 1st shift started. |
+|     | PersonId       | long      | The PersonId of the user to whom the TimeCard and child entities belong            |
+|     | LocationId     | long      | Index into the Location table for where an end user is Planned to work             |
+|     | CreatedAt      | timestamp | Created timestamp                                                                  |
+|     | ModifiedAt     | timestamp | Last modified timestamp                                                            |
+|     | deleted        | bool      | Soft delete flag                                                                   |
 
 *Note*
 
@@ -53,23 +52,21 @@ Based on Roster pre-filled timeentry rows are created with 'Planned' state. When
 
 Used to record both planned and actual time. Encapsulates day and time (to the minute). 
 
-
-| Key | Column Name      | Type      | Description                                                                   |
-| --- | ---------------- | --------- | ----------------------------------------------------------------------------- |
-|     |                  |           |                                                                               |
-| Key | TimeEntryId      | long      |                                                                               |
-|     | TimeCardId       | long      |                                                                               |
-|     | TimeEntryStatus  | enum      | Planned, Booked,Cancelled                                                     |
-|     | TimePeriodTypeId | long      | Index into the TimePeriodType entity to determine Shift, Absence, SRD, etc    |                                             
-|     | ShiftType        | varchar   | Early, Late, Day etc                                                          |
-|     | ActivityId       | long      | Index into the Activity table for what the end user is Planned to do on shift |
-|     | ActualStartTime  | timestamp |                                                                               |
-|     | ActualEndTime    | timestamp |                                                                               |
-|     | PlannedStartTime | timestamp |                                                                               |
-|     | PlannedEndTime   | timestamp |                                                                               |
-|     | createdAt        | timestamp | Created timestamp                                                             |
-|     | modifiedAt       | timestamp | Last modified timestamp                                                       |
-|     | deleted          | bool      | Soft delete flag                                                              |
+| Key | TimeEntryId       | long      | Unique identifier for thie TimeEntry                                          |
+| --- | ----------------- | --------- | ----------------------------------------------------------------------------- |
+|     | TimeCardId        | long      | Unique identifier for the TimeCard to which this TimeEntry belongs            |
+|     | TimeEntryStatus   | enum      | Planned, Booked                                                               |
+|     | TimePeriodId      | int       | Index into the TimePeriodType entity to determine Shift, Absence, SRD, etc    |
+|     | ShiftType         | varchar   | Early, Late, Day etc                                                          |
+|     | ActivityId        | int       | Index into the Activity table for what the end user is Planned to do on shift |
+|     | ActualStartTime   | timestamp | The actual time a shift started as entered by the end user, proxy or system   |
+|     | ActualEndTime     | timestamp | The actual time a shift ended as entered by the end user, proxy or system     |
+|     | PlannedStartTime  | timestamp | The time a user is Planned to start working as populated by the Scheduler     |
+|     | PlannedEndTime    | timestamp | The time a user is Planned to end working as populated by the Scheduler       |
+|     | MealBreakDuration | int       | TBD - The number of minutes taken for a meal break                            |
+|     | CreatedAt         | timestamp | Created timestamp                                                             |
+|     | ModifiedAt        | timestamp | Last modified timestamp                                                       |
+|     | deleted           | bool      | Soft delete flag                                                              |
 
 
 ### TimeCardNotes
@@ -80,16 +77,15 @@ Notes are associated with a TimeCard and cannot exist on their own.
 A notes option will be available and visible for a timecard time entry. Multiple notes can be added and displayed. All saved notes will persist on the timecard timeline – notes cannot be edited or deleted. 
 
 
-| Key | Column Name    | Type      | Description             |
-| --- | -------------- | --------- | ----------------------- |
-|     |                |           |                         |
-| Key | TimeCardNoteID | long      |                         |
-|     | TimeCardId     | long      |                         |
-|     | content        | varchar   |                         |
-|     | createdAt      | timestamp | Created timestamp       |
-|     | modifiedAt     | timestamp | Last modified timestamp |
-|     | deleted        | bool      | Soft delete flag        |
-|     |                |           |                         |
+| Key | Column Name    | Type      | Description                                                           |
+| --- | -------------- | --------- | --------------------------------------------------------------------- |
+|     |                |           |                                                                       |
+| Key | TimeCardNoteID | long      | Unique identifier for this TimeCardNote                               |
+|     | TimeCardId     | long      | Unique identifier for the TimeCard to which this TimeCardNote belongs |
+|     | content        | varchar   |                                                                       |
+|     | CreatedAt      | timestamp | Created timestamp                                                     |
+|     | ModifiedAt     | timestamp | Last modified timestamp                                               |
+|     | deleted        | bool      | Soft delete flag                                                      |
 |     |                |           |                         |
 
 ### TimeCardEventLog
@@ -99,7 +95,7 @@ All significant events which impact a TimeCard are to be logged. These events as
 | Key | Column Name      | Type      | Description                                      |
 | --- | ---------------- | --------- | ------------------------------------------------ |
 |     |                  |           |                                                  |
-| Key | TimeCardEventLogId | long      |                                                  |
+| Key | TimeCardEventLogId | long      |                                                |
 |     | TimeCardId       | long      | Optional. TimeCardId to which the event belongs  |
 |     | TimeEntryId      | long      | Optional. TimeEntryId to which the event belongs |
 |     | EventDate        | timestamp | Event timestamp                                  |
@@ -134,7 +130,7 @@ As they have a monetary value these should be auditable - record manager who app
 |     | ApprovalDate     | timestamp |                                                    |
 |     | FlexChangeReason | varchar   |                                                    |
 |     | createdAt        | timestamp | Created timestamp                                  |
-|     | modifiedSt       | timestamp | Last modified timestamp                            |
+|     | modifiedAt       | timestamp | Last modified timestamp                            |
 |     | deleted          | bool      | Soft delete flag                                   |
 
 ### FlexChangeNote
