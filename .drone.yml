@@ -34,7 +34,7 @@ steps:
     commands:
     # wait for docker service to be up before running docker build
     - n=0; while [ "$n" -lt 60 ] && [ ! "$(docker stats --no-stream)" ]; do n=$(( n + 1 )); sleep 1; done
-    - docker build -t callisto-timecard-restapi:"$${VERSION}" .
+    - docker build -t callisto-timecard-restapi:latest .
     when:
       event:
       - push
