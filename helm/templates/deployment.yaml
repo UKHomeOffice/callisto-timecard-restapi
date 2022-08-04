@@ -31,4 +31,4 @@ spec:
               cpu: '1500m'
           ports:
             - name: http
-              containerPort: 8081
+              containerPort: 9090
