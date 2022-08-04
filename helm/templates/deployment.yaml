@@ -1,0 +1,34 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.name }}
+  labels:
+    app: {{ .Values.name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.name }}
+    spec:
+      securityContext:
+        runAsUser: 1001
+        runAsGroup: 1001
+      containers:
+        - name: timecard-restapi
+          image: {{ .Values.image.repo }}{{ .Values.image.name }}:{{ .Values.image.version }}
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              memory: '512Mi'
+              cpu: '500m'
+            limits:
+              memory: '1Gi'
+              cpu: '1500m'
+          ports:
+            - name: http
+              containerPort: 8081
