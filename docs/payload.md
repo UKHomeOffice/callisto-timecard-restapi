@@ -34,31 +34,38 @@ A note is used to carry arbitrary textual information about a date. Notes are im
 |createdAt|string(date-time)|false|none|Assigned by the TimeCard container when the note is persisted|
 |authorId|number|false|none|The id of the Person who wrote the note's content|
 
-<h2 id="tocS_CodedValue">CodedValue</h2>
+<h2 id="tocS_TimePeriodType">TimePeriodType</h2>
 <!-- backwards compatibility -->
-<a id="schemacodedvalue"></a>
-<a id="schema_CodedValue"></a>
-<a id="tocScodedvalue"></a>
-<a id="tocscodedvalue"></a>
+<a id="schematimeperiodtype"></a>
+<a id="schema_TimePeriodType"></a>
+<a id="tocStimeperiodtype"></a>
+<a id="tocstimeperiodtype"></a>
 
 ```json
 {
-  "code": "string",
-  "namespace": "http://[tenantId].timecard.sas.digital.homeoffice.go.uk",
-  "display": "the value of the code property"
+  "timePeriodTypeId": 0,
+  "name": "string",
+  "valueType": "date"
 }
 
 ```
 
-A CodeValue encapsulates a code
+A way to categorise time periods (e.g. a shift, a standard rest day). Depending on the type of time period the actual time value that should be recorded against that period varies. For example to record a shift time period two data points are needed - a shift start datetime and and a shift end datetime. Contrast this with a standard rest day where only a single date is needed.
 
 ### Properties
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|code|string|true|none|The code itself|
-|namespace|string(uri)|false|none|The optional namespace that the code belongs to. The namespace and code together present a unique identifier for the CodedValue in the context of the TimeCard container|
-|display|string|false|none|The optional human-readable label for the code|
+|timePeriodTypeId|number|false|none|the identifier for this TimePeriodType|
+|name|string|true|none|the display name of this TimePeriodType|
+|valueType|string|true|none|The value that a time period of this type should contain|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|valueType|date|
+|valueType|datetime|
 
 <h2 id="tocS_TimeEntry">TimeEntry</h2>
 <!-- backwards compatibility -->
@@ -74,21 +81,19 @@ A CodeValue encapsulates a code
   "ownerId": 0,
   "actualStartTime": "2019-08-24T14:15:22Z",
   "actualEndTime": "2019-08-24T14:15:22Z",
+  "plannedStartTime": "2019-08-24T14:15:22Z",
+  "plannedEndTime": "2019-08-24T14:15:22Z",
+  "shiftType": "string",
   "timePeriodType": {
-    "code": "string",
-    "namespace": "http://[tenantId].timecard.sas.digital.homeoffice.go.uk",
-    "display": "the value of the code property"
-  },
-  "activity": {
-    "code": "string",
-    "namespace": "http://[tenantId].timecard.sas.digital.homeoffice.go.uk",
-    "display": "the value of the code property"
+    "timePeriodTypeId": 0,
+    "name": "string",
+    "valueType": "date"
   }
 }
 
 ```
 
-A TimeEntry carries the time periods during which employees have performed a business activity (e.g. PCP, dog handling etc) or HR activity (e.g. leaves, training etc). TimeEntry is the actual recording of hours done by employees as per their roster. Encapsulates day and time (to the minute).
+A TimeEntry carries the time periods during which employees have performed a business activity (e.g. PCP, dog handling etc) or HR activity (e.g. leaves, training etc). TimeEntry is the actual recording of hours done by employees as per their roster. Encapsulates day and time (to the minute). The TimeEntry also holds the concept of planned time. In this instance the owner of the TimeEntry has been rostered to perform some work in the future at a specified time. Not all TimeEntry owners are subject to their time being planned out therefore the fields related to planned time are optional. It is also possible to create a TimeEntry with just an actualStartTime and to provide the actualEndTime later. However if planned time is provided then both the start and end must be set.
 
 ### Properties
 
@@ -98,7 +103,9 @@ A TimeEntry carries the time periods during which employees have performed a bus
 |version|number|false|none|The version of the TimeEntry as assigned by the TimeCard container. This value changes when the resource is created, updated, or deleted.|
 |ownerId|number|true|none|The id of the Person who owns this TimeEntry i.e. the Person who has performed the activity in the given time period|
 |actualStartTime|string(date-time)|true|none|The start time of the activity that was worked (to the minute)|
-|actualEndTime|string(date-time)|true|none|The end time of the activity that was worked (to the minute)|
-|timePeriodType|[CodedValue](#schemacodedvalue)|true|none|The type of time entry (e.g. a shift, a standard rest day)|
-|activity|[CodedValue](#schemacodedvalue)|true|none|The type of work that has been carried out (e.g PCP)|
+|actualEndTime|string(date-time)|false|none|The end time of the activity that was worked (to the minute)|
+|plannedStartTime|string(date-time)|false|none|The start time of the activity that has been planned (to the minute)|
+|plannedEndTime|string(date-time)|false|none|The end time of the activity that has been planned (to the minute)|
+|shiftType|string|false|none|a descriptor for the shift (eg 'early shift')|
+|timePeriodType|[TimePeriodType](#schematimeperiodtype)|true|none|The type of time entry (e.g. a shift, a standard rest day)|
 

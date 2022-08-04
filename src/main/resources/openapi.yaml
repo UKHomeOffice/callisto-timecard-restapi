@@ -28,33 +28,30 @@ components:
           format: date-time
         authorId:
             description: The id of the Person who wrote the note's content
-            type: number        
-    CodedValue:
+            type: number  
+    TimePeriodType:
       type: object
-      description: A CodeValue encapsulates a code
+      description: A way to categorise time periods (e.g. a shift, a standard rest day). Depending on the type of time period the actual time value that should be recorded against that period varies. For example to record a shift time period two data points are needed - a shift start datetime and and a shift end datetime. Contrast this with a standard rest day where only a single date is needed. 
       required:
-        - code
+            - name
+            - valueType
       properties:
-        code:
-          description: The code itself
+        timePeriodTypeId: 
+          description: the identifier for this TimePeriodType
+          type: number
+        name:
+          description: the display name of this TimePeriodType
           type: string
-        namespace:
-          description: The optional namespace that the code belongs to. The namespace and code together present a unique identifier for the CodedValue in the context of the TimeCard container
+        valueType:
+          description: The value that a time period of this type should contain
           type: string
-          format: uri
-          default: http://[tenantId].timecard.sas.digital.homeoffice.go.uk
-        display:
-          description: The optional human-readable label for the code
-          type: string
-          default: the value of the code property         
+          enum: [date, datetime]
     TimeEntry:
-      description: A TimeEntry carries the time periods during which employees have performed a business activity (e.g. PCP, dog handling etc) or HR activity (e.g. leaves, training etc). TimeEntry is the actual recording of hours done by employees as per their roster. Encapsulates day and time (to the minute).
+      description: A TimeEntry carries the time periods during which employees have performed a business activity (e.g. PCP, dog handling etc) or HR activity (e.g. leaves, training etc). TimeEntry is the actual recording of hours done by employees as per their roster. Encapsulates day and time (to the minute). The TimeEntry also holds the concept of planned time. In this instance the owner of the TimeEntry has been rostered to perform some work in the future at a specified time. Not all TimeEntry owners are subject to their time being planned out therefore the fields related to planned time are optional. It is also possible to create a TimeEntry with just an actualStartTime and to provide the actualEndTime later. However if planned time is provided then both the start and end must be set.
       type: object
       required:
         - actualStartTime
-        - actualEndTime
         - timePeriodType
-        - activity
         - ownerId
       properties:
         timeEntryId:
@@ -74,11 +71,18 @@ components:
           description: The end time of the activity that was worked (to the minute)
           type: string
           format: date-time
+        plannedStartTime: 
+          description: The start time of the activity that has been planned (to the minute)
+          type: string
+          format: date-time
+        plannedEndTime: 
+          description: The end time of the activity that has been planned (to the minute)
+          type: string
+          format: date-time   
+        shiftType:
+          description: a descriptor for the shift (eg 'early shift')
+          type: string
         timePeriodType:
             description: The type of time entry (e.g. a shift, a standard rest day)
             allOf:
-              - $ref: '#/components/schemas/CodedValue'
-        activity:
-            description: The type of work that has been carried out (e.g PCP)
-            allOf:
-              - $ref: '#/components/schemas/CodedValue'
+              - $ref: '#/components/schemas/TimePeriodType'

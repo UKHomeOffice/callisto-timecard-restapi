@@ -68,15 +68,11 @@ workspace {
         }
 		
 		dynamic timecardSystem "recordTimeCreateTimeEntry" "Creates a new TimeEntry " {
-			user -> singlePageApplication "navigates to record time"
-            singlePageApplication -> timecardAPIApplication "find TimeEntry by date"
-			timecardAPIApplication -> singlePageApplication "return TimeEntry set"
-	        singlePageApplication -> user "display TimeEntry set"
 	        user -> singlePageApplication "navigates to enter new time entry"
-			singlePageApplication -> timecardAPIApplication "get all TimeEntryType and Config"
-			timecardAPIApplication -> singlePageApplication "return TimeEntry set and Config set"
-			singlePageApplication -> user "display TimeEntryType set"
-			user -> singlePageApplication "selects TimeEntryType"
+			singlePageApplication -> timecardAPIApplication "get TimePeriodType"
+			timecardAPIApplication -> singlePageApplication "return TimePeriodType set"
+			singlePageApplication -> user "display TimePeriodType set"
+			user -> singlePageApplication "selects TimePeriodType"
 			singlePageApplication -> user "display time or date entry field(s)"
 			user -> singlePageApplication "enters time or date"
 			singlePageApplication -> timecardAPIApplication "create TimeEntry"
@@ -91,8 +87,6 @@ workspace {
 			timecardAPIApplication -> singlePageApplication "return TimeEntry set"
 	        singlePageApplication -> user "display TimeEntry set"
 	        user -> singlePageApplication "choose TimeEntry and navigates to modify time entry"
-			singlePageApplication -> timecardAPIApplication "get Config(TimeEntry.timePeriodType)"
-			timecardAPIApplication -> singlePageApplication "return Config"
 			singlePageApplication -> user "display TimeEntry""
 			user -> singlePageApplication "changes time or date"
 			singlePageApplication -> timecardAPIApplication "modify TimeEntry"
