@@ -54,7 +54,7 @@ This command retrieves a set of `TimeEntry` instances whose time period (time co
 #### Payload
 Upon a successful call to GetAllTimeEntryType a payload containing a filtered list of all relevant TimeEntryTypes and their associated ValueType must be returned.
 
-## GetTimePeriodTypeConfig
+## Get TimePeriodType Config
 This command will ultimately retrieve a filtered list of TimeEntryTypes appropriate for the Person for whom the TimeEntry is being entered. The requirements for this are evolving but some of the filters identified so far are below:
 
 1. Time Period Type should be dependent on profile of individual user.
