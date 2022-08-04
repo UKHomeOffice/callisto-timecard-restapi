@@ -49,11 +49,12 @@ TimeEntry is the actual recording of hours done by employees as per their roster
 Based on Roster pre-filled timeentry rows are created with 'Planned' state. When employee submits the time card (with or without modification) then timecard entries are changed into
 'Booked'
 
-
 Used to record both planned and actual time. Encapsulates day and time (to the minute). 
 
-| Key | TimeEntryId       | long      | Unique identifier for thie TimeEntry                                          |
+| Key | Column Name       | Type      | Description                                                                   |
 | --- | ----------------- | --------- | ----------------------------------------------------------------------------- |
+|     |                   |           |                                                                               |
+| Key | TimeEntryId       | long      | Unique identifier for thie TimeEntry                                          |
 |     | TimeCardId        | long      | Unique identifier for the TimeCard to which this TimeEntry belongs            |
 |     | TimeEntryStatus   | enum      | Planned, Booked                                                               |
 |     | TimePeriodId      | int       | Index into the TimePeriodType entity to determine Shift, Absence, SRD, etc    |
