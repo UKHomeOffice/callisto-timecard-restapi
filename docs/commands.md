@@ -59,6 +59,8 @@ This command will ultimately retrieve a filtered list of TimeEntryTypes appropri
 1. Time Period Type should be dependent on profile of individual user.
 2. Part Time workers will be the only users who have NWD (particularly so full time AHA users don't confuse it with SRD
 3. Only those whose Person Profile indicates they can work on call will see on-call.
+4. TimePeriodTypes have an Effective Start Date and and Effective End Date
+5. Different organisations or even Areas within a Tenant may have different sets of Time Period Types.
 
 ### inputs 
 - TenantId    - mandatory -  the tenant whose `TimeEntry` instances will be searched
