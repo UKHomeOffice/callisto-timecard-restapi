@@ -44,7 +44,7 @@ The `timePeriodType` property on a [`TimeEntry`](../../payload.md#time-entry) go
 #### Container commands
 - [TimeCard.find TimeEntry by date(timeentryDate, timeentryOwnerId, tenantId)](../../commands.md#get-timeentry-by-date) - used to retrieve `TimeEntry` instances. 
 - [TimeCard.create timeentry(timeEntry, tenantId)](../../commands.md#create-timeentry) - used to create a new `TimeEntry`
-- [TimeCard.getTimePeriodTypeConfig(tenantId, personId)](../../commands.md#gettimeperiodtypeconfig - retrieves list of TimePeriodTypes and ValueType
+- [TimeCard.getTimePeriodTypeConfig(tenantId, personId)](../../commands.md#get-timeperiodtype-config - retrieves list of TimePeriodTypes and ValueType
 
 ### Modify existing Timeentry
 ![](../../images/recordTimeModifyTimeEntry.png)
