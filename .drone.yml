@@ -7,9 +7,6 @@ platform:
   os: linux
   arch: amd64
 
-environment:
-  VERSION: latest-20220802
-
 steps:
   - name: build
     image: maven:3.8.3-openjdk-17
