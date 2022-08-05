@@ -1,0 +1,137 @@
+---
+kind: pipeline
+type: kubernetes
+name: callisto-timecard-restapi
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+  - name: build
+    image: maven:3.8.3-openjdk-17
+    commands:
+      - mvn clean package
+
+  - name: lint_dockerfile
+    pull: if-not-exists
+    image: hadolint/hadolint:latest-alpine
+    commands:
+      - hadolint Dockerfile
+    when:
+      event:
+        - push
+        - pull_request
+
+  - name: build_image
+    pull: if-not-exists
+    image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/dind
+    environment:
+      DOCKER_HOST: tcp://docker:2375
+    commands:
+    # wait for docker service to be up before running docker build
+    - n=0; while [ "$n" -lt 60 ] && [ ! "$(docker stats --no-stream)" ]; do n=$(( n + 1 )); sleep 1; done
+    - docker build -t callisto-timecard-restapi:latest .
+    when:
+      event:
+      - push
+
+  - name: build_tag_push_ecr
+    pull: if-not-exists
+    image: plugins/ecr
+    environment:
+      AWS_REGION: eu-west-2
+    settings:
+      access_key:
+        from_secret: aws_access_key_id
+      secret_key:
+        from_secret: aws_secret_access_key
+      repo: callisto/timecard-restapi
+      registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
+      tags:
+      - latest
+    when:
+      branch:
+        - main
+
+services:
+  - name: docker
+    image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/dind
+    environment:
+      DOCKER_TLS_CERTDIR: ""
+
+---
+kind: pipeline
+type: kubernetes
+name: callisto-timecard-restapi-deploy
+
+platform:
+  os: linux
+  arch: amd64
+
+depends_on:
+  - callisto-timecard-restapi
+
+trigger:
+  status: success
+
+steps:
+  - name: lint_helm_files
+    image: pelotech/drone-helm3
+    settings:
+      mode: lint
+      chart: ./helm
+      values_file: ./helm/values.yaml
+
+  - name: deploy_to_dev
+    image: pelotech/drone-helm3
+    settings:
+      namespace: callisto-dev
+      mode: upgrade
+      chart: ./helm
+      values_file: ./helm/values.yaml
+      release: callisto-timecard-restapi
+      kube_certificate: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUMyRENDQWNDZ0F3SUJBZ0lSQUxBdk1yVGVzQkhNUkliR0ZZa3JsaHN3RFFZSktvWklodmNOQVFFTEJRQXcKRlRFVE1CRUdBMVVFQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB4TnpBNE1qZ3hPVFU0TlRSYUZ3MHlOekE0TWpneApPVFU0TlRSYU1CVXhFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBCkE0SUJEd0F3Z2dFS0FvSUJBUURQNm5ZVGpmbmR2T2kxOEltYm5idk9aOXJ3c1hxSkZFTE1IVTkxT2VIaXFIT2kKT1luVFZ3cmpCaDJpZExUM0ozbkVoYnM0WFRIcVlwcVEzdmcwVzluVVRPMnk5ZmFmdlRZVTk0NGZXUTl1SXJOZwo1Y0Q0SXhzK05vWTJmdkkrcStYUUM2SFNiRGJ0S0dOUy9Kbmc5SFdsazF2dzY0TlBwbU5IMTJtUFVvNGpGZnc5CmZoL3RwY1k5akVsZnhJckJBVEJzNHhYcDJHOFFrK1ZCSWE5bnF4bmtVTHJvT0t2Y092T3g4RDU1TXdXcEVKc3QKdENZSXFHM05xdlhMcUdTQzdueHoxYmJNSmZjRDdBRmdvZnM1bXZ0bmlRTHBnZG93WmxNc3g2cnJVM2pBUkw3OApvTktXR3p3c3BKNjhybXdhSGZ4NlRBWldHbUxSU2NPd0xlbWJ3cDRIQWdNQkFBR2pJekFoTUE0R0ExVWREd0VCCi93UUVBd0lCQmpBUEJnTlZIUk1CQWY4RUJUQURBUUgvTUEwR0NTcUdTSWIzRFFFQkN3VUFBNElCQVFDb2RrZkMKS2NOYzY5cXR6ZllWUUFlajFVb0hhMjhUUzlqMHV3RVdqWlU0dFVWR2cvZDNCK2YvcnYyN2tqRGM3U2JJSForVQpxMlpMVlVnYU85OVoyUjQyUFhNVTZCRUVUdjUvT0t4amdkNlFNQnFFVkxBdU1XZFpsbnBkMEpDMDFGd0tJb3BGCnVpVUFoWnRjR0tJRXg1U1N1SUlKdFU4a2pnR2xuS0V6aXJrUVVCOUJUOURSQ1VhelQ1ZUp6VFVLSVliWjBNL3gKSUZMbUQvZmZZeFhmRGlSM25YWkdZSWpkUGJHYW42ZU5pZExjQkdEZkxabzZFdkJTR2FUSHl5KzEyc3c2clhTVwpBTVFWd3BUY2ZpSlM1NG9xSXhDU3dyam5XNFZYRnhiSC96SWZXMGs5M29ucERNdXhjT20rN0NuZjViRlJEdlpzCjRCaEV1ank1eEVtajA1TWwKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+      kube_api_server:
+        from_secret: dev_kube_api_url
+      kube_token:
+        from_secret: dev_kube_token
+    when:
+      event:
+        - push
+      branch:
+        - main
+
+---
+kind: pipeline
+type: kubernetes
+name: build notifications
+
+trigger:
+  status:
+    - success
+    - failure
+  event:
+    - push
+
+depends_on:
+  - callisto-timecard-restapi-deploy
+
+steps:
+  - name: slack
+    image: plugins/slack
+    settings:
+      webhook:
+        from_secret: slack_webhook_url
+      channel: callisto-tech-notifications
+      username: Drone
+      template: |
+        {{#success build.status}}
+          Build #{{ build.number }} succeeded! :tada:
+        {{else}}
+          Build #{{ build.number }} failed :alert:
+        {{/success}}
+        Commit: <${DRONE_REPO_LINK}/commit/{{ build.commit }}|{{ truncate build.commit 8 }}> - {{{ trim build.message }}}
+        Repo: {{ repo.name }}
+        Branch: <${DRONE_REPO_LINK}/commits/{{ build.branch }}|{{ build.branch }}>
+        Author: {{ build.author }}

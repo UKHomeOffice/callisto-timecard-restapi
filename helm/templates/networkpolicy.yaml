@@ -1,0 +1,16 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: ingress-network-policy-callisto-timecard
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ .Values.name }}
+  ingress:
+    - {}
+  egress:
+    - {}
+  policyTypes:
+    - Egress
+    - Ingress
