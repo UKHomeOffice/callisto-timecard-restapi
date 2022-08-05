@@ -1,0 +1,18 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "1.0.0-create-schema-and-moo-table",
+        "author": "Joanna Fawl",
+        "changes": [
+          {
+            "sqlFile": {
+              "dbms": "postgresql",
+              "path": "create-schema-and-moo-table.sql"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
