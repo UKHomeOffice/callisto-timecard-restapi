@@ -3,4 +3,3 @@ name: callisto-timecard-restapi
 description: A Helm chart for deploying Callisto Timecard REST api
 type: application
 version: 1.0.0
-appVersion: 1.0.0
