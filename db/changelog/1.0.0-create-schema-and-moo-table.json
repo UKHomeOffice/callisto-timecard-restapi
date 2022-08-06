@@ -8,7 +8,7 @@
           {
             "sqlFile": {
               "dbms": "postgresql",
-              "path": "create-schema-and-moo-table.sql"
+              "path": "sql/create-schema-and-moo-table.sql"
             }
           }
         ]
