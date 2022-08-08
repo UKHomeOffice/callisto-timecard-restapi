@@ -92,7 +92,7 @@ steps:
     commands:
       # wait for docker service to be up before running docker build
       - n=0; while [ "$n" -lt 60 ] && [ ! "$(docker stats --no-stream)" ]; do n=$(( n + 1 )); sleep 1; done
-      - cd db/sql
+      - cd db
       - docker build -t callisto-timecard-database:latest .
     when:
       event:
