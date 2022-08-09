@@ -106,6 +106,7 @@ steps:
       secret_key:
         from_secret: ecr_timecard_database_secret_access_key
       repo: callisto/timecard-database
+      context: db
       registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
       tags:
         - latest
