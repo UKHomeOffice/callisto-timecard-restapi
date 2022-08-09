@@ -102,16 +102,18 @@ steps:
       AWS_REGION: eu-west-2
     settings:
       access_key:
-        from_secret: aws_access_key_id
+        from_secret: ecr_timecard_database_access_key_id
       secret_key:
-        from_secret: aws_secret_access_key
+        from_secret: ecr_timecard_database_secret_access_key
       repo: callisto/timecard-database
       registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
       tags:
         - latest
-    when:
-      branch:
-        - main
+#    when:
+#      event:
+#        - push
+#      branch:
+#        - main
 
 services:
   - name: docker
@@ -156,11 +158,11 @@ steps:
         from_secret: dev_kube_api_url
       kube_token:
         from_secret: dev_kube_token
-    when:
-      event:
-        - push
-      branch:
-        - main
+#    when:
+#      event:
+#        - push
+#      branch:
+#        - main
 
 ---
 kind: pipeline

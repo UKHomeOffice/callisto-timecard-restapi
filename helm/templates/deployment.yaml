@@ -20,7 +20,7 @@ spec:
         runAsGroup: 1001
       containers:
         - name: timecard-restapi
-          image: {{ .Values.image.repo }}{{ .Values.image.name }}:{{ .Values.image.version }}
+          image: {{ .Values.image.repo }}/timecard-restapi:latest
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -32,3 +32,38 @@ spec:
           ports:
             - name: http
               containerPort: 9090
+      initContainers:
+        - name: timecard-database
+          image: {{ .Values.image.repo }}/timecard-database:latest
+          env:
+            - name: DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: callistodev-rds
+                  key: db_name
+            - name: DATABASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: callistodev-rds
+                  key: username
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: callistodev-rds
+                  key: password
+            - name: DATABASE_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: callistodev-rds
+                  key: endpoint
+            - name: DATABASE_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: callistodev-rds
+                  key: port
+          args:
+            - "--url=jdbc:postgresql://$(DATABASE_ENDPOINT):$(DATABASE_PORT)/$(DATABASE_NAME)"
+            - "--username=$(DATABASE_USERNAME)"
+            - "--password=$(DATABASE_PASSWORD)"
+            - "--changeLogFile=changelog/db.changelog-main.yml"
+            - "update"
