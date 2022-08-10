@@ -42,7 +42,7 @@ The `timePeriodType` property on a [`TimeEntry`](../../payload.md#time-entry) go
 ![](../../images/recordTimeCreateTimeEntry.png)
 
 #### Container commands
-- [TimeCard.find TimeEntry by date(timeentryDate, timeentryOwnerId, tenantId)](../../commands.md#get-timeentry-by-date) - used to retrieve `TimeEntry` instances. 
+- [TimeCard.find TimeEntry by date(timeentryDate, ownerId, tenantId)](../../commands.md#get-timeentry-by-date) - used to retrieve `TimeEntry` instances. 
 - [TimeCard.create timeentry(timeEntry, tenantId)](../../commands.md#create-timeentry) - used to create a new `TimeEntry`
 - [TimeCard.getTimePeriodType(tenantId, personId)](../../commands.md#get-timeperiodtype) - retrieves list of TimePeriodTypes and ValueType
 
@@ -50,14 +50,14 @@ The `timePeriodType` property on a [`TimeEntry`](../../payload.md#time-entry) go
 ![](../../images/recordTimeModifyTimeEntry.png)
 
 #### Container commands
-- [TimeCard.find TimeEntry by date(timeentryDate, timeentryOwnerId, tenantId)](../../commands.md#get-timeentry-by-date) - used to retrieve `TimeEntry` instances. 
+- [TimeCard.find TimeEntry by date(timeentryDate, ownerId, tenantId)](../../commands.md#get-timeentry-by-date) - used to retrieve `TimeEntry` instances. 
 - [TimeCard.modify timeentry(timeEntry, tenantId)](../../commands.md#modify-timeentry) - used to modify an existing `TimeEntry`
 
 ### Remove existing Timeentry
 ![](../../images/recordTimeRemoveTimeEntry.png)
 
 #### Container commands
-- [TimeCard.find TimeEntry by date(timeentryDate, timeentryOwnerId, tenantId)](../../commands.md#get-timeentry-by-date) - used to retrieve `TimeEntry` instances. 
+- [TimeCard.find TimeEntry by date(timeentryDate, ownerId, tenantId)](../../commands.md#get-timeentry-by-date) - used to retrieve `TimeEntry` instances. 
 - [TimeCard.remove timeentry(timeEntry, tenantId)](../../commands.md#remove-timeentry) - used to remove an existing `TimeEntry`
 
 ## Key data models
