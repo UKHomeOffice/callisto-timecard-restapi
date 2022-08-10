@@ -4,7 +4,6 @@
 This command causes a new `TimeEntry` to be created 
 
 ### inputs 
-- ownerId - mandatory - the identifier for the person who owns the TimeEntry
 - TenantId    - mandatory -  the tenant that holds the `TimeEntry`
 - TimeEntry - mandatory - the [TimeEntry](./payload.md#timeentry) that is to be created
 
