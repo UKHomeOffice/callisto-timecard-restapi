@@ -21,7 +21,7 @@ spec:
       containers:
         - name: timecard-restapi
           image: {{ .Values.image.repo }}timecard-restapi:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           resources:
             requests:
               memory: '512Mi'
@@ -35,6 +35,7 @@ spec:
       initContainers:
         - name: timecard-database
           image: {{ .Values.image.repo }}timecard-database:latest
+          imagePullPolicy: Always
           env:
             - name: DATABASE_NAME
               valueFrom:
