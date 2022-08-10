@@ -20,7 +20,7 @@ spec:
         runAsGroup: 1001
       containers:
         - name: timecard-restapi
-          image: {{ .Values.image.repo }}/timecard-restapi:latest
+          image: {{ .Values.image.repo }}timecard-restapi:latest
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -34,7 +34,7 @@ spec:
               containerPort: 9090
       initContainers:
         - name: timecard-database
-          image: {{ .Values.image.repo }}/timecard-database:latest
+          image: {{ .Values.image.repo }}timecard-database:latest
           env:
             - name: DATABASE_NAME
               valueFrom:
