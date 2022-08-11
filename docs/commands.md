@@ -13,9 +13,7 @@ This command causes a new `TimeEntry` to be created
  - technical failure - see [standard command output](TODO) (**TODO**) for how to report technical failures
 
  ### Implementation Notes
- When implementing this command it is important to note that when pesisting the TimeEntry entity on the database a TimeEntry entity must always belong to a TimeCard entity. 
- 
- Therefore if this is the first TimeEntry created for a given day, in other words no TimeCard exists for the Shift Start Date then one must be created and the TimeEntry populated with the TimeCardId to create the association.
+
  
 ## modify TimeEntry
 This command causes an existing `TimeEntry` entity to be modified.
