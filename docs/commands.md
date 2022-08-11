@@ -12,8 +12,6 @@ This command causes a new `TimeEntry` to be created
  - business failure - see [Record Time](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-925) (access required) for business failure scenarios. Also see [standard command output](TODO) (**TODO**)  for how to report business failures
  - technical failure - see [standard command output](TODO) (**TODO**) for how to report technical failures
 
- ### Implementation Notes
-
  
 ## modify TimeEntry
 This command causes an existing `TimeEntry` entity to be modified.
