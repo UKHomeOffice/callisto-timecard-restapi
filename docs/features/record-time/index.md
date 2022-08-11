@@ -60,18 +60,12 @@ The `timePeriodType` property on a [`TimeEntry`](../../payload.md#time-entry) go
 - [TimeCard.find TimeEntry by date(timeentryDate, ownerId, tenantId)](../../commands.md#get-timeentry-by-date) - used to retrieve `TimeEntry` instances. 
 - [TimeCard.remove timeentry(timeEntry, tenantId)](../../commands.md#remove-timeentry) - used to remove an existing `TimeEntry`
 
-## Key data models
-
-### Payload model
+## Payload model
 
 This section describes which parts of the TimeCard container's payload model are relevant when an end user wants to record their time. More information can be found in the [payload model definition](../../payload.md). The key resource for the record time feature is the [TimeEntry](../../payload.md#timeentry).
 
 ![payload-model](../../images/payload-model.png)
 
-### Storage model
-This section describes how the TimeCard container should store its data. More information can be found in the [storage model definition](../../storage.md)
-
-![storage-model](../../images/timecard-container-data-model.png)
 
 ## Considerations
 
