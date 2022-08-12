@@ -22,12 +22,12 @@
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 	</properties>
 
-	<repositories>
+	<distributionManagement>
 		<repository>
 			<id>github</id>
 			<url>https://maven.pkg.github.com/UkHomeOffice/callisto-jparest</url>
 		</repository>
-	</repositories>
+	</distributionManagement>
 
 	<dependencies>
 		<dependency>
