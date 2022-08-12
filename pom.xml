@@ -21,6 +21,14 @@
 		<sonar.language>java</sonar.language>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 	</properties>
+
+	<repositories>
+		<repository>
+			<id>github</id>
+			<url>https://maven.pkg.github.com/UkHomeOffice/callisto-jparest</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -42,6 +50,11 @@
 			<artifactId>mockito-all</artifactId>
 			<version>1.10.19</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>uk.gov.homeoffice.digital.sas</groupId>
+			<artifactId>jparest</artifactId>
+			<version>0.0.0</version>
 		</dependency>
 	</dependencies>
 
