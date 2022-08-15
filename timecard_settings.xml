@@ -13,7 +13,7 @@
             <repositories>
                 <repository>
                     <id>github</id>
-                    <url>https://maven.pkg.github.com/UKHomeOffice/callisto-jparest</url>
+                    <url>git@github.com:UKHomeOffice/callisto-jparest.git</url>
                     <snapshots>
                         <enabled>true</enabled>
                     </snapshots>
