@@ -11,9 +11,11 @@ steps:
   - name: build
     image: maven:3.8.3-openjdk-17
     environment:
-      GITHUB_PAT:
-        from_secret: github_pat
+      GITHUB_SSH:
+        from_secret: github_ssh
     commands:
+      - mkdir /root/.ssh/ && echo "$GITHUB_SSH" > /root/.ssh/id_rsa && chmod 0600 /root/.ssh/id_rsa
+      - ssh-keyscan github.com >> /root/.ssh/known_hosts && chmod 600 /root/.ssh/known_hosts
       - mvn -s ./timecard_settings.xml -f pom.xml install
 
   - name: lint_dockerfile
