@@ -13,9 +13,8 @@ steps:
     environment:
       GITHUB_SSH:
         from_secret: github_ssh
-
     commands:
-      - mvn -s ./timecard_settings.xml -f pom.xml package
+      - mvn -s ./timecard_settings.xml -f pom.xml install
 
   - name: lint_dockerfile
     pull: if-not-exists

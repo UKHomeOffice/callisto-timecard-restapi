@@ -3,12 +3,12 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <servers>
         <server>
-            <id>callisto-jparest</id>
+            <id>github</id>
             <configuration>
                 <httpHeaders>
                     <property>
                         <name>Authorization</name>
-                        <value>Token: ${GITHUB_SSH}</value>
+                        <value>Bearer ${GITHUB_SSH}</value>
                     </property>
                 </httpHeaders>
             </configuration>
