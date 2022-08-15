@@ -8,8 +8,8 @@ platform:
   arch: amd64
 
 steps:
-  - name: build
-    image: maven:3.8.3-openjdk-17
+  - name: Setup Git
+    image: alpine/git
     environment:
       GITHUB_SSH:
         from_secret: github_ssh
@@ -19,6 +19,10 @@ steps:
       - printf  "Host github.com\n   Hostname github.com\n   IdentityFile /root/.ssh/id_rsa\n" > /root/.ssh/config
       - chmod 0600 /root/.ssh/config
       - printf "[github]\n[user]\n user = git" > /root/.gitconfig
+      - git remote set-url origin git@github.com:UKHomeOffice/callisto-jparest.git
+  - name: Build
+    image: maven:3.8-openjdk-17
+    commands:
       - mvn clean install
   - name: lint_dockerfile
     pull: if-not-exists
