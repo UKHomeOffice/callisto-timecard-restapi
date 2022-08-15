@@ -22,20 +22,6 @@
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 	</properties>
 
-	<distributionManagement>
-		<repository>
-			<id>github</id>
-			<url>https://maven.pkg.github.com/UkHomeOffice/callisto-jparest</url>
-		</repository>
-	</distributionManagement>
-
-	<repositories>
-		<repository>
-			<id>github</id>
-			<url>https://maven.pkg.github.com/UKHomeOffice/callisto-jparest</url>
-		</repository>
-	</repositories>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
