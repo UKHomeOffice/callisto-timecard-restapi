@@ -43,6 +43,11 @@
 			<version>1.10.19</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>uk.gov.homeoffice.digital.sas</groupId>
+			<artifactId>jparest</artifactId>
+			<version>0.0.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -72,5 +77,6 @@
 		</plugins>
 		<finalName>timecard-api</finalName>
 	</build>
+	
 
 </project>
