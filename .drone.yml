@@ -11,11 +11,10 @@ steps:
   - name: build
     image: maven:3.8.3-openjdk-17
     environment:
-      SPRING_PROFILES_ACTIVE: dev
       ARTIFACTORY_TOKEN:
         from_secret: artifactory_token
     commands:
-      - mvn -s ./timecard_settings.xml clean package
+      - mvn -s ./timecard_settings.xml -Dactive.profile=dev clean package
 
   - name: lint_dockerfile
     pull: if-not-exists
