@@ -14,7 +14,7 @@ steps:
       ARTIFACTORY_TOKEN:
         from_secret: artifactory_token
     commands:
-      - mvn -s ./jparest_settings.xml -f pom.xml
+      - mvn -s ./jparest_settings.xml -f pom.xml install
       - mvn clean package
 
   - name: lint_dockerfile
