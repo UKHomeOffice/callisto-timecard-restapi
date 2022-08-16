@@ -14,4 +14,29 @@
             </configuration>
         </server>
     </servers>
+
+    <profiles>
+        <profile>
+            <id>artifactory</id>
+            <repositories>
+                <repository>
+                    <id>callisto-jparest</id>
+                    <name>Callisto Jparest Repo</name>
+                    <url>https://artifactory.digital.homeoffice.gov.uk/artifactory/callisto-jparest</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+        </profile>
+    </profiles>
+
+    <activeProfiles>
+        <activeProfile>artifactory</activeProfile>
+    </activeProfiles>
+
+
+
+
+
 </settings>
