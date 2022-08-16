@@ -10,7 +10,11 @@ platform:
 steps:
   - name: build
     image: maven:3.8.3-openjdk-17
+    environment:
+      ARTIFACTORY_TOKEN:
+        from_secret: artifactory_token
     commands:
+      - mvn -s ./jparest_settings.xml -f pom.xml
       - mvn clean package
 
   - name: lint_dockerfile
