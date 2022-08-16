@@ -126,6 +126,9 @@ depends_on:
 trigger:
   status: success
 
+environment:
+  SPRING_PROFILES_ACTIVE: dev
+
 steps:
   - name: lint_helm_files
     image: pelotech/drone-helm3
