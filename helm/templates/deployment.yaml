@@ -32,6 +32,32 @@ spec:
           ports:
             - name: http
               containerPort: 9090
+          env:
+            - name: DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: callistodev-rds
+                  key: db_name
+            - name: DATABASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: callistodev-rds
+                  key: username
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: callistodev-rds
+                  key: password
+            - name: DATABASE_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: callistodev-rds
+                  key: endpoint
+            - name: DATABASE_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: callistodev-rds
+                  key: port
       initContainers:
         - name: timecard-database
           image: {{ .Values.image.repo }}timecard-database:latest
