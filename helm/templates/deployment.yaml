@@ -20,8 +20,8 @@ spec:
         runAsGroup: 1001
       containers:
         - name: timecard-restapi
-          image: {{ .Values.image.repo }}{{ .Values.image.name }}:{{ .Values.image.version }}
-          imagePullPolicy: IfNotPresent
+          image: {{ .Values.image.repo }}timecard-restapi:latest
+          imagePullPolicy: Always
           resources:
             requests:
               memory: '512Mi'
@@ -32,3 +32,15 @@ spec:
           ports:
             - name: http
               containerPort: 9090
+          env: {{ toYaml .Values.env.database | nindent 12 }}
+      initContainers:
+        - name: timecard-database
+          image: {{ .Values.image.repo }}timecard-database:latest
+          imagePullPolicy: Always
+          env: {{ toYaml .Values.env.database | nindent 12 }}
+          args:
+            - "--url=jdbc:postgresql://$(DATABASE_ENDPOINT):$(DATABASE_PORT)/$(DATABASE_NAME)"
+            - "--username=$(DATABASE_USERNAME)"
+            - "--password=$(DATABASE_PASSWORD)"
+            - "--changeLogFile=changelog/db.changelog-main.yml"
+            - "update"

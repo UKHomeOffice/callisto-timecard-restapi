@@ -44,9 +44,15 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.4.1</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
 			<groupId>uk.gov.homeoffice.digital.sas</groupId>
 			<artifactId>jparest</artifactId>
-			<version>0.0.0</version>
+			<version>0.0.1</version>
 		</dependency>
 	</dependencies>
 
@@ -77,6 +83,5 @@
 		</plugins>
 		<finalName>timecard-api</finalName>
 	</build>
-	
 
 </project>

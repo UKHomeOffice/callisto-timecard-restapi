@@ -26,18 +26,45 @@ steps:
         - push
         - pull_request
 
-  - name: build_image
+  - name: build_tag_push_ecr
     pull: if-not-exists
-    image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/dind
+    image: plugins/ecr
     environment:
-      DOCKER_HOST: tcp://docker:2375
-    commands:
-    # wait for docker service to be up before running docker build
-    - n=0; while [ "$n" -lt 60 ] && [ ! "$(docker stats --no-stream)" ]; do n=$(( n + 1 )); sleep 1; done
-    - docker build -t callisto-timecard-restapi:latest .
+      AWS_REGION: eu-west-2
+    settings:
+      access_key:
+        from_secret: ecr_timecard_restapi_access_key_id
+      secret_key:
+        from_secret: ecr_timecard_restapi_secret_access_key
+      repo: callisto/timecard-restapi
+      registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
+      tags:
+      - latest
     when:
       event:
-      - push
+        - push
+      branch:
+        - main
+
+---
+kind: pipeline
+type: kubernetes
+name: callisto-timecard-database-schema
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+  - name: lint_dockerfile
+    pull: if-not-exists
+    image: hadolint/hadolint:latest-alpine
+    commands:
+      - hadolint db/Dockerfile
+    when:
+      event:
+        - push
+        - pull_request
 
   - name: build_tag_push_ecr
     pull: if-not-exists
@@ -46,22 +73,20 @@ steps:
       AWS_REGION: eu-west-2
     settings:
       access_key:
-        from_secret: aws_access_key_id
+        from_secret: ecr_timecard_database_access_key_id
       secret_key:
-        from_secret: aws_secret_access_key
-      repo: callisto/timecard-restapi
+        from_secret: ecr_timecard_database_secret_access_key
+      repo: callisto/timecard-database
+      dockerfile: db/Dockerfile
+      context: db
       registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
       tags:
-      - latest
+        - latest
     when:
+      event:
+        - push
       branch:
         - main
-
-services:
-  - name: docker
-    image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/dind
-    environment:
-      DOCKER_TLS_CERTDIR: ""
 
 ---
 kind: pipeline
@@ -74,6 +99,7 @@ platform:
 
 depends_on:
   - callisto-timecard-restapi
+  - callisto-timecard-database-schema
 
 trigger:
   status: success
