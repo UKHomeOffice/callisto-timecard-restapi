@@ -47,7 +47,6 @@ steps:
         - main
 
 ---
-
 kind: pipeline
 type: kubernetes
 name: callisto-timecard-database-schema
@@ -57,7 +56,6 @@ platform:
   arch: amd64
 
 steps:
-
   - name: lint_dockerfile
     pull: if-not-exists
     image: hadolint/hadolint:latest-alpine
@@ -101,7 +99,7 @@ platform:
 
 depends_on:
   - callisto-timecard-restapi
-  - callisto-timecard-database
+  - callisto-timecard-database-schema
 
 trigger:
   status: success

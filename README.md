@@ -26,7 +26,7 @@ CREATE DATABASE callisto;
 
 ### Setting environment variables 
 
-Before running the database locally, you need to set your local environment variables eg.
+Before running the database locally, you need to set your local environment variables e.g.
 
 ```
 DATABASE_ENDPOINT=localhost
