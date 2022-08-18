@@ -32,7 +32,7 @@ spec:
           ports:
             - name: http
               containerPort: 9090
-          env: {{ .Values.env.database | toYaml | nindent 12 }}
+          env: {{ toYaml .Values.env.database | nindent 12 }}
       initContainers:
         - name: timecard-database
           image: {{ .Values.image.repo }}timecard-database:latest
