@@ -50,7 +50,7 @@ steps:
 
 kind: pipeline
 type: kubernetes
-name: callisto-timecard-database
+name: callisto-timecard-database-schema
 
 platform:
   os: linux
