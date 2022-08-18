@@ -33,7 +33,7 @@ spec:
             - name: http
               containerPort: 9090
           env: |
-{{ .Values.env.database | indent 12 }}
+{{ .Values.env.database | toYaml | indent 12 }}
       initContainers:
         - name: timecard-database
           image: {{ .Values.image.repo }}timecard-database:latest
