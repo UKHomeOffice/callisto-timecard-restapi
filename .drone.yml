@@ -40,9 +40,9 @@ steps:
       registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
       tags:
       - latest
-#    when:
-#      branch:
-#        - main
+    when:
+      branch:
+        - main
 
 ---
 
@@ -82,11 +82,11 @@ steps:
       registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
       tags:
         - latest
-#    when:
-#      event:
-#        - push
-#      branch:
-#        - main
+    when:
+      event:
+        - push
+      branch:
+        - main
 
 ---
 kind: pipeline
@@ -125,11 +125,11 @@ steps:
         from_secret: dev_kube_api_url
       kube_token:
         from_secret: dev_kube_token
-#    when:
-#      event:
-#        - push
-#      branch:
-#        - main
+    when:
+      event:
+        - push
+      branch:
+        - main
 
 ---
 kind: pipeline
