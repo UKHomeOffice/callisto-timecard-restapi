@@ -8,6 +8,9 @@ replicaCount: 1
 
 image:
   repo: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/
+  name:
+    restapi: timecard-restapi
+    database: timecard-database
 
 env:
   database:
