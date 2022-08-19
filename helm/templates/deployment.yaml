@@ -20,7 +20,7 @@ spec:
         runAsGroup: 1001
       containers:
         - name: timecard-restapi
-          image: {{ .Values.image.repo }}{{ .Values.image.name.restapi }}:{{ .Values.image.tag }}
+          image: {{ .Values.image.repo }}timecard-restapi:{{ .Values.image.tag }}
           imagePullPolicy: Always
           resources:
             requests:
@@ -35,7 +35,7 @@ spec:
           env: {{ toYaml .Values.env.database | nindent 12 }}
       initContainers:
         - name: timecard-database
-          image: {{ .Values.image.repo }}{{ .Values.image.name.database }}:{{ .Values.image.tag }}
+          image: {{ .Values.image.repo }}timecard-database:{{ .Values.image.tag }}
           imagePullPolicy: Always
           env: {{ toYaml .Values.env.database | nindent 12 }}
           args:

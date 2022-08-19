@@ -8,9 +8,6 @@ replicaCount: 1
 
 image:
   repo: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/
-  name:
-    restapi: timecard-restapi
-    database: timecard-database
   tag: latest # this value will be overridden by drone.yml
 
 env:
