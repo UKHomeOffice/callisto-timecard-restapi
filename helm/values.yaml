@@ -8,6 +8,7 @@ replicaCount: 1
 
 image:
   repo: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/
+  tag: latest # this value will be overridden by drone.yml
 
 env:
   database:
