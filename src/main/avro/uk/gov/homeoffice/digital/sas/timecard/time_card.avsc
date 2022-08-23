@@ -33,7 +33,7 @@
             "name": "time_entries", 
             "type": {
                 "type": ["array", "null"],
-                "items": "uk.gov.homeoffice.digital.sas.timecard.TimeEntry"
+                "items": "uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry"
             },
             "doc": "The TimeEntries for this TimeCard. They should all start on the same date as is stored in the timecard_date field"
         },
@@ -41,7 +41,7 @@
             "name": "notes", 
             "type": {
                 "type": ["array", "null"],
-                "items": "uk.gov.homeoffice.digital.sas.timecard.TimeEntry"
+                "items": "uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry"
             },
             "doc": "The TimeEntries for this TimeCard. They should all start on the same date as is stored in the timecard_date field"
         }

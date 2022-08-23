@@ -1,0 +1,18 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "002-create-timeEntry-and-timePeriodType-table",
+        "author": "Callisto Dev",
+        "changes": [
+          {
+            "sqlFile": {
+              "dbms": "postgresql",
+              "path": "sql/create-timeEntry-and-timePeriodType-table.sql"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
