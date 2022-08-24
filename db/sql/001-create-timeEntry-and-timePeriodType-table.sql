@@ -1,5 +1,7 @@
 
-CREATE TABLE timecard.time_period_type (
+CREATE SCHEMA IF NOT EXISTS timecard;
+
+CREATE TABLE IF NOT EXISTS timecard.time_period_type (
     id VARCHAR(36)  PRIMARY KEY,
     tenant_id VARCHAR(36) NOT NULL,
     name VARCHAR(50) NOT NULL
@@ -14,7 +16,7 @@ INSERT INTO timecard.time_period_type (id,tenant_id,"name") VALUES
 	 ('00000000-0000-0000-0000-000000000006','00000000-0000-0000-0000-000000000000','Training'),
 	 ('00000000-0000-0000-0000-000000000007','00000000-0000-0000-0000-000000000000','Overtime');
 
-CREATE TABLE timecard.time_entry (
+CREATE TABLE IF NOT EXISTS timecard.time_entry (
     id VARCHAR(36)  PRIMARY KEY,
     tenant_id VARCHAR(36) NOT NULL,
     version INT DEFAULT NULL,

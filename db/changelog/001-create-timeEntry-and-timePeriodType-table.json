@@ -8,7 +8,7 @@
           {
             "sqlFile": {
               "dbms": "postgresql",
-              "path": "sql/create-timeEntry-and-timePeriodType-table.sql"
+              "path": "sql/001-create-timeEntry-and-timePeriodType-table.sql"
             }
           }
         ]
