@@ -3,7 +3,7 @@
     {
       "changeSet": {
         "id": "002-create-timeEntry-and-timePeriodType-table",
-        "author": "Callisto Dev",
+        "author": "S Manga",
         "changes": [
           {
             "sqlFile": {

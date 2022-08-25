@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS timecard.time_entry (
     version INT DEFAULT NULL,
     owner_id INT NOT null,
     time_period_type_id VARCHAR(36) NOT NULL,
-    shift_type VARCHAR(15) DEFAULT NULL,
+    shift_type VARCHAR(50) DEFAULT NULL,
     actual_start_time TIMESTAMP NOT NULL,
     actual_end_time TIMESTAMP DEFAULT NULL,
     planned_start_time TIMESTAMP DEFAULT NULL,

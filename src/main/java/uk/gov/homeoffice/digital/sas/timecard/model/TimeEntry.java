@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.UpdateTimestamp;
 import uk.gov.homeoffice.digital.sas.jparest.annotation.Resource;
 import uk.gov.homeoffice.digital.sas.jparest.models.BaseEntity;
 
@@ -13,7 +15,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.UUID;
 
@@ -25,10 +31,12 @@ import java.util.UUID;
 @Setter
 public class TimeEntry extends BaseEntity {
 
+    @Column(name = "version")
+    @Min(value = 1, message = "Version value must be greater than or equal to {value}")
     private int version;
 
-    @NotNull
     @Column(name = "owner_id")
+    @Min( value = 1, message = "Owner id's value must be greater than or equal to {value}")
     private int ownerId;
 
     @Type(type="uuid-char")
@@ -41,9 +49,10 @@ public class TimeEntry extends BaseEntity {
     private TimePeriodType timePeriodType;
 
     @Column(name = "shift_type")
+    @Size(max = 50, message = "Shift type must be less than or equal to {max}")
     private String shiftType;
 
-    @NotNull
+    @NotNull(message = "Actual start time should not be empty")
     @Column(name = "actual_start_time")
     private Date actualStartTime;
 
@@ -56,15 +65,21 @@ public class TimeEntry extends BaseEntity {
     @Column(name = "planned_end_time")
     private Date plannedEndTime;
 
-    @NotNull
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
+    @JsonIgnore
     private Date createdAt;
 
-    @NotNull
+
     @Column(name = "updated_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
+    @JsonIgnore
     private Date updatedAt;
 
     @Column(name = "deleted")
+    @JsonIgnore
     private boolean deleted;
 
 }
