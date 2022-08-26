@@ -2,7 +2,7 @@
   "databaseChangeLog": [
     {
       "changeSet": {
-        "id": "002-create-timeEntry-and-timePeriodType-table",
+        "id": "001-create-timeEntry-and-timePeriodType-table",
         "author": "S Manga",
         "changes": [
           {
