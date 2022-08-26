@@ -19,16 +19,12 @@ INSERT INTO timecard.time_period_type (id,tenant_id,"name") VALUES
 CREATE TABLE IF NOT EXISTS timecard.time_entry (
     id VARCHAR(36)  PRIMARY KEY,
     tenant_id VARCHAR(36) NOT NULL,
-    version INT DEFAULT NULL,
     owner_id INT NOT null,
     time_period_type_id VARCHAR(36) NOT NULL,
     shift_type VARCHAR(50) DEFAULT NULL,
     actual_start_time TIMESTAMP NOT NULL,
     actual_end_time TIMESTAMP DEFAULT NULL,
-    planned_start_time TIMESTAMP DEFAULT NULL,
-    planned_end_time TIMESTAMP DEFAULT NULL,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
-    deleted BOOLEAN DEFAULT NULL,
     FOREIGN KEY (time_period_type_id) REFERENCES timecard.time_period_type (id)
 );

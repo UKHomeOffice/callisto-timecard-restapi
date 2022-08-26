@@ -15,11 +15,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -30,10 +29,6 @@ import java.util.UUID;
 @Getter
 @Setter
 public class TimeEntry extends BaseEntity {
-
-    @Column(name = "version")
-    @Min(value = 1, message = "Version value must be greater than or equal to {value}")
-    private int version;
 
     @Column(name = "owner_id")
     @Min( value = 1, message = "Owner id's value must be greater than or equal to {value}")
@@ -59,27 +54,14 @@ public class TimeEntry extends BaseEntity {
     @Column(name = "actual_end_time")
     private Date actualEndTime;
 
-    @Column(name = "planned_start_time")
-    private Date plannedStartTime;
-
-    @Column(name = "planned_end_time")
-    private Date plannedEndTime;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at", columnDefinition = "TIMESTAMP", nullable = false, updatable = false)
     @CreationTimestamp
     @JsonIgnore
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
-
-    @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated_at", columnDefinition = "TIMESTAMP")
     @UpdateTimestamp
     @JsonIgnore
-    private Date updatedAt;
-
-    @Column(name = "deleted")
-    @JsonIgnore
-    private boolean deleted;
+    private LocalDateTime updatedAt;
 
 }
