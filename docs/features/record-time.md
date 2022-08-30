@@ -1,5 +1,3 @@
-
-
 # Record time
 
 This high-level design is intended to cover the Record Time Feature which includes the user stories listed below. It seeks to:
@@ -10,7 +8,7 @@ This high-level design is intended to cover the Record Time Feature which includ
 
 The Record Time [feature definition](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-925) (access required) in Jira details the user stories that make up the feature. The user stories contain more detailed requirement around business rules and validation logic. The intention is that this document should be used as a guide when designing and implementing and testing against a given story from the record time feature
 
-To understand the proposed high-level design, it is instructive to consider both the definition of the [containers](../../index.md) used to perform the key actions and the appropriate parts of the [payload model](../../payload.md) specifically [TimeEntry](../../payload.md#timeentry).
+To understand the proposed high-level design, it is instructive to consider both the definition of the [containers](./../index.md) used to perform the key actions and the appropriate parts of the [payload model](./../payload.md) specifically [TimeEntry](./../payload.md#timeentry).
 
 ## Flows
 
@@ -19,7 +17,7 @@ The key flows required to implement the feature tickets are described at a high 
 There are three top level flows that make up record time - 
 
 - Create a new TimeEntry
-- Modifiy an existing TimeEntry
+- Modify an existing TimeEntry
 - Remove an existing TimeEntry
 
 When an end user wants to record time worked then the starting point will be to choose a date and check whether there are any existing `TimeEntry` instances that should be updated to record the time that the user wants to enter.
@@ -33,39 +31,38 @@ end user to choose to modify an existing `TimeEntry` or create a new `TimeEntry`
 If the response code indicates that `TimeEntry` resources were [not found](https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/restful-endpoint.md#handle-errors-gracefully-and-return-standard-error-codes) then effectively the end user is trying to delete something that does not exist therefore it is up to the client about how best to inform the user that their requested action cannot be completed
 
 ### Handling version conflicts
-When updating a `TimeEntry` (modify or remove) care must be taken to avoid overwritting changes. See [considerations](#considerations) for more detail on dealing with version conflicts
+When updating a `TimeEntry` (modify or remove) care must be taken to avoid overwriting changes. See [considerations](#considerations) for more detail on dealing with version conflicts
 
 ### Date or Time entry
-The `timePeriodType` property on a [`TimeEntry`](../../payload.md#time-entry) governs how granular the time entered by the user needs to be. Some kinds of `TimePeriodType` require the user to enter a period explicity down to the date, hour and minute. Others only require the user to enter a single date. On this basis the client must be capable of using the TimeEntryPeriod to determine what data entry fields to present the user with and then hook up the value(s) entered by the user to a `TimeEntry` instance. More information can be found in [considerations](#considerations).
+The `timePeriodType` property on a [`TimeEntry`](./../payload.md#time-entry) governs how granular the time entered by the user needs to be. Some kinds of `TimePeriodType` require the user to enter a period explicitly down to the date, hour and minute. Others only require the user to enter a single date. On this basis the client must be capable of using the TimeEntryPeriod to determine what data entry fields to present the user with and then hook up the value(s) entered by the user to a `TimeEntry` instance. More information can be found in [considerations](#considerations).
 
 ### Create new Timeentry
-![](../../images/recordTimeCreateTimeEntry.png)
+![](./../images/recordTimeCreateTimeEntry.png)
 
 #### Container commands
-- [TimeCard.find TimeEntry by date(timeentryDate, ownerId, tenantId)](../../commands.md#get-timeentry-by-date) - used to retrieve `TimeEntry` instances. 
-- [TimeCard.create timeentry(timeEntry, tenantId)](../../commands.md#create-timeentry) - used to create a new `TimeEntry`
-- [TimeCard.getTimePeriodType(tenantId, personId)](../../commands.md#get-timeperiodtype) - retrieves list of TimePeriodTypes and ValueType
+- [TimeCard.find TimeEntry by date(timeentryDate, ownerId, tenantId)](../commands.md#get-timeentry-by-date) - used to retrieve `TimeEntry` instances. 
+- [TimeCard.create timeentry(timeEntry, tenantId)](../commands.md#create-timeentry) - used to create a new `TimeEntry`
+- [TimeCard.getTimePeriodType(tenantId, personId)](../commands.md#get-timeperiodtype) - retrieves list of TimePeriodTypes and ValueType
 
 ### Modify existing Timeentry
-![](../../images/recordTimeModifyTimeEntry.png)
+![](./../images/recordTimeModifyTimeEntry.png)
 
 #### Container commands
-- [TimeCard.find TimeEntry by date(timeentryDate, ownerId, tenantId)](../../commands.md#get-timeentry-by-date) - used to retrieve `TimeEntry` instances. 
-- [TimeCard.modify timeentry(timeEntry, tenantId)](../../commands.md#modify-timeentry) - used to modify an existing `TimeEntry`
+- [TimeCard.find TimeEntry by date(timeentryDate, ownerId, tenantId)](../commands.md#get-timeentry-by-date) - used to retrieve `TimeEntry` instances. 
+- [TimeCard.modify timeentry(timeEntry, tenantId)](../commands.md#modify-timeentry) - used to modify an existing `TimeEntry`
 
 ### Remove existing Timeentry
-![](../../images/recordTimeRemoveTimeEntry.png)
+![](./../images/recordTimeRemoveTimeEntry.png)
 
 #### Container commands
-- [TimeCard.find TimeEntry by date(timeentryDate, ownerId, tenantId)](../../commands.md#get-timeentry-by-date) - used to retrieve `TimeEntry` instances. 
-- [TimeCard.remove timeentry(timeEntry, tenantId)](../../commands.md#remove-timeentry) - used to remove an existing `TimeEntry`
+- [TimeCard.find TimeEntry by date(timeentryDate, ownerId, tenantId)](../commands.md#get-timeentry-by-date) - used to retrieve `TimeEntry` instances. 
+- [TimeCard.remove timeentry(timeEntry, tenantId)](../commands.md#remove-timeentry) - used to remove an existing `TimeEntry`
 
 ## Payload model
 
-This section describes which parts of the TimeCard container's payload model are relevant when an end user wants to record their time. More information can be found in the [payload model definition](../../payload.md). The key resource for the record time feature is the [TimeEntry](../../payload.md#timeentry).
+This section describes which parts of the TimeCard container's payload model are relevant when an end user wants to record their time. More information can be found in the [payload model definition](./../payload.md). The key resource for the record time feature is the [TimeEntry](./../payload.md#timeentry).
 
-![payload-model](../../images/payload-model.png)
-
+![payload-model](./../images/payload-model.png)
 
 ## Considerations
 
@@ -78,7 +75,7 @@ This section describes which parts of the TimeCard container's payload model are
 ## Out of scope
 
 ### Business rules
-It is ancitpated that business rule validation they will be dealt with at the component level
+It is anticipated that business rule validation they will be dealt with at the component level
 
 ### Events
 There will be a number of events that should be generated as part of recoding time. Note that at the time of writing (02 Aug 2022) more work is required to define what triggers these events are and what they contain. It is likely that they will not be elaborated until they are consumed as part of other features
