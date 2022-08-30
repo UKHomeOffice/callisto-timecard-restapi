@@ -1,0 +1,5 @@
+apiVersion: v2
+name: callisto-timecard-restapi
+description: A Helm chart for deploying Callisto Timecard REST api
+type: application
+version: 1.0.0

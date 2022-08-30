@@ -1,0 +1,18 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "001-create-timeEntry-and-timePeriodType-table",
+        "author": "S Manga",
+        "changes": [
+          {
+            "sqlFile": {
+              "dbms": "postgresql",
+              "path": "sql/001-create-timeEntry-and-timePeriodType-table.sql"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
