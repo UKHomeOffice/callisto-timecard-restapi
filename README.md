@@ -2,6 +2,10 @@
 
 ## Running locally
 
+### Authenticate with the Home Office private Maven repository (Artifactory)
+
+In order to retrieve private Maven packages, you’ll need to [configure authentication for Artifactory](https://collaboration.homeoffice.gov.uk/display/EAHW/Artifactory).
+
 ### Create database
 
 If you need to create your own postgres database you can use docker. This works well if you create a container and name it, then you can stop and start it as you please
