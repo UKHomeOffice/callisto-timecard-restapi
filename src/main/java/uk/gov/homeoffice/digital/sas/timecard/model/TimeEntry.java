@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.format.annotation.DateTimeFormat;
 import uk.gov.homeoffice.digital.sas.jparest.annotation.Resource;
 import uk.gov.homeoffice.digital.sas.jparest.models.BaseEntity;
 
@@ -48,10 +49,12 @@ public class TimeEntry extends BaseEntity {
     private String shiftType;
 
     @NotNull(message = "Actual start time should not be empty")
-    @Column(name = "actual_start_time")
+    @Column(name = "actual_start_time", columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Date actualStartTime;
 
-    @Column(name = "actual_end_time")
+    @Column(name = "actual_end_time", columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Date actualEndTime;
 
     @Column(name = "created_at", columnDefinition = "TIMESTAMP", nullable = false, updatable = false)

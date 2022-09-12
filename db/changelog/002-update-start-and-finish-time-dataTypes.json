@@ -1,0 +1,18 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "002-update-start-and-finish-time-dataTypes",
+        "author": "Daleel R",
+        "changes": [
+          {
+            "sqlFile": {
+              "dbms": "postgresql",
+              "path": "sql/002-update-start-and-finish-time-dataTypes.sql"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
