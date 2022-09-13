@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
-@Resource(path = "time-entry")
+@Resource(path = "time-entries")
 @Entity(name = "time_entry")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @NoArgsConstructor
