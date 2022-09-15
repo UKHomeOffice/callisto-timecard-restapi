@@ -1,0 +1,121 @@
+workspace {
+
+    model {
+		enterprise "Home Office" {
+			user = person "User" "" "User"
+			manager = person "Manager" "" "Manager"
+			scheduler = person "Scheduler" "" "Scheduler"
+			admin = person "Admin" "" "Admin"
+			person = person "Person" "" "Person"
+
+			timecardSystem = softwaresystem "TimeCard service" "Allows users to record thier worked time and view their planned time. Managers can view team members worked and planned time." {
+				teamEventsProducer = container "Team Events Producer" "Provides a stream of events detailing team data"
+				personOnboardingService = container "Person Onboarding Service" "Provides a means to ingest Person data from external sources into Callisto to build up a Callisto representation of a Person"
+				singlePageApplication = container "Single-Page Application" "Provides all of the Time card functionality to customers via their web browser." "React" "Web Browser"
+				scheduledEventsProducer = container "Scheduled Events Producer" "Provides a stream of events detailing scheduling data"
+				personEventsProducer = container "Person Events Producer" "Provides a stream of events detailing person data"
+				accrualsService = container "Accrual Service" "A consumer of TimeEntry events which it uses to update accrual balance data"
+				timecardService = container "TimeCard Service" "Provides timecard functionality via RESTful API and Event stream" "Java and SpringBoot" 
+				database = container "Database" "Stores TimeEntry, Note, FlexChange, FlexChangeNote and Audit entities" "PostgreSQL" "Database"			
+			}
+		}
+		
+		# relationships between people and software systems
+        user -> timecardSystem "records worked time, views planned time and makes flex changes using"
+		manager -> timecardSystem "views team members worked time, views planned time and makes flex changes using"
+		
+        # relationships to/from containers
+        user -> singlePageApplication "records worked time, views planned time and makes flex changes using"
+		manager -> singlePageApplication "views team members worked time, views planned time and makes flex changes using"
+        singlePageApplication -> timecardService "reads and writes TimeEntry, Note, FlexChange, FlexChangeNote. Reads TimePeriodType" "
+        scheduler -> scheduledEventsProducer "publishes ScheduledEntry using"
+        scheduledEventsProducer -> timecardService "publishes ScheduledEntry events"
+        personEventsProducer -> timecardService "publishes Person events"
+        timecardService -> accrualsService "publishes TimeEntry events"
+        timecardService -> database "uses"
+        scheduler -> accrualsService "uses accrual balances to feed into rostering decisions"
+        admin -> timecardService "reads and writes TimePeriodType"
+        person -> personEventsProducer "publishes Person using"
+        manager -> personEventsProducer "publishes Person using"
+        personOnboardingService -> personEventsProducer "publishes Person using"
+        personEventsProducer -> timecardService "publishes Person events"
+        manager -> teamEventsProducer "publishes Team using"
+        teamEventsProducer -> timecardService "publishes Team events"
+
+        
+    }
+
+    views {
+	
+	    container timecardSystem "Containers" {
+            include *
+            autoLayout
+        }	
+		
+		dynamic timecardSystem "recordTimeCreateTimeEntry" "Creates a new TimeEntry " {
+	        user -> singlePageApplication "navigates to enter new time entry"
+			singlePageApplication -> timecardService "get TimePeriodType"
+			timecardService -> singlePageApplication "return TimePeriodType set"
+			singlePageApplication -> user "display TimePeriodType set"
+			user -> singlePageApplication "selects TimePeriodType"
+			singlePageApplication -> user "display time or date entry field(s)"
+			user -> singlePageApplication "enters time or date"
+			singlePageApplication -> timecardService "create TimeEntry"
+			timecardService -> singlePageApplication "return success or failure"
+			singlePageApplication -> user "display success or failure"
+            autoLayout
+        }
+        
+		dynamic timecardSystem "recordTimeModifyTimeEntry" "Modifies an existing TimeEntry " {
+			user -> singlePageApplication "navigates to record time"
+            singlePageApplication -> timecardService "find TimeEntry by date"
+			timecardService -> singlePageApplication "return TimeEntry set"
+	        singlePageApplication -> user "display TimeEntry set"
+	        user -> singlePageApplication "choose TimeEntry and navigates to modify time entry"
+			singlePageApplication -> user "display TimeEntry""
+			user -> singlePageApplication "changes time or date"
+			singlePageApplication -> timecardService "modify TimeEntry"
+			timecardService -> singlePageApplication "return success or failure"
+			singlePageApplication -> user "display success or failure"
+            autoLayout
+        }
+        
+		dynamic timecardSystem "recordTimeRemoveTimeEntry" "Removes an existing TimeEntry " {
+			user -> singlePageApplication "navigates to record time"
+            singlePageApplication -> timecardService "find TimeEntry by date"
+			timecardService -> singlePageApplication "return TimeEntry set"
+	        singlePageApplication -> user "display TimeEntry set"
+	        user -> singlePageApplication "choose TimeEntry and navigates to remove time entry"
+			singlePageApplication -> user "display TimeEntry""
+			user -> singlePageApplication "chooses to delete TimeEntry"
+			singlePageApplication -> timecardService "remove TimeEntry"
+			timecardService -> singlePageApplication "return success or failure"
+			singlePageApplication -> user "display success or failure"
+            autoLayout
+        }        
+        
+        styles {
+            element "Person" {
+                color #ffffff
+                fontSize 22
+                shape Person
+                background #08427b
+            }
+            element "Software System" {
+                background #1168bd
+                color #ffffff
+            }			
+            element "Container" {
+                background #438dd5
+                color #ffffff
+            }
+            element "Database" {
+                shape Cylinder
+            }
+            element "Component" {
+                background #85bbf0
+                color #000000
+            }			
+        } 
+    }
+}
