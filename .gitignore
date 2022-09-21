@@ -2,3 +2,4 @@
 target
 
 liquibase.properties
+docs/payload-model.puml

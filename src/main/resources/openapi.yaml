@@ -6,13 +6,13 @@ info:
 paths: {}
 components:
   schemas:
-    Note:
+    DayNote:
       type: object
       description: A note is used to carry arbitrary textual information about a date. Notes are immutable.
       required: 
         - content
         - date
-        - author
+        - authorId
       properties:
         content:
           description: Holds the note's text
@@ -86,3 +86,48 @@ components:
             description: The type of time entry (e.g. a shift, a standard rest day)
             allOf:
               - $ref: '#/components/schemas/TimePeriodType'
+    FlexChangeType:
+      type: object
+      description: The type of flexible change. The type drives business rules that govern how much notice the shift worker must have been given. In addition certain types of FlexChange cannot be combined on the same TimeEntry 
+      required:
+            - name
+            - valueType
+      properties:
+        flexChangeTypeId: 
+          description: the identifier for this FlexChangeType
+          type: number
+        name:
+          description: the display name of this FlexChangeType
+          type: string
+    FlexChange:
+      type: object
+      description: A FlexChange is used to carry details of an alteration to a planned shift. For a FlexChange to be created there are business rules governing how far in advance of the shift the alteration was made
+      required: 
+        - flexChangeType
+        - authorisedBy
+        - authorId
+        - timeEntryId
+        - timeEntryVersion
+      properties:
+        flexChangeType:
+          description: Holds the note's text
+          $ref: '#/components/schemas/FlexChangeType'
+        authorisedBy:
+          description: free text field holding the name of the person who authorised the creation of the flexible change. Authorisation is handled outside of Callisto
+          type: string
+        note:
+           description: hold arbitrary information about the flexible change
+           type: string
+        createdAt:
+          description: Assigned by the TimeCard container when the FlexChange is persisted
+          type: string
+          format: date-time
+        authorId:
+            description: The id of the Person who created the FlexChange
+            type: number 
+        timeEntryId:
+            description: The id of the TimeEntry associated with the FlexChange
+            type: number  
+        timeEntryVersion:
+            description: The version of the TimeEntry associated with the FlexChange
+            type: number              

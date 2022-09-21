@@ -92,6 +92,40 @@ workspace {
 			timecardService -> singlePageApplication "return success or failure"
 			singlePageApplication -> user "display success or failure"
             autoLayout
+        }  
+        
+		dynamic timecardSystem "recordFlexChangeCreateFlexChange" "Creates a new FlexChange " {
+            user -> singlePageApplication "navigates to record time"
+            singlePageApplication -> timecardService "find TimeEntry by date"
+			timecardService -> singlePageApplication "return TimeEntry set"
+	        singlePageApplication -> user "display TimeEntry set"
+	        user -> singlePageApplication "choose TimeEntry and navigates to to modify time entry"	
+			singlePageApplication -> user "display TimeEntry and option to create flexible change"
+			user -> singlePageApplication "changes time or date"	        
+	        user -> singlePageApplication "selects option to create flexible change"
+	        singlePageApplication -> user "display flexible change data entry fields"
+	        user -> singlePageApplication "enters flexible change data"
+            singlePageApplication -> timecardService "create FlexChange"
+			timecardService -> singlePageApplication "return success or failure"
+			singlePageApplication -> user "display success or failure"	        
+            autoLayout
+        } 
+        
+		dynamic timecardSystem "recordFlexChangeCreateCompleteChangeFlexChange" "Creates a new FlexChange " {
+            user -> singlePageApplication "navigates to enter new time entry"
+			singlePageApplication -> timecardService "get TimePeriodType"
+			timecardService -> singlePageApplication "return TimePeriodType set"
+			singlePageApplication -> user "display TimePeriodType set"
+			user -> singlePageApplication "selects TimePeriodType"
+			singlePageApplication -> user "display time entry field(s) and option to create flexible change"
+			user -> singlePageApplication "enters time"	        
+	        user -> singlePageApplication "selects option to create flexible change"
+	        singlePageApplication -> user "display flexible change data entry fields"
+	        user -> singlePageApplication "enters flexible change data"
+            singlePageApplication -> timecardService "create FlexChange"
+			timecardService -> singlePageApplication "return success or failure"
+			singlePageApplication -> user "display success or failure"
+            autoLayout
         }        
         
         styles {
