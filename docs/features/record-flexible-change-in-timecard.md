@@ -10,7 +10,7 @@ This high-level design is intended to cover the Record Flexible Change In Timeca
 
 The Record Flexible Change In Timecard [feature definition](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-896) (access required) in Jira details the user stories that make up the feature. The user stories contain more detailed requirement around business rules and validation logic. The intention is that this document should be used as a guide when designing and implementing and testing against a given story from the Record Flexible Change In Timecard feature
 
-To understand the proposed high-level design, it is instructive to consider both the definition of the [containers](./../index.md) used to perform the key actions and the appropriate parts of the [payload model](./../payload.md) specifically [TimeEntry](./../payload.md#flexchange and [FlexChange] (./../payload.md#timeentry).
+To understand the proposed high-level design, it is instructive to consider both the definition of the [containers](./../index.md) used to perform the key actions and the appropriate parts of the [payload model](./../payload.md) specifically [TimeEntry](./../payload.md#flexchange) and [FlexChange] (./../payload.md#timeentry).
 
 ## Flows
 
@@ -33,9 +33,11 @@ From there the user will modify the time recorded on the `TimeEntry`. The change
 In all cases the action of creation a flex change requires the modification of multiple resources. In order to keep the Time Card container's data consistent the changes must be atomic such that if a change to one resource fails all related changes are rolled back or are not attempted.
 
 ### Create FlexChange
+
+#### Extended, Altered or Curtailed
+
 ![recordFlexChangeCreateFlexChange.png](./../images/recordFlexChangeCreateFlexChange.png)
 
-#### Extended, Altered, Curtailed
 1. Having got a set of candidate `TimeEntry` instances from the Time Card container's RESTful API the user interface allows the user to select the `TimeEntry` which they want to create a `FlexChange` against.
 2. The user must first modify the `TimeEntry` to update the client's in memory representation of the `TimeEntry.actualStartTime`and/or the `TimeEntry.actualEndTime` values
 3. The user then selects that they wish to create a `FlexChange` and they supply the required data (see the [FlexChange](./../payload.md#flexchange) payload model)
