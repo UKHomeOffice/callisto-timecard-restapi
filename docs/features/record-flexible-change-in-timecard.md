@@ -98,6 +98,7 @@ This section describes which parts of the TimeCard container's payload model are
 ## Considerations
 
 1. The persistence of a FlexChange touches multiple entities in the TimeCard container's data store. The changes must be atomic
+2. The `add FlexChange` command does two things - it creates a `FlexChange` and it creates or modifies a `TimeEntry`. When this command gets implemented as a RESTful endpoint it may not belong under the resources/ path. This command is more of an process command as opposed to a resource command. More reading on this topic here - [Process driven REST API design](https://hackernoon.com/process-driven-rest-api-design-75ca88917582)
 
 ## Out of scope
 
