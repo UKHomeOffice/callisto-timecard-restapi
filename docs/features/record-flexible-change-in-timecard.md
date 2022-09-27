@@ -82,7 +82,7 @@ When updating a `TimeEntry` care must be taken to avoid overwriting changes. See
 
 ### Container commands
 - [TimeCard.find TimeEntry by date(timeentryDate, ownerId, tenantId)](../commands.md#get-timeentry-by-date) - used to retrieve `TimeEntry` instances. 
-- [TimeCard.create flexchange(flexChange, tenantId, )](../commands.md#add-flexchange) - used to create a new `FlexChange`
+- [TimeCard.add flexchange(flexChange, tenantId)](../commands.md#add-flexchange) - used to create a new `FlexChange`
 - [TimeCard.getTimePeriodType(tenantId, personId)](../commands.md#get-timeperiodtype) - retrieves list of TimePeriodTypes and ValueType
 - [TimeCard.remove timeentry(timeEntry, tenantId)](../commands.md#remove-timeentry) - used to remove an existing `TimeEntry`
 
