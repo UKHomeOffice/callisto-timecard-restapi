@@ -10,13 +10,13 @@ This high-level design is intended to cover the Record Flexible Change In Timeca
 
 The Record Flexible Change In Timecard [feature definition](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-896) (access required) in Jira details the user stories that make up the feature. The user stories contain more detailed requirement around business rules and validation logic. The intention is that this document should be used as a guide when designing and implementing and testing against a given story from the Record Flexible Change In Timecard feature
 
-To understand the proposed high-level design, it is instructive to consider both the definition of the [containers](./../index.md) used to perform the key actions and the appropriate parts of the [payload model](./../payload.md) specifically [TimeEntry](./../payload.md#flexchange) and [FlexChange] (./../payload.md#timeentry).
+To understand the proposed high-level design, it is instructive to consider both the definition of the [containers](./../index.md) used to perform the key actions and the appropriate parts of the [payload model](./../payload.md) specifically [TimeEntry](./../payload.md#flexchange) and [FlexChange](./../payload.md#timeentry).
 
 ## Flows
 
 The key flows required to implement the feature tickets are described at a high level below. The sequence diagrams describe which TimeCard container commands need to be invoked and in what order so that an end user is able to record a flexible change.
 
-Note that a FlexChange is immutable, it cannot be edited or removed. If the FlexChange is no longer relevant or was entered erroneously then the Accurals credits and adjustments functionality (at the time of writing 20 Sep 2022 the C&A requirements are not defined) will be used to reverse the effects on the owner's Accrual balance of creating the flexible change.
+Note that a FlexChange is immutable, it cannot be edited or removed. If the FlexChange is no longer relevant or was entered erroneously then the Accruals credits and adjustments functionality (at the time of writing 20 Sep 2022 the C&A requirements are not defined) will be used to reverse the effects on the owner's Accrual balance of creating the flexible change.
 
 When an end user wants to record a flexible change the starting point will be to choose a date and search for all of the existing `TimeEntry` instances that overlap with that date (i.e. start or end on the given date).
 
