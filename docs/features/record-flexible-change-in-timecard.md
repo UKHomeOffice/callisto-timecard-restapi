@@ -10,7 +10,7 @@ This high-level design is intended to cover the Record Flexible Change In Timeca
 
 The Record Flexible Change In Timecard [feature definition](https://collaboration.homeoffice.gov.uk/jira/browse/EAHW-896) (access required) in Jira details the user stories that make up the feature. The user stories contain more detailed requirement around business rules and validation logic. The intention is that this document should be used as a guide when designing and implementing and testing against a given story from the Record Flexible Change In Timecard feature
 
-To understand the proposed high-level design, it is instructive to consider both the definition of the [containers](./../index.md) used to perform the key actions and the appropriate parts of the [payload model](./../payload.md) specifically [TimeEntry](./../payload.md#flexchange) and [FlexChange](./../payload.md#timeentry).
+To understand the proposed high-level design, it is instructive to consider both the definition of the [containers](./../index.md) used to perform the key actions and the appropriate parts of the [payload model](./../payload.md) specifically [FlexChange](./../payload.md#flexchange) and [TimeEntry](./../payload.md#timeentry).
 
 ## Flows
 
