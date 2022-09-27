@@ -40,7 +40,9 @@ In all cases the action of creation a flex change requires the modification of m
 2. The user must first modify the `TimeEntry` to update the client's in memory representation of the `TimeEntry.actualStartTime`and/or the `TimeEntry.actualEndTime` values
 3. The user then selects that they wish to create a `FlexChange` and they supply the required data (see the [FlexChange](./../payload.md#flexchange) payload model)
 4. The client creates an in memory `FlexChange` instance holding the flexible change data that the user supplied. In addition the `FlexChange` contains the `TimeEntry` that is to be updated
-5. The user then completes the recording of the flexible change by choosing to save using the [`add FlexChange`](./../commands.md#add-flexchange) command 
+5. The user then completes the recording of the flexible change by choosing to save using the [`add FlexChange`](./../commands.md#add-flexchange) command
+
+**Note** that the creation of a FlexChange also modifies or creates a TimeEntry. See [considerations](#considerations) for more detail.
 
 #### Complete change
 Conceptually a complete change occurs when one moves a planned shift from one day to a different day where the person was planned to be absent.
@@ -58,6 +60,8 @@ This functionality relies on the [remove existing-timeentry](./record-time.md#re
 Note that the creation of a new `TimeEntry` and an associated new `FlexChange` are both created with the call to the  [`add FlexChange`](./../commands.md#add-flexchange) command. The client must create a `FlexChange` instance which will contain the new `TimeEntry` that is to be created.
 
 ![recordFlexChangeCreateCompleteChangeFlexChange.png](./../images/recordFlexChangeCreateCompleteChangeFlexChange.png)
+
+**Note** that the creation of a FlexChange also modifies or creates a TimeEntry. See [considerations](#considerations) for more detail.
 
 ##### Remove the `TimeEntry` detailing the shift that is now redundant
 Finally the user can tidy up the dangling `TimeEntry` that has been now been replaced. Technically the user does not have to complete this step but failure to do so will leave TimeCard in an inconsistent state and therefore any other containers that rely on its data may also be in an inconsistent state.
