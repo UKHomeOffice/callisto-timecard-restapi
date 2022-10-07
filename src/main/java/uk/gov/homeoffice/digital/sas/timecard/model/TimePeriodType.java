@@ -10,7 +10,7 @@ import uk.gov.homeoffice.digital.sas.jparest.models.BaseEntity;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotEmpty;
 
-@Resource(path = "time-period-type")
+@Resource(path = "time-period-types")
 @Entity(name = "time_period_type")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @NoArgsConstructor

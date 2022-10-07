@@ -2,13 +2,13 @@
   "databaseChangeLog": [
     {
       "changeSet": {
-        "id": "1.0.0-create-schema-and-moo-table",
-        "author": "Joanna Fawl",
+        "id": "002-update-start-and-finish-time-dataTypes",
+        "author": "Daleel R",
         "changes": [
           {
             "sqlFile": {
               "dbms": "postgresql",
-              "path": "sql/create-schema-and-moo-table.sql"
+              "path": "sql/002-update-start-and-finish-time-dataTypes.sql"
             }
           }
         ]
