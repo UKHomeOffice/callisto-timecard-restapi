@@ -1,0 +1,11 @@
+{
+  "namespace": "uk.gov.homeoffice.digital.sas.timecard.model",
+  "type": "record",
+  "name": "TimeEntryAvro",
+  "fields": [
+    {"name": "id", "type": "long"
+    },
+    {"name": "startTime", "type": ["string", "null"]},
+    {"name": "endTime", "type": ["string", "null"]}
+  ]
+}

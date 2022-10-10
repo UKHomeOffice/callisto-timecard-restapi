@@ -11,11 +11,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 import uk.gov.homeoffice.digital.sas.jparest.annotation.Resource;
 import uk.gov.homeoffice.digital.sas.jparest.models.BaseEntity;
+import uk.gov.homeoffice.digital.sas.timecard.Listeners.TimeEntryListener;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -26,6 +24,7 @@ import java.util.UUID;
 @Resource(path = "time-entries")
 @Entity(name = "time_entry")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@EntityListeners(TimeEntryListener.class)
 @NoArgsConstructor
 @Getter
 @Setter
