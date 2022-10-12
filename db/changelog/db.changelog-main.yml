@@ -1,7 +1,5 @@
 databaseChangeLog:
   - include:
-      file: changelog/1.0.0-create-schema-and-moo-table.json
-  - include:
       file: changelog/001-create-timeEntry-and-timePeriodType-table.json
   - include:
       file: changelog/002-update-start-and-finish-time-dataTypes.json
