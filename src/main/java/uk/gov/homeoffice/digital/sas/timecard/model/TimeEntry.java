@@ -32,8 +32,7 @@ import java.util.UUID;
 public class TimeEntry extends BaseEntity {
 
     @Column(name = "owner_id")
-    @Min( value = 1, message = "Owner id's value must be greater than or equal to {value}")
-    private int ownerId;
+    private UUID ownerId;
 
     @Type(type="uuid-char")
     @Column(name = "time_period_type_id")
