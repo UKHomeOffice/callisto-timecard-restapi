@@ -29,7 +29,7 @@ public class KafkaProducerTimeEntry {
 
             @Override
             public void onFailure(Throwable ex) {
-                log.info(String.format("Sent message=[ %s ]", Objects.toString(message)));
+                log.info(String.format("Sent message has failed=[ %s ]", Objects.toString(message)));
             }
 
             @Override

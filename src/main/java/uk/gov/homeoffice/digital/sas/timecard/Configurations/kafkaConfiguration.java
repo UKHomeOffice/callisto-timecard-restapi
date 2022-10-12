@@ -24,6 +24,7 @@ public class kafkaConfiguration {
     @Bean
     public ProducerFactory<String, TimeEntry> producerFactory() {
 
+        // Kafka Producer Configurations
         Map<String, Object> config = new HashMap<>();
 
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
@@ -38,6 +39,8 @@ public class kafkaConfiguration {
         return new KafkaTemplate<String, TimeEntry>(producerFactory());
     }
 
+
+// Consumer config
     @Bean
     public KafkaConsumer<String, TimeEntry> createKafkaConsumer() {
 
