@@ -1,6 +1,7 @@
 package uk.gov.homeoffice.digital.sas.timecard.validators.timeentry;
 
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,6 +11,7 @@ import uk.gov.homeoffice.digital.sas.timecard.repositories.TimeEntryRepository;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 
@@ -27,50 +29,45 @@ public class TimeEntryValidatorTest {
     @Autowired
     private TimeEntryRepository timeEntryRepository;
 
+    private final static Integer OWNER_ID_1 = 1;
+    private final static LocalDateTime EXISTING_SHIFT_START_TIME = LocalDateTime.of(
+            2022, 1, 1, 9, 0, 0);
+
+
+    @BeforeEach
+    void saveTimeEntry() {
+        timeEntryRepository.save(createTimeEntry(OWNER_ID_1, getAsDate(EXISTING_SHIFT_START_TIME)));
+    }
 
 
 
     @Test
     void validate_startTimeIsTheSame_errorReturned() {
 
-        var today = Date.from(LocalDate.of(2020, 1, 1)
-                .atStartOfDay().toInstant(ZoneOffset.UTC));
-
-        var timeEntry = new TimeEntry();
-        timeEntry.setOwnerId(1);
-        timeEntry.setActualStartTime(today);
-        timeEntryRepository.save(timeEntry);
-
-        var timeEntryNew = new TimeEntry();
-        timeEntryNew.setOwnerId(1);
-        timeEntryNew.setActualStartTime(today);
-
+        var timeEntryNew = createTimeEntry(OWNER_ID_1, getAsDate(EXISTING_SHIFT_START_TIME));
 
         assertThatExceptionOfType(ResourceConstraintViolationException.class).isThrownBy(() ->
                 timeEntryValidator.validate(timeEntryNew));
-
     }
 
     @Test
     void validate_startTimeIsDifferent_noErrorReturned() {
-
-
-        var today = LocalDate.of(2020, 1, 1);
-        var tomorrow = today.plusDays(1L);
-
-        var timeEntry = new TimeEntry();
-        timeEntry.setOwnerId(1);
-        timeEntry.setActualStartTime(Date.from(today.atStartOfDay().toInstant(ZoneOffset.UTC)));
-        timeEntryRepository.save(timeEntry);
-
-        var timeEntryNew = new TimeEntry();
-        timeEntryNew.setOwnerId(1);
-        timeEntryNew.setActualStartTime(Date.from(tomorrow.atStartOfDay().toInstant(ZoneOffset.UTC)));
-
+        var newStartTimeEntry = getAsDate(EXISTING_SHIFT_START_TIME.plusDays(1L));
+        var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTimeEntry);
 
         assertThatNoException().isThrownBy(() ->
                 timeEntryValidator.validate(timeEntryNew));
+    }
 
+    private Date getAsDate(LocalDateTime dateTime) {
+        return Date.from(dateTime.toInstant(ZoneOffset.UTC));
+    }
+
+    private TimeEntry createTimeEntry(Integer ownerId, Date actualStartTime) {
+        var timeEntry = new TimeEntry();
+        timeEntry.setOwnerId(ownerId);
+        timeEntry.setActualStartTime(actualStartTime);
+        return timeEntry;
     }
 
 
