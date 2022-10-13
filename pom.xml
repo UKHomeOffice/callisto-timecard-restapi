@@ -66,7 +66,7 @@
 		<dependency>
 			<groupId>uk.gov.homeoffice.digital.sas</groupId>
 			<artifactId>jparest</artifactId>
-			<version>0.0.2</version>
+			<version>0.0.5</version>
 		</dependency>
 	</dependencies>
 
