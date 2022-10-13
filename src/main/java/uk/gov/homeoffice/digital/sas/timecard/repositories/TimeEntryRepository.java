@@ -1,0 +1,23 @@
+package uk.gov.homeoffice.digital.sas.timecard.repositories;
+
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
+
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+@Repository
+public interface TimeEntryRepository extends CrudRepository<TimeEntry, UUID> {
+
+    @Query("SELECT t FROM time_entry t WHERE t.ownerId = :ownerId AND t.actualStartTime = :actualStartTime")
+    List<TimeEntry> findAllClashingTimeEntries(@Param("ownerId") Integer ownerId,
+                                          @Param("actualStartTime") Date actualStartTime);
+//                                          @Param("actualEndTime") Date actualEndTime);
+
+
+}
+
