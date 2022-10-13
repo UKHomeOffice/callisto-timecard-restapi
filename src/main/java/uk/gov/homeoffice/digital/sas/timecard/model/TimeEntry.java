@@ -40,7 +40,8 @@ public class TimeEntry extends BaseEntity {
     private UUID timePeriodTypeId;
 
     @ManyToOne
-    @JoinColumn(name="time_period_type_id", referencedColumnName = "id", unique = true, nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name="time_period_type_id", referencedColumnName = "id",
+        unique = true, nullable = false, insertable = false, updatable = false)
     @JsonIgnore
     private TimePeriodType timePeriodType;
 
