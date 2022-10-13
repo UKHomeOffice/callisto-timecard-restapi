@@ -21,7 +21,8 @@ public class TimeEntryValidator {
 
         if (!timeEntryRepository.findAllClashingTimeEntries(
                 timeEntry.getOwnerId(),
-                timeEntry.getActualStartTime()).isEmpty()) {
+                timeEntry.getActualStartTime(),
+                timeEntry.getActualEndTime()).isEmpty()) {
             throw new ResourceConstraintViolationException(
                     "Cannot have clashes");
         }
