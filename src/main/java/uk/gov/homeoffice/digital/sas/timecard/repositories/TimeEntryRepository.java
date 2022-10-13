@@ -13,10 +13,11 @@ import java.util.UUID;
 @Repository
 public interface TimeEntryRepository extends CrudRepository<TimeEntry, UUID> {
 
-    @Query("SELECT t FROM time_entry t WHERE t.ownerId = :ownerId AND t.actualStartTime = :actualStartTime")
+    @Query("SELECT t FROM time_entry t WHERE t.ownerId = :ownerId AND t.actualStartTime <= :newActualStartTime " +
+            "AND t.actualEndTime > :newActualStartTime")
     List<TimeEntry> findAllClashingTimeEntries(@Param("ownerId") Integer ownerId,
-                                          @Param("actualStartTime") Date actualStartTime);
-//                                          @Param("actualEndTime") Date actualEndTime);
+                                          @Param("newActualStartTime") Date actualStartTime);
+//                                          @Param("newActualEndTime") Date actualEndTime);
 
 
 }

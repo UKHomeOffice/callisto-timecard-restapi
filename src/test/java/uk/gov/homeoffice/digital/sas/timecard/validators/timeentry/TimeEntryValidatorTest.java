@@ -10,7 +10,6 @@ import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.repositories.TimeEntryRepository;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
@@ -32,11 +31,16 @@ public class TimeEntryValidatorTest {
     private final static Integer OWNER_ID_1 = 1;
     private final static LocalDateTime EXISTING_SHIFT_START_TIME = LocalDateTime.of(
             2022, 1, 1, 9, 0, 0);
+    private final static LocalDateTime EXISTING_SHIFT_END_TIME = LocalDateTime.of(
+            2022, 1, 1, 17, 0, 0);
 
 
     @BeforeEach
     void saveTimeEntry() {
-        timeEntryRepository.save(createTimeEntry(OWNER_ID_1, getAsDate(EXISTING_SHIFT_START_TIME)));
+        timeEntryRepository.save(createTimeEntry(
+                OWNER_ID_1,
+                getAsDate(EXISTING_SHIFT_START_TIME),
+                getAsDate(EXISTING_SHIFT_END_TIME)));
     }
 
 
@@ -51,11 +55,20 @@ public class TimeEntryValidatorTest {
     }
 
     @Test
-    void validate_startTimeIsDifferent_noErrorReturned() {
-        var newStartTimeEntry = getAsDate(EXISTING_SHIFT_START_TIME.plusDays(1L));
-        var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTimeEntry);
+    void validate_newStartTimeAfterExistingEndTimeAndNoEndTime_noErrorReturned() {
+        var newStartTime = getAsDate(EXISTING_SHIFT_END_TIME.plusDays(1));
+        var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
 
         assertThatNoException().isThrownBy(() ->
+                timeEntryValidator.validate(timeEntryNew));
+    }
+
+    @Test
+    void validate_newStartTimeInBetweenExistingStartAndEndTime_errorReturned() {
+        var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME.plusHours(1));
+        var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
+
+        assertThatExceptionOfType(ResourceConstraintViolationException.class).isThrownBy(() ->
                 timeEntryValidator.validate(timeEntryNew));
     }
 
@@ -67,6 +80,11 @@ public class TimeEntryValidatorTest {
         var timeEntry = new TimeEntry();
         timeEntry.setOwnerId(ownerId);
         timeEntry.setActualStartTime(actualStartTime);
+        return timeEntry;
+    }
+    private TimeEntry createTimeEntry(Integer ownerId, Date actualStartTime, Date actualEndTime) {
+        var timeEntry = createTimeEntry(ownerId, actualStartTime);
+        timeEntry.setActualEndTime(actualEndTime);
         return timeEntry;
     }
 
