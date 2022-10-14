@@ -21,7 +21,6 @@ import static org.assertj.core.api.Assertions.assertThatNoException;
 @Transactional
 public class TimeEntryValidatorTest {
 
-
     @Autowired
     private TimeEntryValidator timeEntryValidator;
 
@@ -33,7 +32,6 @@ public class TimeEntryValidatorTest {
             2022, 1, 1, 9, 0, 0);
     private final static LocalDateTime EXISTING_SHIFT_END_TIME = LocalDateTime.of(
             2022, 1, 1, 17, 0, 0);
-
 
     @BeforeEach
     void saveTimeEntry() {
@@ -72,6 +70,36 @@ public class TimeEntryValidatorTest {
 
         assertThatExceptionOfType(ResourceConstraintViolationException.class).isThrownBy(() ->
                 timeEntryValidator.validate(timeEntryNew));
+    }
+
+    @Test
+    void validate_onUpdate_errorReturned() {
+
+        var newTimeEntry = timeEntryRepository.save(createTimeEntry(
+                OWNER_ID_1,
+                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(2)),
+                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1))));
+
+        newTimeEntry.setActualEndTime(getAsDate(EXISTING_SHIFT_END_TIME));
+        newTimeEntry.setActualStartTime(getAsDate(EXISTING_SHIFT_START_TIME));
+
+        assertThatExceptionOfType(ResourceConstraintViolationException.class).isThrownBy(() ->
+                timeEntryRepository.save(newTimeEntry));
+    }
+
+    @Test
+    void validate_onSave_errorReturned() {
+
+        var newTimeEntry = createTimeEntry(
+                OWNER_ID_1,
+                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(2)),
+                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
+
+        newTimeEntry.setActualEndTime(getAsDate(EXISTING_SHIFT_END_TIME));
+        newTimeEntry.setActualStartTime(getAsDate(EXISTING_SHIFT_START_TIME));
+
+        assertThatExceptionOfType(ResourceConstraintViolationException.class).isThrownBy(() ->
+                timeEntryRepository.save(newTimeEntry));
     }
 
     // existing: 09:00-17:00, new: 09:01-

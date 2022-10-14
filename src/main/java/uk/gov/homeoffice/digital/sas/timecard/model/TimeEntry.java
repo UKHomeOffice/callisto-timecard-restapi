@@ -14,11 +14,7 @@ import uk.gov.homeoffice.digital.sas.jparest.models.BaseEntity;
 import uk.gov.homeoffice.digital.sas.timecard.BeanUtil;
 import uk.gov.homeoffice.digital.sas.timecard.validators.timeentry.TimeEntryValidator;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
+import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -73,7 +69,8 @@ public class TimeEntry extends BaseEntity {
 
 
     @PrePersist
-    private void onPrePersist() {
+    @PreUpdate
+    private void validate() {
         TimeEntryValidator timeEntryValidator = BeanUtil.getBean(TimeEntryValidator.class);
         timeEntryValidator.validate(this);
 
