@@ -43,6 +43,23 @@ public class TimeEntryValidatorTest {
                 getAsDate(EXISTING_SHIFT_END_TIME)));
     }
 
+    // existing: 08:00-, new: 08:00-
+    @Test
+    void validate_newStartTimeIsTheSameAsExistingStartTimeWithNoEndTimes_errorReturned() {
+        var time = LocalDateTime.of(
+                2022, 1, 1, 8, 0, 0);
+
+        timeEntryRepository.save(createTimeEntry(
+                OWNER_ID_1,
+                getAsDate(time)));
+
+        var newStartTime = getAsDate(time);
+
+        var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
+
+        assertThatExceptionOfType(ResourceConstraintViolationException.class).isThrownBy(() ->
+                timeEntryValidator.validate(timeEntryNew));
+    }
 
     // existing: 09:00-17:00, new: 09:00-
     @Test
@@ -111,7 +128,7 @@ public class TimeEntryValidatorTest {
     @Test
     void validate_newStartAndEndTimeSameAsExistingStartAndEndTime_errorReturned() {
         var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME);
-        var newEndTime = getAsDate(EXISTING_SHIFT_START_TIME);
+        var newEndTime = getAsDate(EXISTING_SHIFT_END_TIME);
         var newTimeEntry = createTimeEntry(OWNER_ID_1, newStartTime, newEndTime);
 
         assertThatExceptionOfType(ResourceConstraintViolationException.class).isThrownBy(() ->
