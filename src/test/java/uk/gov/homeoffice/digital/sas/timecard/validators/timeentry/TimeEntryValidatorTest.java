@@ -43,6 +43,8 @@ public class TimeEntryValidatorTest {
                 getAsDate(EXISTING_SHIFT_END_TIME)));
     }
 
+    // region clashing_error_tests
+
     // existing: 08:00-, new: 08:00-
     @Test
     void validate_newStartTimeIsTheSameAsExistingStartTimeWithNoEndTimes_errorReturned() {
@@ -63,32 +65,12 @@ public class TimeEntryValidatorTest {
 
     // existing: 09:00-17:00, new: 09:00-
     @Test
-    void validate_newStartTimeIsTheSameAsExistingStartTime_errorReturned() {
+    void validate_newStartTimeIsTheSameAsExistingStartTimeAndNoNewEndTime_errorReturned() {
         var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME);
 
         var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
 
         assertThatExceptionOfType(ResourceConstraintViolationException.class).isThrownBy(() ->
-                timeEntryValidator.validate(timeEntryNew));
-    }
-
-    // existing: 09:00-17:00, new: 17:01-
-    @Test
-    void validate_newStartTimeAfterExistingEndTimeAndNoEndTime_noErrorReturned() {
-        var newStartTime = getAsDate(EXISTING_SHIFT_END_TIME.plusMinutes(1));
-        var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
-
-        assertThatNoException().isThrownBy(() ->
-                timeEntryValidator.validate(timeEntryNew));
-    }
-
-    // existing: 09:00-17:00, new: 17:00-
-    @Test
-    void validate_newStartTimeEqualToExistingEndTimeAndNoEndTime_noErrorReturned() {
-        var newStartTime = getAsDate(EXISTING_SHIFT_END_TIME);
-        var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
-
-        assertThatNoException().isThrownBy(() ->
                 timeEntryValidator.validate(timeEntryNew));
     }
 
@@ -134,6 +116,65 @@ public class TimeEntryValidatorTest {
         assertThatExceptionOfType(ResourceConstraintViolationException.class).isThrownBy(() ->
                 timeEntryValidator.validate(newTimeEntry));
     }
+    // endregion
+
+    // region happy_path
+
+    // existing: 09:00-17:00, new: 17:01-
+    @Test
+    void validate_newStartTimeAfterExistingEndTimeAndNoEndTime_noErrorReturned() {
+        var newStartTime = getAsDate(EXISTING_SHIFT_END_TIME.plusMinutes(1));
+        var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
+
+        assertThatNoException().isThrownBy(() ->
+                timeEntryValidator.validate(timeEntryNew));
+    }
+
+    // existing: 09:00-17:00, new: 17:00-
+    @Test
+    void validate_newStartTimeEqualToExistingEndTimeAndNoEndTime_noErrorReturned() {
+        var newStartTime = getAsDate(EXISTING_SHIFT_END_TIME);
+        var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
+
+        assertThatNoException().isThrownBy(() ->
+                timeEntryValidator.validate(timeEntryNew));
+    }
+
+    // existing: 09:00-17:00, new: 08:00-09:00
+    @Test
+    void validate_newEndTimeEqualToExistingStartTime_noErrorReturned() {
+        var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1));
+        var newEndTime = getAsDate(EXISTING_SHIFT_START_TIME);
+        var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime, newEndTime);
+
+        assertThatNoException().isThrownBy(() ->
+                timeEntryValidator.validate(timeEntryNew));
+    }
+
+    // existing: 09:00-17:00, new: 08:59-
+    @Test
+    void validate_newStartTimeBeforeExistingStartTimeAndNoEndTime_noErrorReturned() {
+        var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME.minusMinutes(1));
+        var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
+
+        assertThatNoException().isThrownBy(() ->
+                timeEntryValidator.validate(timeEntryNew));
+    }
+
+    // existing: 09:00-17:00, new: 09:00-
+    @Test
+    void validate_clashingTimeEntryForDifferentOwner_noErrorReturned() {
+        var newOwnerId = 2;
+
+        var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME);
+
+        var timeEntryNew = createTimeEntry(newOwnerId, newStartTime);
+
+        assertThatNoException().isThrownBy(() ->
+                timeEntryValidator.validate(timeEntryNew));
+    }
+
+    // endregion
 
     private Date getAsDate(LocalDateTime dateTime) {
         return Date.from(dateTime.toInstant(ZoneOffset.UTC));
@@ -150,7 +191,5 @@ public class TimeEntryValidatorTest {
         timeEntry.setActualEndTime(actualEndTime);
         return timeEntry;
     }
-
-
 
 }
