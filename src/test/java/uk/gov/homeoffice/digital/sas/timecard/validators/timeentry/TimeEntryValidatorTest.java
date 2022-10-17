@@ -17,6 +17,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatNoException;
@@ -84,36 +85,6 @@ public class TimeEntryValidatorTest {
 
         assertThatExceptionOfType(ResourceConstraintViolationException.class).isThrownBy(() ->
                 timeEntryValidator.validate(timeEntryNew));
-    }
-
-//    @Test
-//    void validate_onUpdate_errorReturned() {
-//
-//        var newTimeEntry = timeEntryRepository.save(createTimeEntry(
-//                OWNER_ID_1,
-//                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(2)),
-//                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1))));
-//
-//        newTimeEntry.setActualEndTime(getAsDate(EXISTING_SHIFT_END_TIME));
-//        newTimeEntry.setActualStartTime(getAsDate(EXISTING_SHIFT_START_TIME));
-//
-//        assertThatExceptionOfType(ResourceConstraintViolationException.class).isThrownBy(() ->
-//                timeEntryRepository.save(newTimeEntry));
-//    }
-
-    @Test
-    void validate_onSave_errorReturned() {
-
-        var newTimeEntry = createTimeEntry(
-                OWNER_ID_1,
-                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(2)),
-                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
-
-        newTimeEntry.setActualEndTime(getAsDate(EXISTING_SHIFT_END_TIME));
-        newTimeEntry.setActualStartTime(getAsDate(EXISTING_SHIFT_START_TIME));
-
-        assertThatExceptionOfType(ResourceConstraintViolationException.class).isThrownBy(() ->
-                timeEntryRepository.save(newTimeEntry));
     }
 
     // existing: 09:00-17:00, new: 09:01-
@@ -214,6 +185,46 @@ public class TimeEntryValidatorTest {
 
         assertThatNoException().isThrownBy(() ->
                 timeEntryValidator.validate(timeEntryNew));
+    }
+
+    // existing: 07:00-08:00, updated: 05:00-06:00
+    @Test
+    void validate_timeEntryIdsAreTheSameAndNoClash_noErrorReturned() {
+
+        var newTimeEntry = createTimeEntry(
+                OWNER_ID_1,
+                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(2)),
+                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
+
+        newTimeEntry.setId(UUID.fromString("7f000001-83e5-1791-8183-e557df040000"));
+
+        timeEntryRepository.save(newTimeEntry);
+
+        newTimeEntry.setActualStartTime(getAsDate(EXISTING_SHIFT_START_TIME.minusHours(4)));
+        newTimeEntry.setActualEndTime(getAsDate(EXISTING_SHIFT_START_TIME.minusHours(3)));
+
+        assertThatNoException().isThrownBy(() ->
+                timeEntryValidator.validate(newTimeEntry));
+    }
+
+    // existing: 07:00-08:00, updated: 06:00-08:00
+    @Test
+    void validate_timeEntryIdsAreTheSameAndTimesClash_noErrorReturned() {
+
+        var newTimeEntry = createTimeEntry(
+                OWNER_ID_1,
+                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(2)),
+                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
+
+        newTimeEntry.setId(UUID.fromString("7f000001-83e5-1791-8183-e557df040000"));
+
+        timeEntryRepository.save(newTimeEntry);
+
+        newTimeEntry.setActualStartTime(getAsDate(EXISTING_SHIFT_START_TIME.minusHours(3)));
+        newTimeEntry.setActualEndTime(getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
+
+        assertThatNoException().isThrownBy(() ->
+                timeEntryValidator.validate(newTimeEntry));
     }
 
     // endregion
