@@ -43,16 +43,10 @@ public class TimeEntryValidatorTest {
 
     @BeforeEach
     void saveTimeEntry() {
-        Session session = entityManager.unwrap(Session.class);
-        session.setHibernateFlushMode(FlushMode.MANUAL);
-
-        timeEntryRepository.save(createTimeEntry(
+        saveEntryAndFlushDatabase(createTimeEntry(
                 OWNER_ID_1,
                 getAsDate(EXISTING_SHIFT_START_TIME),
                 getAsDate(EXISTING_SHIFT_END_TIME)));
-
-        session.flush();
-        session.setHibernateFlushMode(FlushMode.AUTO);
     }
 
     // region clashing_error_tests
@@ -63,15 +57,9 @@ public class TimeEntryValidatorTest {
         var time = LocalDateTime.of(
                 2022, 1, 1, 8, 0, 0);
 
-        Session session = entityManager.unwrap(Session.class);
-        session.setHibernateFlushMode(FlushMode.MANUAL);
-
-        timeEntryRepository.save(createTimeEntry(
+        saveEntryAndFlushDatabase(createTimeEntry(
                 OWNER_ID_1,
                 getAsDate(time)));
-
-        session.flush();
-        session.setHibernateFlushMode(FlushMode.AUTO);
 
         var newStartTime = getAsDate(time);
 
@@ -145,14 +133,8 @@ public class TimeEntryValidatorTest {
                 getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
 
         existingTimeEntry.setId(UUID.fromString("7f000001-83e5-1791-8183-e557df040000"));
-        Session session = entityManager.unwrap(Session.class);
-        session.setHibernateFlushMode(FlushMode.MANUAL);
 
-        timeEntryRepository.save(existingTimeEntry);
-
-        session.flush();
-        session.setHibernateFlushMode(FlushMode.AUTO);
-
+        saveEntryAndFlushDatabase(existingTimeEntry);
 
         var newTimeEntry = createTimeEntry(
                 OWNER_ID_1,
@@ -164,7 +146,6 @@ public class TimeEntryValidatorTest {
         assertThatExceptionOfType(ResourceConstraintViolationException.class).isThrownBy(() ->
                 timeEntryValidator.validate(newTimeEntry));
     }
-
 
     // endregion
 
@@ -235,13 +216,7 @@ public class TimeEntryValidatorTest {
 
         newTimeEntry.setId(UUID.fromString("7f000001-83e5-1791-8183-e557df040000"));
 
-        Session session = entityManager.unwrap(Session.class);
-        session.setHibernateFlushMode(FlushMode.MANUAL);
-
-        timeEntryRepository.save(newTimeEntry);
-
-        session.flush();
-        session.setHibernateFlushMode(FlushMode.AUTO);
+        saveEntryAndFlushDatabase(newTimeEntry);
 
         newTimeEntry.setActualStartTime(getAsDate(EXISTING_SHIFT_START_TIME.minusHours(4)));
         newTimeEntry.setActualEndTime(getAsDate(EXISTING_SHIFT_START_TIME.minusHours(3)));
@@ -261,13 +236,7 @@ public class TimeEntryValidatorTest {
 
         newTimeEntry.setId(UUID.fromString("7f000001-83e5-1791-8183-e557df040000"));
 
-        Session session = entityManager.unwrap(Session.class);
-        session.setHibernateFlushMode(FlushMode.MANUAL);
-
-        timeEntryRepository.save(newTimeEntry);
-
-        session.flush();
-        session.setHibernateFlushMode(FlushMode.AUTO);
+        saveEntryAndFlushDatabase(newTimeEntry);
 
         newTimeEntry.setActualStartTime(getAsDate(EXISTING_SHIFT_START_TIME.minusHours(3)));
         newTimeEntry.setActualEndTime(getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
@@ -292,6 +261,16 @@ public class TimeEntryValidatorTest {
         var timeEntry = createTimeEntry(ownerId, actualStartTime);
         timeEntry.setActualEndTime(actualEndTime);
         return timeEntry;
+    }
+
+    private void saveEntryAndFlushDatabase(TimeEntry existingTimeEntry) {
+        Session session = entityManager.unwrap(Session.class);
+        session.setHibernateFlushMode(FlushMode.MANUAL);
+
+        timeEntryRepository.save(existingTimeEntry);
+
+        session.flush();
+        session.setHibernateFlushMode(FlushMode.AUTO);
     }
 
 }
