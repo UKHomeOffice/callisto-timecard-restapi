@@ -45,10 +45,12 @@ public class TimeEntryValidatorTest {
     void saveTimeEntry() {
         Session session = entityManager.unwrap(Session.class);
         session.setHibernateFlushMode(FlushMode.MANUAL);
+
         timeEntryRepository.save(createTimeEntry(
                 OWNER_ID_1,
                 getAsDate(EXISTING_SHIFT_START_TIME),
                 getAsDate(EXISTING_SHIFT_END_TIME)));
+
         session.flush();
         session.setHibernateFlushMode(FlushMode.AUTO);
     }
@@ -63,10 +65,13 @@ public class TimeEntryValidatorTest {
 
         Session session = entityManager.unwrap(Session.class);
         session.setHibernateFlushMode(FlushMode.MANUAL);
+
         timeEntryRepository.save(createTimeEntry(
                 OWNER_ID_1,
                 getAsDate(time)));
+
         session.flush();
+        session.setHibernateFlushMode(FlushMode.AUTO);
 
         var newStartTime = getAsDate(time);
 
@@ -129,6 +134,38 @@ public class TimeEntryValidatorTest {
         assertThatExceptionOfType(ResourceConstraintViolationException.class).isThrownBy(() ->
                 timeEntryValidator.validate(newTimeEntry));
     }
+
+    // existing: 07:00-08:00, updated: 06:00-08:00
+    @Test
+    void validate_timeEntryIdsAreDifferentAndTimesClash_errorReturned() {
+
+        var existingTimeEntry = createTimeEntry(
+                OWNER_ID_1,
+                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(2)),
+                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
+
+        existingTimeEntry.setId(UUID.fromString("7f000001-83e5-1791-8183-e557df040000"));
+        Session session = entityManager.unwrap(Session.class);
+        session.setHibernateFlushMode(FlushMode.MANUAL);
+
+        timeEntryRepository.save(existingTimeEntry);
+
+        session.flush();
+        session.setHibernateFlushMode(FlushMode.AUTO);
+
+
+        var newTimeEntry = createTimeEntry(
+                OWNER_ID_1,
+                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(2)),
+                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
+
+        newTimeEntry.setId(UUID.fromString("956f4e98-9a1c-4b59-9b8b-988792400c3a"));
+
+        assertThatExceptionOfType(ResourceConstraintViolationException.class).isThrownBy(() ->
+                timeEntryValidator.validate(newTimeEntry));
+    }
+
+
     // endregion
 
     // region happy_path
@@ -198,7 +235,13 @@ public class TimeEntryValidatorTest {
 
         newTimeEntry.setId(UUID.fromString("7f000001-83e5-1791-8183-e557df040000"));
 
+        Session session = entityManager.unwrap(Session.class);
+        session.setHibernateFlushMode(FlushMode.MANUAL);
+
         timeEntryRepository.save(newTimeEntry);
+
+        session.flush();
+        session.setHibernateFlushMode(FlushMode.AUTO);
 
         newTimeEntry.setActualStartTime(getAsDate(EXISTING_SHIFT_START_TIME.minusHours(4)));
         newTimeEntry.setActualEndTime(getAsDate(EXISTING_SHIFT_START_TIME.minusHours(3)));
@@ -218,7 +261,13 @@ public class TimeEntryValidatorTest {
 
         newTimeEntry.setId(UUID.fromString("7f000001-83e5-1791-8183-e557df040000"));
 
+        Session session = entityManager.unwrap(Session.class);
+        session.setHibernateFlushMode(FlushMode.MANUAL);
+
         timeEntryRepository.save(newTimeEntry);
+
+        session.flush();
+        session.setHibernateFlushMode(FlushMode.AUTO);
 
         newTimeEntry.setActualStartTime(getAsDate(EXISTING_SHIFT_START_TIME.minusHours(3)));
         newTimeEntry.setActualEndTime(getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
