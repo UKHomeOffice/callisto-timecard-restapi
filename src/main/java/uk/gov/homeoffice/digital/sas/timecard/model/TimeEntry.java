@@ -11,10 +11,12 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 import uk.gov.homeoffice.digital.sas.jparest.annotation.Resource;
 import uk.gov.homeoffice.digital.sas.jparest.models.BaseEntity;
-import uk.gov.homeoffice.digital.sas.timecard.BeanUtil;
-import uk.gov.homeoffice.digital.sas.timecard.validators.timeentry.TimeEntryValidator;
+import uk.gov.homeoffice.digital.sas.timecard.validators.timeentry.TimeEntryConstraint;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -28,6 +30,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
+@TimeEntryConstraint
 public class TimeEntry extends BaseEntity {
 
     @Column(name = "owner_id")
@@ -66,13 +69,5 @@ public class TimeEntry extends BaseEntity {
     @JsonIgnore
     private LocalDateTime updatedAt;
 
-
-
-    @PrePersist
-    @PreUpdate
-    private void validate() {
-        TimeEntryValidator timeEntryValidator = BeanUtil.getBean(TimeEntryValidator.class);
-        timeEntryValidator.validate(this);
-    }
 
 }

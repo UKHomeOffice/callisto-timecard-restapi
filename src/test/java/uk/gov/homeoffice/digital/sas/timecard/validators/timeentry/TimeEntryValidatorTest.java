@@ -7,17 +7,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import uk.gov.homeoffice.digital.sas.jparest.exceptions.ResourceConstraintViolationException;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.repositories.TimeEntryRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatNoException;
@@ -25,9 +24,6 @@ import static org.assertj.core.api.Assertions.assertThatNoException;
 @SpringBootTest
 @Transactional
 public class TimeEntryValidatorTest {
-
-    @Autowired
-    private TimeEntryValidator timeEntryValidator;
 
     @Autowired
     private TimeEntryRepository timeEntryRepository;
@@ -65,8 +61,8 @@ public class TimeEntryValidatorTest {
 
         var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
 
-        assertThatExceptionOfType(ResourceConstraintViolationException.class).isThrownBy(() ->
-                timeEntryValidator.validate(timeEntryNew));
+        assertThatExceptionOfType(ConstraintViolationException.class).isThrownBy(() ->
+                saveEntryAndFlushDatabase(timeEntryNew));
     }
 
     // existing: 09:00-17:00, new: 09:00-
@@ -76,8 +72,8 @@ public class TimeEntryValidatorTest {
 
         var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
 
-        assertThatExceptionOfType(ResourceConstraintViolationException.class).isThrownBy(() ->
-                timeEntryValidator.validate(timeEntryNew));
+        assertThatExceptionOfType(ConstraintViolationException.class).isThrownBy(() ->
+                saveEntryAndFlushDatabase(timeEntryNew));
     }
 
     // existing: 09:00-17:00, new: 09:01-
@@ -86,8 +82,8 @@ public class TimeEntryValidatorTest {
         var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME.plusMinutes(1));
         var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
 
-        assertThatExceptionOfType(ResourceConstraintViolationException.class).isThrownBy(() ->
-                timeEntryValidator.validate(timeEntryNew));
+        assertThatExceptionOfType(ConstraintViolationException.class).isThrownBy(() ->
+                saveEntryAndFlushDatabase(timeEntryNew));
     }
 
     // existing: 09:00-17:00, new: 08:59-16:59
@@ -97,8 +93,8 @@ public class TimeEntryValidatorTest {
         var newEndTime = getAsDate(EXISTING_SHIFT_END_TIME.minusMinutes(1));
         var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime, newEndTime);
 
-        assertThatExceptionOfType(ResourceConstraintViolationException.class).isThrownBy(() ->
-                timeEntryValidator.validate(timeEntryNew));
+        assertThatExceptionOfType(ConstraintViolationException.class).isThrownBy(() ->
+                saveEntryAndFlushDatabase(timeEntryNew));
     }
 
     // existing: 09:00-17:00, new: 16:59-17:01
@@ -108,8 +104,8 @@ public class TimeEntryValidatorTest {
         var newEndTime = getAsDate(EXISTING_SHIFT_END_TIME.plusMinutes(1));
         var newTimeEntry = createTimeEntry(OWNER_ID_1, newStartTime, newEndTime);
 
-        assertThatExceptionOfType(ResourceConstraintViolationException.class).isThrownBy(() ->
-                timeEntryValidator.validate(newTimeEntry));
+        assertThatExceptionOfType(ConstraintViolationException.class).isThrownBy(() ->
+                saveEntryAndFlushDatabase(newTimeEntry));
     }
 
     // existing: 09:00-17:00, new: 09:00-17:00
@@ -119,8 +115,8 @@ public class TimeEntryValidatorTest {
         var newEndTime = getAsDate(EXISTING_SHIFT_END_TIME);
         var newTimeEntry = createTimeEntry(OWNER_ID_1, newStartTime, newEndTime);
 
-        assertThatExceptionOfType(ResourceConstraintViolationException.class).isThrownBy(() ->
-                timeEntryValidator.validate(newTimeEntry));
+        assertThatExceptionOfType(ConstraintViolationException.class).isThrownBy(() ->
+                saveEntryAndFlushDatabase(newTimeEntry));
     }
 
     // existing: 07:00-08:00, updated: 06:00-08:00
@@ -139,8 +135,8 @@ public class TimeEntryValidatorTest {
                 getAsDate(EXISTING_SHIFT_START_TIME.minusHours(2)),
                 getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
 
-        assertThatExceptionOfType(ResourceConstraintViolationException.class).isThrownBy(() ->
-                timeEntryValidator.validate(newTimeEntry));
+        assertThatExceptionOfType(ConstraintViolationException.class).isThrownBy(() ->
+                saveEntryAndFlushDatabase(newTimeEntry));
     }
 
     // endregion
@@ -154,7 +150,7 @@ public class TimeEntryValidatorTest {
         var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
 
         assertThatNoException().isThrownBy(() ->
-                timeEntryValidator.validate(timeEntryNew));
+                saveEntryAndFlushDatabase(timeEntryNew));
     }
 
     // existing: 09:00-17:00, new: 17:00-
@@ -164,7 +160,7 @@ public class TimeEntryValidatorTest {
         var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
 
         assertThatNoException().isThrownBy(() ->
-                timeEntryValidator.validate(timeEntryNew));
+                saveEntryAndFlushDatabase(timeEntryNew));
     }
 
     // existing: 09:00-17:00, new: 08:00-09:00
@@ -175,7 +171,7 @@ public class TimeEntryValidatorTest {
         var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime, newEndTime);
 
         assertThatNoException().isThrownBy(() ->
-                timeEntryValidator.validate(timeEntryNew));
+                saveEntryAndFlushDatabase(timeEntryNew));
     }
 
     // existing: 09:00-17:00, new: 08:59-
@@ -185,7 +181,7 @@ public class TimeEntryValidatorTest {
         var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
 
         assertThatNoException().isThrownBy(() ->
-                timeEntryValidator.validate(timeEntryNew));
+                saveEntryAndFlushDatabase(timeEntryNew));
     }
 
     // existing: 09:00-17:00, new: 09:00-
@@ -198,7 +194,7 @@ public class TimeEntryValidatorTest {
         var timeEntryNew = createTimeEntry(newOwnerId, newStartTime);
 
         assertThatNoException().isThrownBy(() ->
-                timeEntryValidator.validate(timeEntryNew));
+                saveEntryAndFlushDatabase(timeEntryNew));
     }
 
     // existing: 07:00-08:00, updated: 05:00-06:00
@@ -216,7 +212,7 @@ public class TimeEntryValidatorTest {
         newTimeEntry.setActualEndTime(getAsDate(EXISTING_SHIFT_START_TIME.minusHours(3)));
 
         assertThatNoException().isThrownBy(() ->
-                timeEntryValidator.validate(newTimeEntry));
+                saveEntryAndFlushDatabase(newTimeEntry));
     }
 
     // existing: 07:00-08:00, updated: 06:00-08:00
@@ -234,7 +230,7 @@ public class TimeEntryValidatorTest {
         newTimeEntry.setActualEndTime(getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
 
         assertThatNoException().isThrownBy(() ->
-                timeEntryValidator.validate(newTimeEntry));
+                saveEntryAndFlushDatabase(newTimeEntry));
     }
 
     // endregion
