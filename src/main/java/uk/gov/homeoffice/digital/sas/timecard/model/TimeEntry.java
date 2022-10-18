@@ -73,7 +73,6 @@ public class TimeEntry extends BaseEntity {
     private void validate() {
         TimeEntryValidator timeEntryValidator = BeanUtil.getBean(TimeEntryValidator.class);
         timeEntryValidator.validate(this);
-
     }
 
 }

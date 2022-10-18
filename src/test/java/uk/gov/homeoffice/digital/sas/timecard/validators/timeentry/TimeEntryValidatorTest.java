@@ -132,16 +132,12 @@ public class TimeEntryValidatorTest {
                 getAsDate(EXISTING_SHIFT_START_TIME.minusHours(2)),
                 getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
 
-        existingTimeEntry.setId(UUID.fromString("7f000001-83e5-1791-8183-e557df040000"));
-
         saveEntryAndFlushDatabase(existingTimeEntry);
 
         var newTimeEntry = createTimeEntry(
                 OWNER_ID_1,
                 getAsDate(EXISTING_SHIFT_START_TIME.minusHours(2)),
                 getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
-
-        newTimeEntry.setId(UUID.fromString("956f4e98-9a1c-4b59-9b8b-988792400c3a"));
 
         assertThatExceptionOfType(ResourceConstraintViolationException.class).isThrownBy(() ->
                 timeEntryValidator.validate(newTimeEntry));
@@ -214,8 +210,6 @@ public class TimeEntryValidatorTest {
                 getAsDate(EXISTING_SHIFT_START_TIME.minusHours(2)),
                 getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
 
-        newTimeEntry.setId(UUID.fromString("7f000001-83e5-1791-8183-e557df040000"));
-
         saveEntryAndFlushDatabase(newTimeEntry);
 
         newTimeEntry.setActualStartTime(getAsDate(EXISTING_SHIFT_START_TIME.minusHours(4)));
@@ -233,8 +227,6 @@ public class TimeEntryValidatorTest {
                 OWNER_ID_1,
                 getAsDate(EXISTING_SHIFT_START_TIME.minusHours(2)),
                 getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
-
-        newTimeEntry.setId(UUID.fromString("7f000001-83e5-1791-8183-e557df040000"));
 
         saveEntryAndFlushDatabase(newTimeEntry);
 
