@@ -23,8 +23,7 @@ Feature: Assertions
     And the admin is a user
 
   Scenario: Object should contain fields
-    When the admin retrieves time-entries from the timecard service with
-      | tenantId          | 00000000-0000-0000-0000-000000000000 |
+    When the admin retrieves time-entries from the timecard service
     Then the last of the time-entries in the last response from the timecard service should contain the fields
       | tenantId          |
       | shiftType         |
@@ -32,8 +31,7 @@ Feature: Assertions
       | timePeriodTypeId  |
 
   Scenario: Object should contain fields
-    When the admin retrieves time-period-types from the timecard service with
-      | tenantId          | 00000000-0000-0000-0000-000000000000 |
+    When the admin retrieves time-period-types from the timecard service
     Then the last of the time-period-types in the last response from the timecard service should contain the fields
       | id        |
       | tenantId  |
