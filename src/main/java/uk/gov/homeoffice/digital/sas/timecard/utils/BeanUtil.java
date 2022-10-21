@@ -1,4 +1,4 @@
-package uk.gov.homeoffice.digital.sas.timecard;
+package uk.gov.homeoffice.digital.sas.timecard.utils;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

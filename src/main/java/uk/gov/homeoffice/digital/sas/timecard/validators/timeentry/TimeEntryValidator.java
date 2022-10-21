@@ -2,7 +2,7 @@ package uk.gov.homeoffice.digital.sas.timecard.validators.timeentry;
 
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
-import uk.gov.homeoffice.digital.sas.timecard.BeanUtil;
+import uk.gov.homeoffice.digital.sas.timecard.utils.BeanUtil;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.repositories.TimeEntryRepository;
 
