@@ -19,7 +19,7 @@ steps:
   - name: sonar
     image: maven:3.8.3-openjdk-17
     depends_on:
-      - test
+      - build
     environment:
       SONAR_HOST:
         from_secret: sonar_cloud_host
@@ -31,7 +31,6 @@ steps:
       event:
         exclude:
           - pull_request
-
 
   - name: lint_dockerfile
     pull: if-not-exists
