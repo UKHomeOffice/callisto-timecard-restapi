@@ -16,6 +16,23 @@ steps:
     commands:
       - mvn -s ./timecard_settings.xml clean package
 
+  - name: sonar
+    image: maven:3.8.3-openjdk-17
+    depends_on:
+      - test
+    environment:
+      SONAR_HOST:
+        from_secret: sonar_cloud_host
+      SONAR_TOKEN:
+        from_secret: sonar_cloud_token
+    commands:
+      - mvn sonar:sonar -Dsonar.host.url=$${SONAR_HOST} -Dsonar.login=$${SONAR_TOKEN} -Dsonar.organization=ukhomeoffice -Dsonar.projectKey=callisto-timecard-restapi -Dsonar.branch.name=$DRONE_BRANCH -Dsonar.projectName=callisto-timecard-restapi
+    when:
+      event:
+        exclude:
+          - pull_request
+
+
   - name: lint_dockerfile
     pull: if-not-exists
     image: hadolint/hadolint:latest-alpine
