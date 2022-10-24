@@ -20,7 +20,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 @Resource(path = "time-entries")
@@ -51,11 +51,11 @@ public class TimeEntry extends BaseEntity {
     @NotNull(message = "Actual start time should not be empty")
     @Column(name = "actual_start_time", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private ZonedDateTime actualStartTime;
+    private Date actualStartTime;
 
     @Column(name = "actual_end_time", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private ZonedDateTime actualEndTime;
+    private Date actualEndTime;
 
     @Column(name = "created_at", columnDefinition = "TIMESTAMP", nullable = false, updatable = false)
     @CreationTimestamp
