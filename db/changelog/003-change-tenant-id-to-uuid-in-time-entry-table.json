@@ -1,0 +1,18 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "003-change-tenant-id-to-uuid-in-time-entry-table",
+        "author": "Laurie B",
+        "changes": [
+          {
+            "sqlFile": {
+              "dbms": "postgresql",
+              "path": "sql/003-change-tenant-id-to-uuid-in-time-entry-table.sql"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -66,7 +66,7 @@
         <dependency>
 			<groupId>uk.gov.homeoffice.digital.sas</groupId>
 			<artifactId>jparest</artifactId>
-			<version>0.0.5</version>
+			<version>0.0.8</version>
 		</dependency>
 	</dependencies>
 
@@ -76,6 +76,16 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${checkstyle-maven-plugin.version}</version>
+                <goals>
+                    <goal>check</goal>
+                </goals>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>true</failsOnError>
