@@ -31,6 +31,7 @@ import java.util.UUID;
 @Setter
 public class TimeEntry extends BaseEntity {
 
+    @Type(type="uuid-char")
     @Column(name = "owner_id")
     private UUID ownerId;
 
