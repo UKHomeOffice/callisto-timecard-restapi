@@ -3,3 +3,5 @@ databaseChangeLog:
       file: changelog/001-create-timeEntry-and-timePeriodType-table.json
   - include:
       file: changelog/002-update-start-and-finish-time-dataTypes.json
+  - include:
+      file: changelog/003-change-tenant-id-to-uuid-in-time-entry-table.json
