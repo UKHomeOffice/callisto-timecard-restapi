@@ -33,7 +33,7 @@ import uk.gov.homeoffice.digital.sas.timecard.validators.timeentry.TimeEntryCons
 public class TimeEntry extends BaseEntity {
 
   @NotNull(message = "Owner ID should not be empty")
-  @Type(type="uuid-char")
+  @Type(type = "uuid-char")
   @Column(name = "owner_id")
   private UUID ownerId;
 
