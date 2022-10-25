@@ -20,6 +20,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 import uk.gov.homeoffice.digital.sas.jparest.annotation.Resource;
 import uk.gov.homeoffice.digital.sas.jparest.models.BaseEntity;
+import uk.gov.homeoffice.digital.sas.timecard.validators.timeentry.TimeEntryConstraint;
 
 @Resource(path = "time-entries")
 @Entity(name = "time_entry")
@@ -27,6 +28,7 @@ import uk.gov.homeoffice.digital.sas.jparest.models.BaseEntity;
 @NoArgsConstructor
 @Getter
 @Setter
+@TimeEntryConstraint
 public class TimeEntry extends BaseEntity {
 
   @NotNull(message = "Owner ID should not be empty")
@@ -66,5 +68,6 @@ public class TimeEntry extends BaseEntity {
   @UpdateTimestamp
   @JsonIgnore
   private LocalDateTime updatedAt;
+
 
 }
