@@ -13,13 +13,13 @@ import java.util.UUID;
 @Repository
 public interface TimeEntryRepository extends CrudRepository<TimeEntry, UUID> {
 
-    @Query("SELECT t FROM time_entry t WHERE t.ownerId = :ownerId " +
+    @Query("SELECT t FROM time_entry t WHERE t.ownerId = cast(:ownerId as org.hibernate.type.UUIDCharType) " +
             "AND (:id IS NULL OR t.id <> cast(:id as org.hibernate.type.UUIDCharType)) " +
             "AND ((:newActualStartTime = t.actualStartTime) " + //start times are the same
             "OR ((t.actualStartTime <= :newActualStartTime) AND (:newActualStartTime < t.actualEndTime))" + //new start time is in existing entry
             "OR ((:newActualStartTime <= t.actualStartTime) AND (t.actualStartTime < :newActualEndTime)))") //existing start time is in new time entry
 
-    List<TimeEntry> findAllClashingTimeEntries(@Param("ownerId") Integer ownerId,
+    List<TimeEntry> findAllClashingTimeEntries(@Param("ownerId") String ownerId,
                                           @Param("id") String id,
                                           @Param("newActualStartTime") Date actualStartTime,
                                           @Param("newActualEndTime") Date actualEndTime);

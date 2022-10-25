@@ -17,6 +17,7 @@ import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatNoException;
@@ -31,7 +32,7 @@ public class TimeEntryValidatorTest {
     @PersistenceContext
     private EntityManager entityManager;
 
-    private final static Integer OWNER_ID_1 = 1;
+    private final static UUID OWNER_ID_1 = UUID.fromString("ec703cac-de76-49c8-b1c4-83da6f8b42ce");
     private final static LocalDateTime EXISTING_SHIFT_START_TIME = LocalDateTime.of(
             2022, 1, 1, 9, 0, 0);
     private final static LocalDateTime EXISTING_SHIFT_END_TIME = LocalDateTime.of(
@@ -187,7 +188,7 @@ public class TimeEntryValidatorTest {
     // existing: 09:00-17:00, new: 09:00-
     @Test
     void validate_clashingTimeEntryForDifferentOwner_noErrorReturned() {
-        var newOwnerId = 2;
+        var newOwnerId = UUID.randomUUID();
 
         var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME);
 
@@ -239,13 +240,13 @@ public class TimeEntryValidatorTest {
         return Date.from(dateTime.toInstant(ZoneOffset.UTC));
     }
 
-    private TimeEntry createTimeEntry(Integer ownerId, Date actualStartTime) {
+    private TimeEntry createTimeEntry(UUID ownerId, Date actualStartTime) {
         var timeEntry = new TimeEntry();
         timeEntry.setOwnerId(ownerId);
         timeEntry.setActualStartTime(actualStartTime);
         return timeEntry;
     }
-    private TimeEntry createTimeEntry(Integer ownerId, Date actualStartTime, Date actualEndTime) {
+    private TimeEntry createTimeEntry(UUID ownerId, Date actualStartTime, Date actualEndTime) {
         var timeEntry = createTimeEntry(ownerId, actualStartTime);
         timeEntry.setActualEndTime(actualEndTime);
         return timeEntry;
