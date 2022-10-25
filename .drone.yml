@@ -29,6 +29,10 @@ steps:
         from_secret: sonar_cloud_token
     commands:
       - echo $$DRONE_BRANCH
+      - echo $$DRONE_COMMIT_BRANCH
+      - echo $$DRONE_REPO_BRANCH
+      - echo $$DRONE_SOURCE_BRANCH
+      - echo $$DRONE_TARGET_BRANCH
       - mvn -s ./timecard_settings.xml sonar:sonar -Dsonar.host.url=$${SONAR_HOST} -Dsonar.login=$${SONAR_TOKEN} -Dsonar.organization=ukhomeoffice -Dsonar.projectKey=callisto-timecard-restapi -Dsonar.branch.name=$DRONE_BRANCH -Dsonar.projectName=callisto-timecard-restapi
     when:
       event:
