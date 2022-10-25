@@ -32,9 +32,10 @@ import uk.gov.homeoffice.digital.sas.timecard.validators.timeentry.TimeEntryCons
 @TimeEntryConstraint
 public class TimeEntry extends BaseEntity {
 
+  @NotNull(message = "Owner ID should not be empty")
+  @Type(type="uuid-char")
   @Column(name = "owner_id")
-  @Min(value = 1, message = "Owner id's value must be greater than or equal to {value}")
-  private int ownerId;
+  private UUID ownerId;
 
   @Type(type = "uuid-char")
   @Column(name = "time_period_type_id")
