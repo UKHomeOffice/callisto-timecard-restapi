@@ -1,5 +1,12 @@
+.vscode
+.env*
 .idea
 target
 
 liquibase.properties
+
 docs/payload-model.puml
+
+# this file is our current (hopefully temporary) solution for circumnavigating cors when running our UI against this API running locally. We wouldn’t want to commit it by accident 😄
+src/main/java/uk/gov/homeoffice/digital/sas/timecard/WebConfig.java
+

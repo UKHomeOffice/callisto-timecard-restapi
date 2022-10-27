@@ -2,13 +2,13 @@
   "databaseChangeLog": [
     {
       "changeSet": {
-        "id": "1.0.0-create-schema-and-moo-table",
-        "author": "Joanna Fawl",
+        "id": "003-change-tenant-id-to-uuid-in-time-entry-table",
+        "author": "Laurie B",
         "changes": [
           {
             "sqlFile": {
               "dbms": "postgresql",
-              "path": "sql/create-schema-and-moo-table.sql"
+              "path": "sql/003-change-tenant-id-to-uuid-in-time-entry-table.sql"
             }
           }
         ]

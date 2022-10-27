@@ -1,16 +1,15 @@
 package uk.gov.homeoffice.digital.sas.timecard.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.Entity;
+import javax.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uk.gov.homeoffice.digital.sas.jparest.annotation.Resource;
 import uk.gov.homeoffice.digital.sas.jparest.models.BaseEntity;
 
-import javax.persistence.Entity;
-import javax.validation.constraints.NotEmpty;
-
-@Resource(path = "time-period-type")
+@Resource(path = "time-period-types")
 @Entity(name = "time_period_type")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @NoArgsConstructor
@@ -18,6 +17,7 @@ import javax.validation.constraints.NotEmpty;
 @Setter
 public class TimePeriodType extends BaseEntity {
 
-    @NotEmpty
-    private String name;
+  @NotEmpty
+  private String name;
+
 }
