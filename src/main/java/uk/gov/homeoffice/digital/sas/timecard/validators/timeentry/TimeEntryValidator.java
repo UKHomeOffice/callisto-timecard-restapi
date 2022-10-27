@@ -6,9 +6,14 @@ import javax.validation.ConstraintValidatorContext;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
+import org.json.simple.JSONObject;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.repositories.TimeEntryRepository;
 import uk.gov.homeoffice.digital.sas.timecard.utils.BeanUtil;
+
+import java.sql.Time;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstraint, Object> {
 
@@ -32,17 +37,29 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
 
     session.setHibernateFlushMode(FlushMode.AUTO);
     if (!timeEntryClashes.isEmpty()) {
+      var payload = timeEntryClashes.stream().map(this::transformTimeEntry)
+          .collect(Collectors.toCollection(ArrayList::new));
+
       HibernateConstraintValidatorContext hibernateContext =
           context.unwrap(HibernateConstraintValidatorContext.class);
 
       hibernateContext.disableDefaultConstraintViolation();
-      hibernateContext.withDynamicPayload(timeEntryClashes);
+      hibernateContext.withDynamicPayload(payload);
       hibernateContext
           .buildConstraintViolationWithTemplate(
               "Time periods must not overlap with another time period")
+          .addPropertyNode("actualStartTime")
           .addConstraintViolation();
       return false;
     }
     return true;
+  }
+
+  private JSONObject transformTimeEntry(TimeEntry timeEntry) {
+    var result = new JSONObject();
+    result.put("startTime", timeEntry.getActualStartTime());
+    result.put("endTime", timeEntry.getActualEndTime());
+    result.put("timePeriodTypeId", timeEntry.getTimePeriodTypeId());
+    return result;
   }
 }
