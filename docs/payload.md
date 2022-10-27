@@ -81,7 +81,7 @@ A way to categorise time periods (e.g. a shift, a standard rest day). Depending 
   "ownerId": 0,
   "startTime": "2019-08-24T14:15:22Z",
   "endTime": "2019-08-24T14:15:22Z",
-  "mealBreakAllowence": 0,
+  "mealBreakAllowance": 0,
   "mealBreakTaken": 0,
   "shiftType": "string",
   "timePeriodType": {
@@ -104,7 +104,7 @@ A TimeEntry carries the time periods during which employees have performed a bus
 |ownerId|number|true|none|The id of the Person who owns this TimeEntry i.e. the Person who has performed the activity in the given time period|
 |startTime|string(date-time)|true|none|The start time of the activity that was worked (to the minute)|
 |endTime|string(date-time)|false|none|The end time of the activity that was worked (to the minute)|
-|mealBreakAllowence|integer|false|none|The maximum amount of time that the worker is entitled to take (in minutes)|
+|mealBreakAllowance|integer|false|none|The maximum amount of time that the worker is entitled to take (in minutes)|
 |mealBreakTaken|integer|false|none|The amount of time that the worker has taken for their meal break (in minutes)|
 |shiftType|string|false|none|a descriptor for the shift (eg 'early shift')|
 |timePeriodType|[TimePeriodType](#schematimeperiodtype)|true|none|The type of time entry (e.g. a shift, a standard rest day)|

@@ -71,7 +71,7 @@ components:
           description: The end time of the activity that was worked (to the minute)
           type: string
           format: date-time
-        mealBreakAllowence: 
+        mealBreakAllowance: 
           description: The maximum amount of time that the worker is entitled to take (in minutes)
           type: integer
         mealBreakTaken: 

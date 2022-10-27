@@ -3,8 +3,7 @@
 entity person {
   * id : number <<PK>>
   --
-  * is_fulltime: boolean 
-  * terms_and_conditions_id: number <<FK>>
+  * fte_value: double 
   * location_id: varchar <<FK>>
   * employment_type_id <<FK>>
 }
@@ -18,7 +17,7 @@ entity time_entry {
   * end_time: date_time
   * time_period_type_id: number <<FK>>  
   shift_type: varchar
-  meal_break_allowence: double
+  meal_break_allowance: double
   meal_break_taken: double
 }
 
@@ -53,7 +52,7 @@ entity flex_change_type {
 }
 
 entity public_holiday_by_location {
-  * location_id : string <<PK>>
+  * location_id : varchar <<PK>>
   --
   * public_holiday_countrycode : string
 }
@@ -72,7 +71,7 @@ entity night_hour_range {
   * end_time : time
 }
 
-entity contract_type_definition {
+entity ahw_contract_definition {
   * employment_type_id : string <<PK>>
   --
   * min_night_duration : float
@@ -86,7 +85,7 @@ flex_change ||.. time_entry
 flex_change ||.. person
 flex_change ||.. flex_change_type
 person ||.. night_hour_range
-person ||.. contract_type_definition
+person ||.. ahw_contract_definition
 person ||.. public_holiday_by_location
 public_holiday_by_location ||.. public_holiday
 
