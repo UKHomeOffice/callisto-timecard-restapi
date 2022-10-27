@@ -1,5 +1,7 @@
 package uk.gov.homeoffice.digital.sas.timecard.validators.timeentry;
 
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -10,10 +12,6 @@ import org.json.simple.JSONObject;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.repositories.TimeEntryRepository;
 import uk.gov.homeoffice.digital.sas.timecard.utils.BeanUtil;
-
-import java.sql.Time;
-import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstraint, Object> {
 
@@ -48,7 +46,7 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
       hibernateContext
           .buildConstraintViolationWithTemplate(
               "Time periods must not overlap with another time period")
-          .addPropertyNode("actualStartTime")
+          .addPropertyNode("timeEntry")
           .addConstraintViolation();
       return false;
     }
