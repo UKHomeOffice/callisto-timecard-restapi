@@ -79,10 +79,10 @@ A way to categorise time periods (e.g. a shift, a standard rest day). Depending 
   "timeEntryId": 0,
   "version": 0,
   "ownerId": 0,
-  "actualStartTime": "2019-08-24T14:15:22Z",
-  "actualEndTime": "2019-08-24T14:15:22Z",
-  "plannedStartTime": "2019-08-24T14:15:22Z",
-  "plannedEndTime": "2019-08-24T14:15:22Z",
+  "startTime": "2019-08-24T14:15:22Z",
+  "endTime": "2019-08-24T14:15:22Z",
+  "mealBreakAllowence": 0,
+  "mealBreakTaken": 0,
   "shiftType": "string",
   "timePeriodType": {
     "timePeriodTypeId": 0,
@@ -102,10 +102,10 @@ A TimeEntry carries the time periods during which employees have performed a bus
 |timeEntryId|number|false|none|Assigned by the TimeCard container|
 |version|number|false|none|The version of the TimeEntry as assigned by the TimeCard container. This value changes when the resource is created, updated, or deleted.|
 |ownerId|number|true|none|The id of the Person who owns this TimeEntry i.e. the Person who has performed the activity in the given time period|
-|actualStartTime|string(date-time)|true|none|The start time of the activity that was worked (to the minute)|
-|actualEndTime|string(date-time)|false|none|The end time of the activity that was worked (to the minute)|
-|plannedStartTime|string(date-time)|false|none|The start time of the activity that has been planned (to the minute)|
-|plannedEndTime|string(date-time)|false|none|The end time of the activity that has been planned (to the minute)|
+|startTime|string(date-time)|true|none|The start time of the activity that was worked (to the minute)|
+|endTime|string(date-time)|false|none|The end time of the activity that was worked (to the minute)|
+|mealBreakAllowence|integer|false|none|The maximum amount of time that the worker is entitled to take (in minutes)|
+|mealBreakTaken|integer|false|none|The amount of time that the worker has taken for their meal break (in minutes)|
 |shiftType|string|false|none|a descriptor for the shift (eg 'early shift')|
 |timePeriodType|[TimePeriodType](#schematimeperiodtype)|true|none|The type of time entry (e.g. a shift, a standard rest day)|
 

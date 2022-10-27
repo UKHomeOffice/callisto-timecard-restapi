@@ -50,7 +50,7 @@ components:
       description: A TimeEntry carries the time periods during which employees have performed a business activity (e.g. PCP, dog handling etc) or HR activity (e.g. leaves, training etc). TimeEntry is the actual recording of hours done by employees as per their roster. Encapsulates day and time (to the minute). The TimeEntry also holds the concept of planned time. In this instance the owner of the TimeEntry has been rostered to perform some work in the future at a specified time. Not all TimeEntry owners are subject to their time being planned out therefore the fields related to planned time are optional. It is also possible to create a TimeEntry with just an actualStartTime and to provide the actualEndTime later. However if planned time is provided then both the start and end must be set.
       type: object
       required:
-        - actualStartTime
+        - startTime
         - timePeriodType
         - ownerId
       properties:
@@ -63,22 +63,20 @@ components:
         ownerId:
             description: The id of the Person who owns this TimeEntry i.e. the Person who has performed the activity in the given time period
             type: number
-        actualStartTime: 
+        startTime: 
           description: The start time of the activity that was worked (to the minute)
           type: string
           format: date-time
-        actualEndTime: 
+        endTime: 
           description: The end time of the activity that was worked (to the minute)
           type: string
           format: date-time
-        plannedStartTime: 
-          description: The start time of the activity that has been planned (to the minute)
-          type: string
-          format: date-time
-        plannedEndTime: 
-          description: The end time of the activity that has been planned (to the minute)
-          type: string
-          format: date-time   
+        mealBreakAllowence: 
+          description: The maximum amount of time that the worker is entitled to take (in minutes)
+          type: integer
+        mealBreakTaken: 
+          description: The amount of time that the worker has taken for their meal break (in minutes)
+          type: integer  
         shiftType:
           description: a descriptor for the shift (eg 'early shift')
           type: string
@@ -130,4 +128,4 @@ components:
             type: number  
         timeEntryVersion:
             description: The version of the TimeEntry associated with the FlexChange
-            type: number              
+            type: number   
