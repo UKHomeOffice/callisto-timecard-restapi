@@ -5,6 +5,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
+import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.repositories.TimeEntryRepository;
 import uk.gov.homeoffice.digital.sas.timecard.utils.BeanUtil;
@@ -30,6 +31,18 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
         timeEntry.getActualEndTime());
 
     session.setHibernateFlushMode(FlushMode.AUTO);
-    return timeEntryClashes.isEmpty();
+    if (!timeEntryClashes.isEmpty()) {
+      HibernateConstraintValidatorContext hibernateContext =
+          context.unwrap(HibernateConstraintValidatorContext.class);
+
+      hibernateContext.disableDefaultConstraintViolation();
+      hibernateContext.withDynamicPayload(timeEntryClashes);
+      hibernateContext
+          .buildConstraintViolationWithTemplate(
+              "Time periods must not overlap with another time period")
+          .addConstraintViolation();
+      return false;
+    }
+    return true;
   }
 }
