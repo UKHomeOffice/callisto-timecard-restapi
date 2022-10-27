@@ -14,8 +14,8 @@ entity time_entry {
   --
   * version
   * owner_id: number <<FK>>
-  * actual_start_time
-  * actual_end_time
+  * start_time: date_time
+  * end_time: date_time
   * time_period_type_id: number <<FK>>  
   shift_type: varchar
   meal_break_allowence: double
