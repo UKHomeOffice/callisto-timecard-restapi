@@ -32,4 +32,24 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
     session.setHibernateFlushMode(FlushMode.AUTO);
     return timeEntryClashes.isEmpty();
   }
+
+  public boolean duplicateIsValid(Object value, ConstraintValidatorContext context) {
+
+    EntityManager entityManager = BeanUtil.getBean(EntityManager.class);
+    Session session = entityManager.unwrap(Session.class);
+    /* We need to manually control the session here as auto flushing after the db read
+    will cause an infinite loop of entity validation
+     */
+    session.setHibernateFlushMode(FlushMode.MANUAL);
+
+    var timeEntry = (TimeEntry) value;
+    var timeEntryClashes = BeanUtil.getBean(TimeEntryRepository.class).findAllClashingTimeEntries(
+        timeEntry.getOwnerId() != null ? timeEntry.getOwnerId().toString() : null,
+        timeEntry.getId() != null ? timeEntry.getId().toString() : null,
+        timeEntry.getActualStartTime(),
+        timeEntry.getActualEndTime());
+
+    session.setHibernateFlushMode(FlushMode.AUTO);
+    return timeEntryClashes.isEmpty();
+  }
 }
