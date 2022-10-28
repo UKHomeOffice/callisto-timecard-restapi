@@ -49,7 +49,6 @@ public class TimeEntryValidatorTest {
     // region clashing_error_tests
 
     // existing: 08:00-, new: 08:00-
-    @Test
     void validate_newStartTimeIsTheSameAsExistingStartTimeWithNoEndTimes_errorReturned() {
         var time = LocalDateTime.of(
                 2022, 1, 1, 8, 0, 0);
@@ -67,8 +66,7 @@ public class TimeEntryValidatorTest {
     }
 
     // existing: 09:00-17:00, new: 09:00-
-    @Test
-    void validate_newStartTimeIsTheSameAsExistingStartTimeAndNoNewEndTime_errorReturned() {
+   void validate_newStartTimeIsTheSameAsExistingStartTimeAndNoNewEndTime_errorReturned() {
         var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME);
 
         var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
@@ -78,7 +76,6 @@ public class TimeEntryValidatorTest {
     }
 
     // existing: 09:00-17:00, new: 09:01-
-    @Test
     void validate_newStartTimeInBetweenExistingStartAndEndTimeAndNoNewEndTime_errorReturned() {
         var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME.plusMinutes(1));
         var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
@@ -88,7 +85,6 @@ public class TimeEntryValidatorTest {
     }
 
     // existing: 09:00-17:00, new: 08:59-16:59
-    @Test
     void validate_existingStartTimeInBetweenNewStartAndEndTime_errorReturned() {
         var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME.minusMinutes(1));
         var newEndTime = getAsDate(EXISTING_SHIFT_END_TIME.minusMinutes(1));
@@ -99,7 +95,6 @@ public class TimeEntryValidatorTest {
     }
 
     // existing: 09:00-17:00, new: 16:59-17:01
-    @Test
     void validate_newStartTimeBeforeExistingEndTime_errorReturned() {
         var newStartTime = getAsDate(EXISTING_SHIFT_END_TIME.minusMinutes(1));
         var newEndTime = getAsDate(EXISTING_SHIFT_END_TIME.plusMinutes(1));
@@ -110,7 +105,7 @@ public class TimeEntryValidatorTest {
     }
 
     // existing: 09:00-17:00, new: 09:00-17:00
-    @Test
+    
     void validate_newStartAndEndTimeSameAsExistingStartAndEndTime_errorReturned() {
         var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME);
         var newEndTime = getAsDate(EXISTING_SHIFT_END_TIME);
@@ -121,7 +116,6 @@ public class TimeEntryValidatorTest {
     }
 
     // existing: 07:00-08:00, updated: 06:00-08:00
-    @Test
     void validate_timeEntryIdsAreDifferentAndTimesClash_errorReturned() {
 
         var existingTimeEntry = createTimeEntry(
@@ -145,7 +139,6 @@ public class TimeEntryValidatorTest {
     // region happy_path
 
     // existing: 09:00-17:00, new: 17:01-
-    @Test
     void validate_newStartTimeAfterExistingEndTimeAndNoEndTime_noErrorReturned() {
         var newStartTime = getAsDate(EXISTING_SHIFT_END_TIME.plusMinutes(1));
         var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
@@ -155,7 +148,6 @@ public class TimeEntryValidatorTest {
     }
 
     // existing: 09:00-17:00, new: 17:00-
-    @Test
     void validate_newStartTimeEqualToExistingEndTimeAndNoEndTime_noErrorReturned() {
         var newStartTime = getAsDate(EXISTING_SHIFT_END_TIME);
         var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
@@ -165,7 +157,6 @@ public class TimeEntryValidatorTest {
     }
 
     // existing: 09:00-17:00, new: 08:00-09:00
-    @Test
     void validate_newEndTimeEqualToExistingStartTime_noErrorReturned() {
         var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1));
         var newEndTime = getAsDate(EXISTING_SHIFT_START_TIME);
@@ -176,7 +167,6 @@ public class TimeEntryValidatorTest {
     }
 
     // existing: 09:00-17:00, new: 08:59-
-    @Test
     void validate_newStartTimeBeforeExistingStartTimeAndNoEndTime_noErrorReturned() {
         var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME.minusMinutes(1));
         var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
@@ -186,7 +176,6 @@ public class TimeEntryValidatorTest {
     }
 
     // existing: 09:00-17:00, new: 09:00-
-    @Test
     void validate_clashingTimeEntryForDifferentOwner_noErrorReturned() {
         var newOwnerId = UUID.randomUUID();
 
@@ -199,7 +188,6 @@ public class TimeEntryValidatorTest {
     }
 
     // existing: 07:00-08:00, updated: 05:00-06:00
-    @Test
     void validate_timeEntryIdsAreTheSameAndNoClash_noErrorReturned() {
 
         var newTimeEntry = createTimeEntry(
@@ -217,7 +205,7 @@ public class TimeEntryValidatorTest {
     }
 
     // existing: 07:00-08:00, updated: 06:00-08:00
-    @Test
+    
     void validate_timeEntryIdsAreTheSameAndTimesClash_noErrorReturned() {
 
         var newTimeEntry = createTimeEntry(
