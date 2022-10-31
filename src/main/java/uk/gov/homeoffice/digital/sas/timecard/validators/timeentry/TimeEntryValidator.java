@@ -1,6 +1,7 @@
 package uk.gov.homeoffice.digital.sas.timecard.validators.timeentry;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.validation.ConstraintValidator;
@@ -33,6 +34,8 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
         timeEntry.getActualStartTime(),
         timeEntry.getActualEndTime());
 
+    ClashingProperty clashingProperty = getClashingProperty(timeEntryClashes);
+
     session.setHibernateFlushMode(FlushMode.AUTO);
     if (!timeEntryClashes.isEmpty()) {
       var payload = timeEntryClashes.stream().map(this::transformTimeEntry)
@@ -46,7 +49,7 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
       hibernateContext
           .buildConstraintViolationWithTemplate(
               "Time periods must not overlap with another time period")
-          .addPropertyNode("timeEntry")
+          .addPropertyNode(clashingProperty.toString())
           .addConstraintViolation();
       return false;
     }
@@ -59,5 +62,13 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
     result.put("endTime", timeEntry.getActualEndTime());
     result.put("timePeriodTypeId", timeEntry.getTimePeriodTypeId());
     return result;
+  }
+
+  private ClashingProperty getClashingProperty(List<TimeEntry> timeEntryClashes) {
+    return ClashingProperty.startTime;
+  }
+
+  enum ClashingProperty {
+      startTime, endTime, startAndEndTime
   }
 }
