@@ -19,8 +19,9 @@ import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @Transactional
@@ -62,8 +63,10 @@ public class TimeEntryValidatorTest {
 
         var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
 
-        assertThatExceptionOfType(ConstraintViolationException.class).isThrownBy(() ->
-                saveEntryAndFlushDatabase(timeEntryNew));
+        Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
+
+        assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
+        assertEquals(((ConstraintViolationException) thrown).getConstraintViolations().iterator().next().getPropertyPath().toString(), TimeEntryValidator.ClashingProperty.startTime.toString());
     }
 
     // existing: 09:00-17:00, new: 09:00-
