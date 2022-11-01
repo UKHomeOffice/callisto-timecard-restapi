@@ -1,0 +1,1 @@
+DELETE FROM timecard.time_entry;
