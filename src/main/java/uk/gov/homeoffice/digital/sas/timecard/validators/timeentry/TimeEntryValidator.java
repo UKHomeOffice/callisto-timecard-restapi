@@ -1,6 +1,7 @@
 package uk.gov.homeoffice.digital.sas.timecard.validators.timeentry;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
@@ -15,7 +16,6 @@ import uk.gov.homeoffice.digital.sas.timecard.repositories.TimeEntryRepository;
 import uk.gov.homeoffice.digital.sas.timecard.utils.BeanUtil;
 
 public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstraint, Object> {
-
 
   @Override
   public boolean isValid(Object value, ConstraintValidatorContext context) {
@@ -63,30 +63,51 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
     return result;
   }
 
-  private ClashingProperty getClashingProperty(TimeEntry timeEntry, List<TimeEntry> timeEntryClashes) {
+  private ClashingProperty getClashingProperty(
+      TimeEntry timeEntry, List<TimeEntry> timeEntryClashes) {
     var startTimeClash = false;
     var endTimeClash = false;
 
-    if (timeEntry.getActualStartTime().equals(timeEntryClashes.get(0).getActualStartTime())) {
-      startTimeClash = true;
+    for (TimeEntry timeEntryClash : timeEntryClashes) {
+      // start times are equal
+      if (timeEntry.getActualStartTime().equals(timeEntryClash.getActualStartTime())) {
+        startTimeClash = true;
+      }
+
+      if (timeEntryClash.getActualEndTime() != null //clash end time exists
+          && isInTimeEntry(timeEntry.getActualStartTime(), timeEntryClash)) { //ST in clashing entry
+        startTimeClash = true;
+      }
+
+      if (timeEntry.getActualEndTime() != null //ET exists
+          && timeEntryClash.getActualEndTime() != null //cET exists
+      ) {
+        if (isInTimeEntry(timeEntryClash.getActualStartTime(), timeEntry)
+            || timeEntry.getActualEndTime().equals(timeEntryClash.getActualEndTime())) {
+          endTimeClash = true;
+        }
+      }
     }
 
-    if (timeEntryClashes.get(0).getActualEndTime() != null && timeEntryClashes.get(0).getActualStartTime().compareTo(timeEntry.getActualStartTime()) <= 0 && timeEntry.getActualStartTime().compareTo(timeEntryClashes.get(0).getActualEndTime()) < 0) {
-      startTimeClash = true;
+    if (startTimeClash && endTimeClash) {
+      return ClashingProperty.startAndEndTime;
     }
-
-    if (timeEntry.getActualEndTime() != null && timeEntry.getActualStartTime().compareTo(timeEntryClashes.get(0).getActualStartTime()) <= 0 && timeEntryClashes.get(0).getActualStartTime().compareTo(timeEntry.getActualEndTime() != null ? timeEntry.getActualEndTime() : null) < 0) {
-      endTimeClash = true;
+    if (startTimeClash) {
+      return ClashingProperty.startTime;
     }
-
-    if (startTimeClash && endTimeClash) return ClashingProperty.startAndEndTime;
-    if (startTimeClash) return ClashingProperty.startTime;
-    if (endTimeClash) return ClashingProperty.endTime;
+    if (endTimeClash) {
+      return ClashingProperty.endTime;
+    }
 
     return null;
   }
 
+  private boolean isInTimeEntry(Date time, TimeEntry timeEntry) {
+    return (timeEntry.getActualStartTime().before(time)
+        && time.before(timeEntry.getActualEndTime()));
+  }
+
   enum ClashingProperty {
-      startTime, endTime, startAndEndTime
+    startTime, endTime, startAndEndTime
   }
 }

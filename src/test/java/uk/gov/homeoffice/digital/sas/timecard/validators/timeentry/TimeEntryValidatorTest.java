@@ -19,7 +19,8 @@ import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -49,6 +50,10 @@ public class TimeEntryValidatorTest {
 
     // region clashing_error_tests
 
+    private static void assertPropertyErrorType(ConstraintViolationException thrown, TimeEntryValidator.ClashingProperty property) {
+        assertEquals(property.toString(), thrown.getConstraintViolations().iterator().next().getPropertyPath().toString());
+    }
+
     // existing: 08:00-, new: 08:00-
     @Test
     void validate_newStartTimeIsTheSameAsExistingStartTimeWithNoEndTimes_errorReturned() {
@@ -66,7 +71,7 @@ public class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertEquals(((ConstraintViolationException) thrown).getConstraintViolations().iterator().next().getPropertyPath().toString(), TimeEntryValidator.ClashingProperty.startTime.toString());
+        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.startTime);
     }
 
     // existing: 09:00-17:00, new: 09:00-
@@ -76,8 +81,10 @@ public class TimeEntryValidatorTest {
 
         var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
 
-        assertThatExceptionOfType(ConstraintViolationException.class).isThrownBy(() ->
-                saveEntryAndFlushDatabase(timeEntryNew));
+        Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
+
+        assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
+        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.startTime);
     }
 
     // existing: 09:00-17:00, new: 09:01-
@@ -86,8 +93,10 @@ public class TimeEntryValidatorTest {
         var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME.plusMinutes(1));
         var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
 
-        assertThatExceptionOfType(ConstraintViolationException.class).isThrownBy(() ->
-                saveEntryAndFlushDatabase(timeEntryNew));
+        Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
+
+        assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
+        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.startTime);
     }
 
     // existing: 09:00-17:00, new: 08:59-16:59
@@ -97,8 +106,10 @@ public class TimeEntryValidatorTest {
         var newEndTime = getAsDate(EXISTING_SHIFT_END_TIME.minusMinutes(1));
         var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime, newEndTime);
 
-        assertThatExceptionOfType(ConstraintViolationException.class).isThrownBy(() ->
-                saveEntryAndFlushDatabase(timeEntryNew));
+        Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
+
+        assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
+        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.endTime);
     }
 
     // existing: 09:00-17:00, new: 16:59-17:01
@@ -108,8 +119,10 @@ public class TimeEntryValidatorTest {
         var newEndTime = getAsDate(EXISTING_SHIFT_END_TIME.plusMinutes(1));
         var newTimeEntry = createTimeEntry(OWNER_ID_1, newStartTime, newEndTime);
 
-        assertThatExceptionOfType(ConstraintViolationException.class).isThrownBy(() ->
-                saveEntryAndFlushDatabase(newTimeEntry));
+        Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
+
+        assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
+        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.startTime);
     }
 
     // existing: 09:00-17:00, new: 09:00-17:00
@@ -119,28 +132,44 @@ public class TimeEntryValidatorTest {
         var newEndTime = getAsDate(EXISTING_SHIFT_END_TIME);
         var newTimeEntry = createTimeEntry(OWNER_ID_1, newStartTime, newEndTime);
 
-        assertThatExceptionOfType(ConstraintViolationException.class).isThrownBy(() ->
-                saveEntryAndFlushDatabase(newTimeEntry));
+        Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
+
+        assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
+        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.startAndEndTime);
     }
 
-    // existing: 07:00-08:00, updated: 06:00-08:00
+    // existing: 09:00-17:00, new: 08:00-18:00
     @Test
-    void validate_timeEntryIdsAreDifferentAndTimesClash_errorReturned() {
+    void validate_newTimeEntryEntirelyOverlapsExistingTimeEntry_errorReturned() {
+        var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1));
+        var newEndTime = getAsDate(EXISTING_SHIFT_END_TIME.plusHours(1));
+        var newTimeEntry = createTimeEntry(OWNER_ID_1, newStartTime, newEndTime);
 
-        var existingTimeEntry = createTimeEntry(
-                OWNER_ID_1,
-                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(2)),
-                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
+        Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
+
+        assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
+        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.endTime);
+    }
+
+    // existing: 09:00-17:00, 17:00-20:00, new: 16:00-21:00
+    @Test
+    void validate_newTimeEntryEntirelyOverlapsTwoExistingTimeEntries_errorReturned() {
+        var existingStartTime = getAsDate(LocalDateTime.of(
+            2022, 1, 1, 17, 0, 0));
+        var existingEndTime = getAsDate(LocalDateTime.of(
+            2022, 1, 1, 20, 0, 0));
+        var existingTimeEntry = createTimeEntry(OWNER_ID_1, existingStartTime, existingEndTime);
 
         saveEntryAndFlushDatabase(existingTimeEntry);
 
-        var newTimeEntry = createTimeEntry(
-                OWNER_ID_1,
-                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(2)),
-                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
+        var newStartTime = getAsDate(EXISTING_SHIFT_END_TIME.minusHours(1));
+        var newEndTime = getAsDate(EXISTING_SHIFT_END_TIME.plusHours(1));
+        var newTimeEntry = createTimeEntry(OWNER_ID_1, newStartTime, newEndTime);
 
-        assertThatExceptionOfType(ConstraintViolationException.class).isThrownBy(() ->
-                saveEntryAndFlushDatabase(newTimeEntry));
+        Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
+
+        assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
+        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.startAndEndTime);
     }
 
     // endregion
@@ -263,6 +292,28 @@ public class TimeEntryValidatorTest {
 
         session.flush();
         session.setHibernateFlushMode(FlushMode.AUTO);
+    }
+
+    // existing: 07:00-08:00, updated: 06:00-08:00
+    @Test
+    void validate_timeEntryIdsAreDifferentAndTimesClash_errorReturned() {
+
+        var existingTimeEntry = createTimeEntry(
+                OWNER_ID_1,
+                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(2)),
+                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
+
+        saveEntryAndFlushDatabase(existingTimeEntry);
+
+        var newTimeEntry = createTimeEntry(
+                OWNER_ID_1,
+                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(3)),
+                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
+
+        Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
+
+        assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
+        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.endTime);
     }
 
 }
