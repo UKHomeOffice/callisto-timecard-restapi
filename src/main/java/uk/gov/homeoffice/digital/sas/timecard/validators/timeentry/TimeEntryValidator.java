@@ -69,23 +69,20 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
     var endTimeClash = false;
 
     for (TimeEntry timeEntryClash : timeEntryClashes) {
-      // start times are equal
       if (timeEntry.getActualStartTime().equals(timeEntryClash.getActualStartTime())) {
         startTimeClash = true;
       }
 
-      if (timeEntryClash.getActualEndTime() != null //clash end time exists
-          && isInTimeEntry(timeEntry.getActualStartTime(), timeEntryClash)) { //ST in clashing entry
+      if (timeEntryClash.getActualEndTime() != null
+          && isStartTimeInTimeEntry(timeEntry.getActualStartTime(), timeEntryClash)) {
         startTimeClash = true;
       }
 
-      if (timeEntry.getActualEndTime() != null //ET exists
-          && timeEntryClash.getActualEndTime() != null //cET exists
+      if (timeEntry.getActualEndTime() != null
+          && timeEntryClash.getActualEndTime() != null
+          && isStartTimeInTimeEntry(timeEntryClash.getActualStartTime(), timeEntry)
       ) {
-        if (isInTimeEntry(timeEntryClash.getActualStartTime(), timeEntry)
-            || timeEntry.getActualEndTime().equals(timeEntryClash.getActualEndTime())) {
-          endTimeClash = true;
-        }
+        endTimeClash = true;
       }
     }
 
@@ -102,9 +99,9 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
     return null;
   }
 
-  private boolean isInTimeEntry(Date time, TimeEntry timeEntry) {
-    return (timeEntry.getActualStartTime().before(time)
-        && time.before(timeEntry.getActualEndTime()));
+  private boolean isStartTimeInTimeEntry(Date startTime, TimeEntry timeEntry) {
+    return (startTime.getTime() >= timeEntry.getActualStartTime().getTime()
+        && startTime.before(timeEntry.getActualEndTime()));
   }
 
   enum ClashingProperty {

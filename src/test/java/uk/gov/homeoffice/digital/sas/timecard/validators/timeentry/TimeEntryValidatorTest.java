@@ -50,10 +50,6 @@ public class TimeEntryValidatorTest {
 
     // region clashing_error_tests
 
-    private static void assertPropertyErrorType(ConstraintViolationException thrown, TimeEntryValidator.ClashingProperty property) {
-        assertEquals(property.toString(), thrown.getConstraintViolations().iterator().next().getPropertyPath().toString());
-    }
-
     // existing: 08:00-, new: 08:00-
     @Test
     void validate_newStartTimeIsTheSameAsExistingStartTimeWithNoEndTimes_errorReturned() {
@@ -170,6 +166,28 @@ public class TimeEntryValidatorTest {
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
         assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.startAndEndTime);
+    }
+
+    // existing: 07:00-08:00, updated: 06:00-08:00
+    @Test
+    void validate_timeEntryIdsAreDifferentAndTimesClash_errorReturned() {
+
+        var existingTimeEntry = createTimeEntry(
+            OWNER_ID_1,
+            getAsDate(EXISTING_SHIFT_START_TIME.minusHours(2)),
+            getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
+
+        saveEntryAndFlushDatabase(existingTimeEntry);
+
+        var newTimeEntry = createTimeEntry(
+            OWNER_ID_1,
+            getAsDate(EXISTING_SHIFT_START_TIME.minusHours(3)),
+            getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
+
+        Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
+
+        assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
+        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.endTime);
     }
 
     // endregion
@@ -294,26 +312,8 @@ public class TimeEntryValidatorTest {
         session.setHibernateFlushMode(FlushMode.AUTO);
     }
 
-    // existing: 07:00-08:00, updated: 06:00-08:00
-    @Test
-    void validate_timeEntryIdsAreDifferentAndTimesClash_errorReturned() {
-
-        var existingTimeEntry = createTimeEntry(
-                OWNER_ID_1,
-                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(2)),
-                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
-
-        saveEntryAndFlushDatabase(existingTimeEntry);
-
-        var newTimeEntry = createTimeEntry(
-                OWNER_ID_1,
-                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(3)),
-                getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
-
-        Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
-
-        assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.endTime);
+    private static void assertPropertyErrorType(ConstraintViolationException thrown, TimeEntryValidator.ClashingProperty property) {
+        assertEquals(property.toString(), thrown.getConstraintViolations().iterator().next().getPropertyPath().toString());
     }
 
 }
