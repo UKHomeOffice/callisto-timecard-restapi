@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.validator.engine.HibernateConstraintViolation;
+import org.json.simple.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @SpringBootTest
 @Transactional
@@ -310,8 +312,9 @@ public class TimeEntryValidatorTest {
             HibernateConstraintViolation.class);
         var dynamicPayload = hibernateConstraintViolation.getDynamicPayload(ArrayList.class);
 
-        assertEquals("[{\"timePeriodTypeId\":null,\"startTime\":Sat Jan 01 08:00:00 GMT 2022,\"endTime\":null}]",
-            dynamicPayload.toString());
+        var payload1 = ((ArrayList<JSONObject>) dynamicPayload).get(0);
+        assertEquals(getAsDate(time), payload1.get("startTime"));
+        assertNull(payload1.get("endTime"));
     }
 
     // existing: 09:00-17:00, new: 08:00-18:00
@@ -327,8 +330,9 @@ public class TimeEntryValidatorTest {
             HibernateConstraintViolation.class);
         var dynamicPayload = hibernateConstraintViolation.getDynamicPayload(ArrayList.class);
 
-        assertEquals("[{\"timePeriodTypeId\":null,\"startTime\":Sat Jan 01 09:00:00 GMT 2022,\"endTime\":Sat Jan 01 17:00:00 GMT 2022}]",
-            dynamicPayload.toString());
+        var payload1 = ((ArrayList<JSONObject>) dynamicPayload).get(0);
+        assertEquals(getAsDate(EXISTING_SHIFT_START_TIME), payload1.get("startTime"));
+        assertEquals(getAsDate(EXISTING_SHIFT_END_TIME), payload1.get("endTime"));
     }
 
     // endregion
