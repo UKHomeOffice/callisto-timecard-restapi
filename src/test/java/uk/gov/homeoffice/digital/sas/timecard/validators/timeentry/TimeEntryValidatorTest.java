@@ -312,9 +312,9 @@ public class TimeEntryValidatorTest {
             HibernateConstraintViolation.class);
         var dynamicPayload = hibernateConstraintViolation.getDynamicPayload(ArrayList.class);
 
-        var payload1 = ((ArrayList<JSONObject>) dynamicPayload).get(0);
-        assertEquals(getAsDate(time), payload1.get("startTime"));
-        assertNull(payload1.get("endTime"));
+        var payload = ((ArrayList<JSONObject>) dynamicPayload).get(0);
+        assertEquals(getAsDate(time), payload.get("startTime"));
+        assertNull(payload.get("endTime"));
     }
 
     // existing: 09:00-17:00, new: 08:00-18:00
@@ -330,9 +330,9 @@ public class TimeEntryValidatorTest {
             HibernateConstraintViolation.class);
         var dynamicPayload = hibernateConstraintViolation.getDynamicPayload(ArrayList.class);
 
-        var payload1 = ((ArrayList<JSONObject>) dynamicPayload).get(0);
-        assertEquals(getAsDate(EXISTING_SHIFT_START_TIME), payload1.get("startTime"));
-        assertEquals(getAsDate(EXISTING_SHIFT_END_TIME), payload1.get("endTime"));
+        var payload = ((ArrayList<JSONObject>) dynamicPayload).get(0);
+        assertEquals(getAsDate(EXISTING_SHIFT_START_TIME), payload.get("startTime"));
+        assertEquals(getAsDate(EXISTING_SHIFT_END_TIME), payload.get("endTime"));
     }
 
     // endregion
