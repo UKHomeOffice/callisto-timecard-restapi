@@ -1,8 +1,10 @@
 package uk.gov.homeoffice.digital.sas.timecard.validators.timeentry;
 
 
+import java.util.ArrayList;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
+import org.hibernate.validator.engine.HibernateConstraintViolation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -282,6 +284,51 @@ public class TimeEntryValidatorTest {
 
         assertThatNoException().isThrownBy(() ->
                 saveEntryAndFlushDatabase(newTimeEntry));
+    }
+
+    // endregion
+
+    // region dynamic_payload
+
+    // existing: 08:00-, new: 08:00-
+    @Test
+    void validate_newStartTimeIsTheSameAsExistingStartTimeWithNoEndTimes_dynamicPayloadSet() {
+        var time = LocalDateTime.of(
+            2022, 1, 1, 8, 0, 0);
+
+        saveEntryAndFlushDatabase(createTimeEntry(
+            OWNER_ID_1,
+            getAsDate(time)));
+
+        var newStartTime = getAsDate(time);
+
+        var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
+
+        Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
+        var constraintViolationException = (ConstraintViolationException) thrown;
+        var hibernateConstraintViolation = constraintViolationException.getConstraintViolations().iterator().next().unwrap(
+            HibernateConstraintViolation.class);
+        var dynamicPayload = hibernateConstraintViolation.getDynamicPayload(ArrayList.class);
+
+        assertEquals("[{\"timePeriodTypeId\":null,\"startTime\":Sat Jan 01 08:00:00 GMT 2022,\"endTime\":null}]",
+            dynamicPayload.toString());
+    }
+
+    // existing: 09:00-17:00, new: 08:00-18:00
+    @Test
+    void validate_newTimeEntryEntirelyOverlapsExistingTimeEntry_dynamicPayloadSet() {
+        var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1));
+        var newEndTime = getAsDate(EXISTING_SHIFT_END_TIME.plusHours(1));
+        var newTimeEntry = createTimeEntry(OWNER_ID_1, newStartTime, newEndTime);
+
+        Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
+        var constraintViolationException = (ConstraintViolationException) thrown;
+        var hibernateConstraintViolation = constraintViolationException.getConstraintViolations().iterator().next().unwrap(
+            HibernateConstraintViolation.class);
+        var dynamicPayload = hibernateConstraintViolation.getDynamicPayload(ArrayList.class);
+
+        assertEquals("[{\"timePeriodTypeId\":null,\"startTime\":Sat Jan 01 09:00:00 GMT 2022,\"endTime\":Sat Jan 01 17:00:00 GMT 2022}]",
+            dynamicPayload.toString());
     }
 
     // endregion
