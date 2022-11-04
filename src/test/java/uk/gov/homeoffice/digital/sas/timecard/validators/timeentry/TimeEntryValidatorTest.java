@@ -99,6 +99,20 @@ public class TimeEntryValidatorTest {
         assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.startTime);
     }
 
+    // existing: 09:00-17:00, new: 09:01-09:02
+    @Test
+    void validate_newStartTimeAndEndTimeInBetweenExistingStartAndEndTime_errorReturned() {
+        var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME.plusMinutes(1));
+        var newEndTime = getAsDate(EXISTING_SHIFT_END_TIME.plusMinutes(2));
+        var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
+
+        Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
+
+        assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
+        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.startAndEndTime);
+
+    }
+
     // existing: 09:00-17:00, new: 08:59-16:59
     @Test
     void validate_existingStartTimeInBetweenNewStartAndEndTime_errorReturned() {
