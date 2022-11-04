@@ -158,6 +158,28 @@ steps:
 ---
 kind: pipeline
 type: kubernetes
+name: callisto-timecard-restapi-prod-deploy
+
+platform:
+  os: linux
+  arch: amd64
+
+trigger:
+  status: success
+
+steps:
+  - name: deploy_to_prod
+    commands:
+      - echo "dummy prod deployment"
+    when:
+      event:
+        - promote
+      target:
+        - production
+
+---
+kind: pipeline
+type: kubernetes
 name: build notifications
 
 trigger:
