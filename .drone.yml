@@ -164,6 +164,10 @@ platform:
   os: linux
   arch: amd64
 
+depends_on:
+  - callisto-timecard-restapi
+  - callisto-timecard-database-schema
+
 trigger:
   status: success
 
