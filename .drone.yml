@@ -169,25 +169,17 @@ depends_on:
   - callisto-timecard-database-schema
 
 trigger:
-  status: success
+  event:
+    - promote
+  target:
+    - production
 
 steps:
-  - name: lint_helm_files
-    image: pelotech/drone-helm3
-    settings:
-      mode: lint
-      chart: ./helm
-      values_file: ./helm/values.yaml
-
   - name: deploy_to_prod
     image: maven:3.8.3-openjdk-17
     commands:
       - echo "dummy prod deployment"
-    when:
-      event:
-        - promote
-      target:
-        - production
+
 
 ---
 kind: pipeline
