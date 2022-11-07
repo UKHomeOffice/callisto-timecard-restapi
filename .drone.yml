@@ -125,6 +125,10 @@ depends_on:
 
 trigger:
   status: success
+  event:
+    - push
+  branch:
+    - main
 
 steps:
   - name: lint_helm_files
@@ -149,11 +153,6 @@ steps:
         from_secret: dev_kube_api_url
       kube_token:
         from_secret: dev_kube_token
-    when:
-      event:
-        - push
-      branch:
-        - main
 
 ---
 kind: pipeline
