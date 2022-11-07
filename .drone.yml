@@ -8,8 +8,8 @@ platform:
   arch: amd64
 
 trigger:
-  exclude:
-    event:
+  event:
+    exclude:
       - promote
 
 steps:
@@ -82,8 +82,8 @@ platform:
   arch: amd64
 
 trigger:
-  exclude:
-    event:
+  event:
+    exclude:
       - promote
 
 steps:
@@ -135,8 +135,8 @@ depends_on:
 
 trigger:
   status: success
-  exclude:
-    event:
+  event:
+    exclude:
       - promote
 
 steps:
