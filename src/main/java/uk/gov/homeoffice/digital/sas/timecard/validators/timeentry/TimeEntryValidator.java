@@ -80,6 +80,12 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
 
       if (timeEntry.getActualEndTime() != null
           && timeEntryClash.getActualEndTime() != null
+          && isEndTimeInTimeEntry(timeEntry.getActualEndTime(), timeEntryClash)) {
+        endTimeClash = true;
+      }
+
+      if (timeEntry.getActualEndTime() != null
+          && timeEntryClash.getActualEndTime() != null
           && isStartTimeInTimeEntry(timeEntryClash.getActualStartTime(), timeEntry)
       ) {
         endTimeClash = true;
@@ -97,6 +103,11 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
     }
 
     return null;
+  }
+
+  private boolean isEndTimeInTimeEntry(Date endTime, TimeEntry timeEntry) {
+    return (endTime.after(timeEntry.getActualStartTime())
+        && endTime.getTime() <= timeEntry.getActualEndTime().getTime());
   }
 
   private boolean isStartTimeInTimeEntry(Date startTime, TimeEntry timeEntry) {

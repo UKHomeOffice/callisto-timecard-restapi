@@ -74,6 +74,27 @@ public class TimeEntryValidatorTest {
         assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.startTime);
     }
 
+    // existing: 08:00-, new: 08:00-08:01
+    @Test
+    void validate_newStartTimeIsTheSameAsExistingStartTimeWithNoExistingEndTime_errorReturned() {
+        var time = LocalDateTime.of(
+            2022, 1, 1, 8, 0, 0);
+
+        saveEntryAndFlushDatabase(createTimeEntry(
+            OWNER_ID_1,
+            getAsDate(time)));
+
+        var newStartTime = getAsDate(time);
+
+        var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime, getAsDate(time.plusMinutes(1)));
+
+        Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
+
+        assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
+        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.startTime);
+    }
+
+
     // existing: 09:00-17:00, new: 09:00-
     @Test
     void validate_newStartTimeIsTheSameAsExistingStartTimeAndNoNewEndTime_errorReturned() {
@@ -103,8 +124,8 @@ public class TimeEntryValidatorTest {
     @Test
     void validate_newStartTimeAndEndTimeInBetweenExistingStartAndEndTime_errorReturned() {
         var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME.plusMinutes(1));
-        var newEndTime = getAsDate(EXISTING_SHIFT_END_TIME.plusMinutes(2));
-        var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
+        var newEndTime = getAsDate(EXISTING_SHIFT_START_TIME.plusMinutes(2));
+        var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime, newEndTime);
 
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
