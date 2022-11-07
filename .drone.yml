@@ -7,6 +7,11 @@ platform:
   os: linux
   arch: amd64
 
+trigger:
+  exclude:
+    event:
+      - promote
+
 steps:
   - name: build
     image: maven:3.8.3-openjdk-17
@@ -76,6 +81,11 @@ platform:
   os: linux
   arch: amd64
 
+trigger:
+  exclude:
+    event:
+      - promote
+
 steps:
   - name: lint_dockerfile
     pull: if-not-exists
@@ -125,6 +135,9 @@ depends_on:
 
 trigger:
   status: success
+  exclude:
+    event:
+      - promote
 
 steps:
   - name: lint_helm_files
