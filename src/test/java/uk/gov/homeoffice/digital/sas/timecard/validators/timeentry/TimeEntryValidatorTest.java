@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThatNoException;
 
 @SpringBootTest
 @Transactional
-public class TimeEntryValidatorTest {
+class TimeEntryValidatorTest {
 
     @Autowired
     private TimeEntryRepository timeEntryRepository;

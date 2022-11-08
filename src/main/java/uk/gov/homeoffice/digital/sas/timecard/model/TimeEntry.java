@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,6 +30,7 @@ import uk.gov.homeoffice.digital.sas.timecard.validators.timeentry.TimeEntryCons
 @Getter
 @Setter
 @TimeEntryConstraint
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class TimeEntry extends BaseEntity {
 
   @NotNull(message = "Owner ID should not be empty")

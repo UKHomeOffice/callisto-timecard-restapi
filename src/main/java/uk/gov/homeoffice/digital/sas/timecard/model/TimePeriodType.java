@@ -3,6 +3,7 @@ package uk.gov.homeoffice.digital.sas.timecard.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotEmpty;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,6 +16,7 @@ import uk.gov.homeoffice.digital.sas.jparest.models.BaseEntity;
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class TimePeriodType extends BaseEntity {
 
   @NotEmpty
