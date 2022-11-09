@@ -1,0 +1,18 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "004-delete-time-entries-with-old-ownerId-type",
+        "author": "Joanna F",
+        "changes": [
+          {
+            "sqlFile": {
+              "dbms": "postgresql",
+              "path": "sql/004-delete-time-entries-with-old-ownerId-type.sql"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
