@@ -74,48 +74,63 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
       }
 
       if (timeEntryClash.getActualEndTime() != null
-          && isStartTimeInTimeEntry(timeEntry.getActualStartTime(), timeEntryClash)) {
+          && startTimeClashesWithTimeEntry(timeEntry.getActualStartTime(), timeEntryClash)) {
         startTimeClash = true;
       }
 
       if (timeEntry.getActualEndTime() != null
           && timeEntryClash.getActualEndTime() != null
-          && isEndTimeInTimeEntry(timeEntry.getActualEndTime(), timeEntryClash)) {
+          && endTimeClashesWithTimeEntry(timeEntry.getActualEndTime(), timeEntryClash)) {
         endTimeClash = true;
       }
 
       if (timeEntry.getActualEndTime() != null
           && timeEntryClash.getActualEndTime() != null
-          && isStartTimeInTimeEntry(timeEntryClash.getActualStartTime(), timeEntry)
+          && startTimeClashesWithTimeEntry(timeEntryClash.getActualStartTime(), timeEntry)
       ) {
         endTimeClash = true;
+      }
+
+      if (startTimeClash && endTimeClash) {
+        break;
       }
     }
 
     if (startTimeClash && endTimeClash) {
-      return ClashingProperty.startAndEndTime;
+      return ClashingProperty.START_AND_END_TIME;
     }
     if (startTimeClash) {
-      return ClashingProperty.startTime;
+      return ClashingProperty.START_TIME;
     }
     if (endTimeClash) {
-      return ClashingProperty.endTime;
+      return ClashingProperty.END_TIME;
     }
 
-    return null;
+    return ClashingProperty.START_AND_END_TIME;
   }
 
-  private boolean isEndTimeInTimeEntry(Date endTime, TimeEntry timeEntry) {
+  private boolean endTimeClashesWithTimeEntry(Date endTime, TimeEntry timeEntry) {
     return (endTime.after(timeEntry.getActualStartTime())
         && endTime.getTime() <= timeEntry.getActualEndTime().getTime());
   }
 
-  private boolean isStartTimeInTimeEntry(Date startTime, TimeEntry timeEntry) {
+  private boolean startTimeClashesWithTimeEntry(Date startTime, TimeEntry timeEntry) {
     return (startTime.getTime() >= timeEntry.getActualStartTime().getTime()
         && startTime.before(timeEntry.getActualEndTime()));
   }
 
   enum ClashingProperty {
-    startTime, endTime, startAndEndTime
+    START_TIME("startTime"),
+    END_TIME("endTime"),
+    START_AND_END_TIME("startAndEndTime");
+    private final String stringValue;
+
+    ClashingProperty(final String s) {
+      stringValue = s;
+    }
+
+    public String toString() {
+      return stringValue;
+    }
   }
 }

@@ -71,7 +71,7 @@ public class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.startTime);
+        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.START_TIME);
     }
 
     // existing: 08:00-, new: 08:00-08:01
@@ -91,7 +91,7 @@ public class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.startTime);
+        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.START_TIME);
     }
 
 
@@ -105,7 +105,7 @@ public class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.startTime);
+        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.START_TIME);
     }
 
     // existing: 09:00-17:00, new: 09:01-
@@ -117,7 +117,7 @@ public class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.startTime);
+        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.START_TIME);
     }
 
     // existing: 09:00-17:00, new: 09:01-09:02
@@ -130,7 +130,7 @@ public class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.startAndEndTime);
+        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.START_AND_END_TIME);
 
     }
 
@@ -144,7 +144,7 @@ public class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.endTime);
+        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.END_TIME);
     }
 
     // existing: 09:00-17:00, new: 16:59-17:01
@@ -157,7 +157,7 @@ public class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.startTime);
+        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.START_TIME);
     }
 
     // existing: 09:00-17:00, new: 09:00-17:00
@@ -170,7 +170,7 @@ public class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.startAndEndTime);
+        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.START_AND_END_TIME);
     }
 
     // existing: 09:00-17:00, new: 08:00-18:00
@@ -183,7 +183,7 @@ public class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.endTime);
+        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.END_TIME);
     }
 
     // existing: 09:00-17:00, 17:00-20:00, new: 16:00-21:00
@@ -204,7 +204,7 @@ public class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.startAndEndTime);
+        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.START_AND_END_TIME);
     }
 
     // existing: 07:00-08:00, updated: 06:00-08:00
@@ -226,7 +226,7 @@ public class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.endTime);
+        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.END_TIME);
     }
 
     // endregion
