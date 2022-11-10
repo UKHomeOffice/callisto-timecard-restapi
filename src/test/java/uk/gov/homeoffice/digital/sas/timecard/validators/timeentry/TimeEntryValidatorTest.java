@@ -25,8 +25,6 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 @SpringBootTest
 @Transactional
@@ -348,8 +346,8 @@ public class TimeEntryValidatorTest {
         var dynamicPayload = hibernateConstraintViolation.getDynamicPayload(ArrayList.class);
 
         var payload = ((ArrayList<JSONObject>) dynamicPayload).get(0);
-        assertEquals(getAsDate(time), payload.get("startTime"));
-        assertNull(payload.get("endTime"));
+        assertThat(payload.get("startTime")).isEqualTo(getAsDate(time));
+        assertThat(payload.get("endTime")).isNull();
     }
 
     // existing: 09:00-17:00, new: 08:00-18:00
@@ -366,8 +364,8 @@ public class TimeEntryValidatorTest {
         var dynamicPayload = hibernateConstraintViolation.getDynamicPayload(ArrayList.class);
 
         var payload = ((ArrayList<JSONObject>) dynamicPayload).get(0);
-        assertEquals(getAsDate(EXISTING_SHIFT_START_TIME), payload.get("startTime"));
-        assertEquals(getAsDate(EXISTING_SHIFT_END_TIME), payload.get("endTime"));
+        assertThat(payload.get("startTime")).isEqualTo(getAsDate(EXISTING_SHIFT_START_TIME));
+        assertThat(payload.get("endTime")).isEqualTo(getAsDate(EXISTING_SHIFT_END_TIME));
     }
 
     // endregion
@@ -399,7 +397,7 @@ public class TimeEntryValidatorTest {
     }
 
     private static void assertPropertyErrorType(ConstraintViolationException thrown, TimeEntryValidator.ClashingProperty property) {
-        assertEquals(property.toString(), thrown.getConstraintViolations().iterator().next().getPropertyPath().toString());
+        assertThat(thrown.getConstraintViolations().iterator().next().getPropertyPath().toString()).isEqualTo(property.toString());
     }
 
 }
