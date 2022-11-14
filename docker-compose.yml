@@ -1,0 +1,15 @@
+version: '3.3'
+services:
+  api:
+    build:
+      context: ./
+      dockerfile: dev.dockerfile
+    volumes:
+      - ./:/app
+      - ./.m2:/root/.m2
+    working_dir: /app
+    command: sh run.sh
+    ports:
+      - 8080:8080
+      - 35729:35729
+      - 5005:5005
