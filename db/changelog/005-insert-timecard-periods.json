@@ -1,0 +1,18 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "005-insert-timecard-periods",
+        "author": "Seweryn M",
+        "changes": [
+          {
+            "sqlFile": {
+              "dbms": "postgresql",
+              "path": "sql/005-insert-timecard-periods.sql"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
