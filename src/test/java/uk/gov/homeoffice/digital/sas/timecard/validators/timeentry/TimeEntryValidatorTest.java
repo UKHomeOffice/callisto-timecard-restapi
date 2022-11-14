@@ -347,7 +347,7 @@ public class TimeEntryValidatorTest {
         ArrayList<JSONObject> dynamicPayload =
             (ArrayList<JSONObject>) hibernateConstraintViolation.getDynamicPayload(ArrayList.class);
 
-        assertThat(dynamicPayload.size()).isGreaterThan(0);
+        assertThat(dynamicPayload.size()).isPositive();
         var payload = dynamicPayload.get(0);
         assertThat(payload.get("startTime")).isEqualTo(getAsDate(time));
         assertThat(payload.get("endTime")).isNull();
@@ -367,7 +367,7 @@ public class TimeEntryValidatorTest {
         ArrayList<JSONObject> dynamicPayload =
             (ArrayList<JSONObject>) hibernateConstraintViolation.getDynamicPayload(ArrayList.class);
 
-        assertThat(dynamicPayload.size()).isGreaterThan(0);
+        assertThat(dynamicPayload.size()).isPositive();
         var payload = dynamicPayload.get(0);
         assertThat(payload.get("startTime")).isEqualTo(getAsDate(EXISTING_SHIFT_START_TIME));
         assertThat(payload.get("endTime")).isEqualTo(getAsDate(EXISTING_SHIFT_END_TIME));
