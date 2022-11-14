@@ -11,6 +11,7 @@ import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
 import org.json.simple.JSONObject;
+import uk.gov.homeoffice.digital.sas.timecard.enums.ClashingProperty;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.repositories.TimeEntryRepository;
 import uk.gov.homeoffice.digital.sas.timecard.utils.BeanUtil;
@@ -69,25 +70,16 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
     var endTimeClash = false;
 
     for (TimeEntry timeEntryClash : timeEntryClashes) {
-      if (timeEntry.getActualStartTime().equals(timeEntryClash.getActualStartTime())) {
-        startTimeClash = true;
-      }
-
-      if (timeEntryClash.getActualEndTime() != null
+      if (timeEntry.getActualStartTime().equals(timeEntryClash.getActualStartTime())
+          || timeEntryClash.getActualEndTime() != null
           && startTimeClashesWithTimeEntry(timeEntry.getActualStartTime(), timeEntryClash)) {
         startTimeClash = true;
       }
 
       if (timeEntry.getActualEndTime() != null
           && timeEntryClash.getActualEndTime() != null
-          && endTimeClashesWithTimeEntry(timeEntry.getActualEndTime(), timeEntryClash)) {
-        endTimeClash = true;
-      }
-
-      if (timeEntry.getActualEndTime() != null
-          && timeEntryClash.getActualEndTime() != null
-          && startTimeClashesWithTimeEntry(timeEntryClash.getActualStartTime(), timeEntry)
-      ) {
+          && (endTimeClashesWithTimeEntry(timeEntry.getActualEndTime(), timeEntryClash)
+          || startTimeClashesWithTimeEntry(timeEntryClash.getActualStartTime(), timeEntry))) {
         endTimeClash = true;
       }
 
@@ -117,20 +109,5 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
   private boolean startTimeClashesWithTimeEntry(Date startTime, TimeEntry timeEntry) {
     return (startTime.getTime() >= timeEntry.getActualStartTime().getTime()
         && startTime.before(timeEntry.getActualEndTime()));
-  }
-
-  enum ClashingProperty {
-    START_TIME("startTime"),
-    END_TIME("endTime"),
-    START_AND_END_TIME("startAndEndTime");
-    private final String stringValue;
-
-    ClashingProperty(final String s) {
-      stringValue = s;
-    }
-
-    public String toString() {
-      return stringValue;
-    }
   }
 }

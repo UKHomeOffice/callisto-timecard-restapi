@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import uk.gov.homeoffice.digital.sas.timecard.enums.ClashingProperty;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.repositories.TimeEntryRepository;
 
@@ -69,7 +70,7 @@ public class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.START_TIME);
+        assertPropertyErrorType((ConstraintViolationException) thrown, ClashingProperty.START_TIME);
     }
 
     // existing: 08:00-, new: 08:00-08:01
@@ -89,7 +90,7 @@ public class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.START_TIME);
+        assertPropertyErrorType((ConstraintViolationException) thrown, ClashingProperty.START_TIME);
     }
 
 
@@ -103,7 +104,7 @@ public class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.START_TIME);
+        assertPropertyErrorType((ConstraintViolationException) thrown, ClashingProperty.START_TIME);
     }
 
     // existing: 09:00-17:00, new: 09:01-
@@ -115,7 +116,7 @@ public class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.START_TIME);
+        assertPropertyErrorType((ConstraintViolationException) thrown, ClashingProperty.START_TIME);
     }
 
     // existing: 09:00-17:00, new: 09:01-09:02
@@ -128,7 +129,7 @@ public class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.START_AND_END_TIME);
+        assertPropertyErrorType((ConstraintViolationException) thrown, ClashingProperty.START_AND_END_TIME);
 
     }
 
@@ -142,7 +143,7 @@ public class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.END_TIME);
+        assertPropertyErrorType((ConstraintViolationException) thrown, ClashingProperty.END_TIME);
     }
 
     // existing: 09:00-17:00, new: 16:59-17:01
@@ -155,7 +156,7 @@ public class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.START_TIME);
+        assertPropertyErrorType((ConstraintViolationException) thrown, ClashingProperty.START_TIME);
     }
 
     // existing: 09:00-17:00, new: 09:00-17:00
@@ -168,7 +169,7 @@ public class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.START_AND_END_TIME);
+        assertPropertyErrorType((ConstraintViolationException) thrown, ClashingProperty.START_AND_END_TIME);
     }
 
     // existing: 09:00-17:00, new: 08:00-18:00
@@ -181,7 +182,7 @@ public class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.END_TIME);
+        assertPropertyErrorType((ConstraintViolationException) thrown, ClashingProperty.END_TIME);
     }
 
     // existing: 09:00-17:00, 17:00-20:00, new: 16:00-21:00
@@ -202,7 +203,7 @@ public class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.START_AND_END_TIME);
+        assertPropertyErrorType((ConstraintViolationException) thrown, ClashingProperty.START_AND_END_TIME);
     }
 
     // existing: 07:00-08:00, updated: 06:00-08:00
@@ -224,7 +225,7 @@ public class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, TimeEntryValidator.ClashingProperty.END_TIME);
+        assertPropertyErrorType((ConstraintViolationException) thrown, ClashingProperty.END_TIME);
     }
 
     // endregion
@@ -400,7 +401,7 @@ public class TimeEntryValidatorTest {
         session.setHibernateFlushMode(FlushMode.AUTO);
     }
 
-    private static void assertPropertyErrorType(ConstraintViolationException thrown, TimeEntryValidator.ClashingProperty property) {
+    private static void assertPropertyErrorType(ConstraintViolationException thrown, ClashingProperty property) {
         assertThat(thrown.getConstraintViolations().iterator().next().getPropertyPath().toString()).isEqualTo(property.toString());
     }
 
