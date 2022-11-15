@@ -10,31 +10,30 @@ image:
   repo: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/
   tag: latest # this value will be overridden by drone.yml
 
-#TODO: update with test db values
 env:
   database:
     - name: DATABASE_NAME
       valueFrom:
         secretKeyRef:
-          name: callistodev-rds
+          name: callisto-test-db
           key: db_name
     - name: DATABASE_USERNAME
       valueFrom:
         secretKeyRef:
-          name: callistodev-rds
+          name: callisto-test-db
           key: username
     - name: DATABASE_PASSWORD
       valueFrom:
         secretKeyRef:
-          name: callistodev-rds
+          name: callisto-test-db
           key: password
     - name: DATABASE_ENDPOINT
       valueFrom:
         secretKeyRef:
-          name: callistodev-rds
+          name: callisto-test-db
           key: endpoint
     - name: DATABASE_PORT
       valueFrom:
         secretKeyRef:
-          name: callistodev-rds
+          name: callisto-test-db
           key: port
