@@ -347,9 +347,9 @@ public class TimeEntryValidatorTest {
         ArrayList<JSONObject> dynamicPayload =
             (ArrayList<JSONObject>) hibernateConstraintViolation.getDynamicPayload(ArrayList.class);
 
-        assertThat(dynamicPayload.size()).isPositive();
+        assertThat(dynamicPayload).isNotEmpty();
         var payload = dynamicPayload.get(0);
-        assertThat(payload.get("startTime")).isEqualTo(getAsDate(time));
+        assertThat(payload).containsEntry("startTime", getAsDate(time));
         assertThat(payload.get("endTime")).isNull();
     }
 
@@ -367,10 +367,10 @@ public class TimeEntryValidatorTest {
         ArrayList<JSONObject> dynamicPayload =
             (ArrayList<JSONObject>) hibernateConstraintViolation.getDynamicPayload(ArrayList.class);
 
-        assertThat(dynamicPayload.size()).isPositive();
+        assertThat(dynamicPayload).isNotEmpty();
         var payload = dynamicPayload.get(0);
-        assertThat(payload.get("startTime")).isEqualTo(getAsDate(EXISTING_SHIFT_START_TIME));
-        assertThat(payload.get("endTime")).isEqualTo(getAsDate(EXISTING_SHIFT_END_TIME));
+        assertThat(payload).containsEntry("startTime", getAsDate(EXISTING_SHIFT_START_TIME));
+        assertThat(payload).containsEntry("endTime", getAsDate(EXISTING_SHIFT_END_TIME));
     }
 
     // endregion
@@ -402,7 +402,7 @@ public class TimeEntryValidatorTest {
     }
 
     private static void assertPropertyErrorType(ConstraintViolationException thrown, ClashingProperty property) {
-        assertThat(thrown.getConstraintViolations().iterator().next().getPropertyPath().toString()).isEqualTo(property.toString());
+        assertThat(thrown.getConstraintViolations().iterator().next().getPropertyPath()).hasToString(property.toString());
     }
 
 }
