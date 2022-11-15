@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.validator.engine.HibernateConstraintViolation;
-import org.json.simple.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -344,13 +343,13 @@ public class TimeEntryValidatorTest {
         var constraintViolationException = (ConstraintViolationException) thrown;
         var hibernateConstraintViolation = constraintViolationException.getConstraintViolations().iterator().next().unwrap(
             HibernateConstraintViolation.class);
-        ArrayList<JSONObject> dynamicPayload =
-            (ArrayList<JSONObject>) hibernateConstraintViolation.getDynamicPayload(ArrayList.class);
+        var dynamicPayload =
+            (ArrayList<TimeClash>) hibernateConstraintViolation.getDynamicPayload(ArrayList.class);
 
         assertThat(dynamicPayload).isNotEmpty();
         var payload = dynamicPayload.get(0);
-        assertThat(payload).containsEntry("startTime", getAsDate(time));
-        assertThat(payload.get("endTime")).isNull();
+        assertThat(payload.startTime()).isEqualTo(getAsDate(time));
+        assertThat(payload.endTime()).isNull();
     }
 
     // existing: 09:00-17:00, new: 08:00-18:00
@@ -364,14 +363,13 @@ public class TimeEntryValidatorTest {
         var constraintViolationException = (ConstraintViolationException) thrown;
         var hibernateConstraintViolation = constraintViolationException.getConstraintViolations().iterator().next().unwrap(
             HibernateConstraintViolation.class);
-        ArrayList<JSONObject> dynamicPayload =
-            (ArrayList<JSONObject>) hibernateConstraintViolation.getDynamicPayload(ArrayList.class);
+        ArrayList<TimeClash> dynamicPayload =
+            (ArrayList<TimeClash>) hibernateConstraintViolation.getDynamicPayload(ArrayList.class);
 
         assertThat(dynamicPayload).isNotEmpty();
         var payload = dynamicPayload.get(0);
-        assertThat(payload)
-            .containsEntry("startTime", getAsDate(EXISTING_SHIFT_START_TIME))
-            .containsEntry("endTime", getAsDate(EXISTING_SHIFT_END_TIME));
+        assertThat(payload.startTime()).isEqualTo(getAsDate(EXISTING_SHIFT_START_TIME));
+        assertThat(payload.endTime()).isEqualTo(getAsDate(EXISTING_SHIFT_END_TIME));
     }
 
     // endregion

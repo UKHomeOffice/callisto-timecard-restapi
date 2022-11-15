@@ -10,7 +10,6 @@ import javax.validation.ConstraintValidatorContext;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
-import org.json.simple.JSONObject;
 import uk.gov.homeoffice.digital.sas.timecard.enums.ClashingProperty;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.repositories.TimeEntryRepository;
@@ -56,12 +55,10 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
     return true;
   }
 
-  private JSONObject transformTimeEntry(TimeEntry timeEntry) {
-    var result = new JSONObject();
-    result.put("startTime", timeEntry.getActualStartTime());
-    result.put("endTime", timeEntry.getActualEndTime());
-    result.put("timePeriodTypeId", timeEntry.getTimePeriodTypeId());
-    return result;
+  private TimeClash transformTimeEntry(TimeEntry timeEntry) {
+    return new TimeClash(timeEntry.getActualStartTime(),
+        timeEntry.getActualEndTime(),
+        timeEntry.getTimePeriodTypeId());
   }
 
   private ClashingProperty getClashingProperty(
