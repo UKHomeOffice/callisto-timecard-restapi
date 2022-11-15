@@ -70,16 +70,11 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
     var endTimeClash = false;
 
     for (TimeEntry timeEntryClash : timeEntryClashes) {
-      if (timeEntry.getActualStartTime().equals(timeEntryClash.getActualStartTime())
-          || timeEntryClash.getActualEndTime() != null
-          && startTimeClashesWithTimeEntry(timeEntry.getActualStartTime(), timeEntryClash)) {
+      if (startTimeClashes(timeEntry, timeEntryClash)) {
         startTimeClash = true;
       }
 
-      if (timeEntry.getActualEndTime() != null
-          && timeEntryClash.getActualEndTime() != null
-          && (endTimeClashesWithTimeEntry(timeEntry.getActualEndTime(), timeEntryClash)
-          || startTimeClashesWithTimeEntry(timeEntryClash.getActualStartTime(), timeEntry))) {
+      if (endTimeClashes(timeEntry, timeEntryClash)) {
         endTimeClash = true;
       }
 
@@ -99,6 +94,19 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
     }
 
     return ClashingProperty.START_AND_END_TIME;
+  }
+
+  private boolean startTimeClashes(TimeEntry timeEntry, TimeEntry timeEntryClash) {
+    return timeEntry.getActualStartTime().equals(timeEntryClash.getActualStartTime())
+        || timeEntryClash.getActualEndTime() != null
+        && startTimeClashesWithTimeEntry(timeEntry.getActualStartTime(), timeEntryClash);
+  }
+
+  private boolean endTimeClashes(TimeEntry timeEntry, TimeEntry timeEntryClash) {
+    return timeEntry.getActualEndTime() != null
+        && timeEntryClash.getActualEndTime() != null
+        && (endTimeClashesWithTimeEntry(timeEntry.getActualEndTime(), timeEntryClash)
+        || startTimeClashesWithTimeEntry(timeEntryClash.getActualStartTime(), timeEntry));
   }
 
   private boolean endTimeClashesWithTimeEntry(Date endTime, TimeEntry timeEntry) {
