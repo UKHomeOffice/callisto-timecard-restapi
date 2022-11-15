@@ -7,5 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class CallistoTimecardRestapiApplication {
   public static void main(String[] args) {
     SpringApplication.run(CallistoTimecardRestapiApplication.class, args);
+    System.out.println("To jest wersja v3");
   }
 }

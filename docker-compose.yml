@@ -25,19 +25,13 @@ x-liquibase-settings: &liquibase-setting
 services:
   timecard-restapi:
     <<: *db-settings
-    build:
-      context: ./
-      dockerfile: dev.dockerfile
-    volumes:
-      - ./:/app
-      - $HOME/.m2:/root/.m2 # required for jparest dependencies (artifactory)
-    working_dir: /app
-    command: sh run.sh
+    image: openjdk:17-alpine
+    entrypoint: [ "java","-jar","timecard-api.jar" ]
+    working_dir: '/usr/src/main'
     ports:
-      - 50000:9090
-      - 35729:35729
-      - 5005:5005
-
+      - "50000:9090"
+    volumes:
+      - './target:/usr/src/main'
     depends_on:
       - timecard-database-migrations
 
