@@ -369,8 +369,9 @@ public class TimeEntryValidatorTest {
 
         assertThat(dynamicPayload).isNotEmpty();
         var payload = dynamicPayload.get(0);
-        assertThat(payload).containsEntry("startTime", getAsDate(EXISTING_SHIFT_START_TIME));
-        assertThat(payload).containsEntry("endTime", getAsDate(EXISTING_SHIFT_END_TIME));
+        assertThat(payload)
+            .containsEntry("startTime", getAsDate(EXISTING_SHIFT_START_TIME))
+            .containsEntry("endTime", getAsDate(EXISTING_SHIFT_END_TIME));
     }
 
     // endregion
