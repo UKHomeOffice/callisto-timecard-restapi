@@ -4,8 +4,8 @@ x-db-settings: &db-settings
   pull_policy: always
   environment:
     - DATABASE_NAME=callisto
-    - DATABASE_USERNAME=${DATABASE_USERNAME}
-    - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+    - DATABASE_USERNAME=dev
+    - DATABASE_PASSWORD=dev
     - DATABASE_ENDPOINT=postgres
     - DATABASE_PORT=5432
   networks:
