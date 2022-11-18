@@ -35,7 +35,14 @@ steps:
       SONAR_TOKEN:
         from_secret: sonar_cloud_token
     commands:
-      - mvn -s ./timecard_settings.xml sonar:sonar -Dsonar.host.url=$${SONAR_HOST} -Dsonar.login=$${SONAR_TOKEN} -Dsonar.organization=ukhomeoffice -Dsonar.projectKey=callisto-timecard-restapi -Dsonar.branch.name=$DRONE_BRANCH -Dsonar.projectName=callisto-timecard-restapi -Dsonar.qualitygate.wait=true
+      - mvn -s ./timecard_settings.xml sonar:sonar 
+        -Dsonar.host.url=$${SONAR_HOST} 
+        -Dsonar.login=$${SONAR_TOKEN} 
+        -Dsonar.organization=ukhomeoffice 
+        -Dsonar.projectKey=callisto-timecard-restapi 
+        -Dsonar.branch.name=$DRONE_BRANCH 
+        -Dsonar.projectName=callisto-timecard-restapi 
+        -Dsonar.qualitygate.wait=true
     when:
       event:
         exclude:
@@ -195,3 +202,4 @@ steps:
         Repo: {{ repo.name }}
         Branch: <${DRONE_REPO_LINK}/commits/{{ build.branch }}|{{ build.branch }}>
         Author: {{ build.author }}
+        <https://sonarcloud.io/dashboard?id=callisto-timecard-restapi&branch={{ build.branch }}&resolved=false|SonarCloud Analysis Report>
