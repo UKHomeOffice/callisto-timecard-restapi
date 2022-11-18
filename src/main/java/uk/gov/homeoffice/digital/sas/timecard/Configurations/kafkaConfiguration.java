@@ -27,7 +27,8 @@ public class kafkaConfiguration {
         // Kafka Producer Configurations
         Map<String, Object> config = new HashMap<>();
 
-        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
+            "b-1.callistodevmsk.nlo1o5.c2.kafka.eu-west-2.amazonaws.com:9094");
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 
@@ -41,15 +42,16 @@ public class kafkaConfiguration {
 
 
 // Consumer config
-    @Bean
-    public KafkaConsumer<String, TimeEntry> createKafkaConsumer() {
-
-        Properties props = new Properties();
-
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-
-        return new KafkaConsumer<>(props);
-    }
-}
+//    @Bean
+//    public KafkaConsumer<String, TimeEntry> createKafkaConsumer() {
+//
+//        Properties props = new Properties();
+//
+//        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
+//            "b-2.callistodevmsk.nlo1o5.c2.kafka.eu-west-2.amazonaws.com:9094");
+//        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+//        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+//
+//        return new KafkaConsumer<>(props);
+//    }
+//}
