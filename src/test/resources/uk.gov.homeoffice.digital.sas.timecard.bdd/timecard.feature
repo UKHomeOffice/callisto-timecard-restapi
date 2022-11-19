@@ -1,5 +1,8 @@
 Feature: Timecard
 
+  Background:
+    Given a shift time period type
+
   Scenario: Create Time Entry
 
     Given Trevor is a user
@@ -7,7 +10,7 @@ Feature: Timecard
       """
       {
         "ownerId": "00000000-0000-0000-0000-000000000001",
-        "timePeriodTypeId": "00000000-0000-0000-0000-000000000001",
+        "timePeriodTypeId": "#{sharedVariables.get('timePeriodTypeId')}",
         "actualStartTime": "2022-11-16T08:00:00Z",
         "actualEndTime": null
       }
