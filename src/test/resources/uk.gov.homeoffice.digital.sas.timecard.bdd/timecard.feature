@@ -1,7 +1,7 @@
 Feature: Timecard
 
   Background:
-    Given a shift time period type
+    Given Shift time period type
 
   Scenario: Create Time Entry
 

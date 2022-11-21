@@ -4,6 +4,7 @@ import static uk.gov.homeoffice.digital.sas.cucumberjparest.api.JpaRestApiClient
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
 import java.util.Map;
 import java.util.UUID;
@@ -27,8 +28,8 @@ public class TestSetupStepDefinitions {
     this.context = context;
   }
 
-  @Given("a shift time period type")
-  public void insertTimePeriodType() throws JsonProcessingException {
+  @Given("{timePeriodTypeName} time period type")
+  public void insertTimePeriodType(String timePeriodTypeName) throws JsonProcessingException {
     if (tenantId == null) {
       tenantId = UUID.randomUUID();
       System.setProperty(TENANT_ID_SYSTEM_PROPERTY_NAME, tenantId.toString());
@@ -39,7 +40,7 @@ public class TestSetupStepDefinitions {
       Persona admin = personaManager.createPersona("admin");
 
       TimePeriodType shiftType = new TimePeriodType();
-      shiftType.setName("Shift");
+      shiftType.setName(timePeriodTypeName);
 
       JpaRestApiResourceResponse response =
           jpaRestApiClient.create(admin, tenantId.toString(), "timecard", "time-period-types",
@@ -49,5 +50,10 @@ public class TestSetupStepDefinitions {
 
       sharedVariables.put("timePeriodTypeId", persistedTimePeriodType.getId().toString());
     }
+  }
+
+  @ParameterType("(\\S*)")
+  public String timePeriodTypeName(String name) {
+    return name;
   }
 }
