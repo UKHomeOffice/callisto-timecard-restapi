@@ -233,8 +233,9 @@ trigger:
   status:
     - success
     - failure
-  event:
-    - push
+#commented out for testing, to be uncommented when creating PR
+#  event:
+#    - push
 
 depends_on:
   - callisto-timecard-restapi-deploy
