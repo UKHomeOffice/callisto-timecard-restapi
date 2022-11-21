@@ -242,15 +242,15 @@ depends_on:
 
 slack: &slack
     image: plugins/slack
-      settings:
-        webhook:
-          from_secret: slack_webhook_url
-        channel: callisto-tech-notifications
-        username: Drone
+    settings:
+      webhook:
+        from_secret: slack_webhook_url
+      channel: callisto-tech-notifications
+      username: Drone
 
 steps:
   - name: slack_build
-  <<: *slack
+    <<: *slack
     settings:
       template: |
         {{#success build.status}}
