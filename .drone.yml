@@ -183,12 +183,6 @@ depends_on:
   - callisto-timecard-restapi-deploy
   - callisto-timecard-database-schema
 
-#TODO: EAHW-2428 - move to prod pipeline
-trigger:
-  event:
-    - promote
-  target:
-    - test
 
 steps:
   - name: lint_helm_files
@@ -216,11 +210,13 @@ steps:
         from_secret: not_prod_kube_api_url
       kube_token:
         from_secret: test_kube_token
-#commented out for testing, to be uncommented when creating PR
-#      when:
-#        event:
-#          - push
-#        branch:
+      when:
+        event:
+          - promote #TODO: EAHW-2428 - move to prod pipeline
+#          - push #commented out for testing, to be uncommented when creating PR
+        target:
+          - test #TODO: EAHW-2428 - move to prod pipeline
+#        branch: #commented out for testing, to be uncommented when creating PR
 #          - main
 
 
