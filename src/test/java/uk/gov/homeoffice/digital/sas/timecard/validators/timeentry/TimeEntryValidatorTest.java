@@ -185,6 +185,16 @@ class TimeEntryValidatorTest {
         assertPropertyErrorType((ConstraintViolationException) thrown, ClashingProperty.END_TIME);
     }
 
+    @Test
+    void validate_differentTenants_newTimeEntryEntirelyOverlapsExistingTimeEntry_NoErrorReturned() {
+        var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1));
+        var newEndTime = getAsDate(EXISTING_SHIFT_END_TIME.plusHours(1));
+        var newTimeEntry = createTimeEntry(OWNER_ID_1, newStartTime, newEndTime);
+        newTimeEntry.setTenantId(TENANT_ID);
+
+        assertThatNoException().isThrownBy(() -> saveEntryAndFlushDatabase(newTimeEntry));
+    }
+
     // existing: 09:00-17:00, 17:00-20:00, new: 16:00-21:00
     @Test
     void validate_newTimeEntryEntirelyOverlapsTwoExistingTimeEntries_errorReturned() {
@@ -383,7 +393,6 @@ class TimeEntryValidatorTest {
         var timeEntry = new TimeEntry();
         timeEntry.setOwnerId(ownerId);
         timeEntry.setActualStartTime(actualStartTime);
-        timeEntry.setTenantId(TENANT_ID);
         return timeEntry;
     }
     private TimeEntry createTimeEntry(UUID ownerId, Date actualStartTime, Date actualEndTime) {
