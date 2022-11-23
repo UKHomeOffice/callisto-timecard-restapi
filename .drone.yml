@@ -1,13 +1,51 @@
 ---
 kind: pipeline
 type: kubernetes
-name: callisto-timecard-restapi
+name: lint-files
 
 platform:
   os: linux
   arch: amd64
 
 trigger:
+  event:
+    - push
+    - pull_request
+    exclude:
+      - promote
+
+steps:
+  - name: lint_dockerfiles
+    pull: if-not-exists
+    image: hadolint/hadolint:latest-alpine
+    commands:
+      - hadolint Dockerfile
+      - hadolint db/Dockerfile
+
+  - name: lint_helm_files
+    image: pelotech/drone-helm3
+    settings:
+      mode: lint
+      chart: ./helm
+      values_files:
+        - ./helm/values.yaml
+        - ./helm/test-values.yaml
+
+
+---
+kind: pipeline
+type: kubernetes
+name: callisto-timecard-restapi
+
+platform:
+  os: linux
+  arch: amd64
+
+depends_on:
+  - lint-files
+
+trigger:
+  status: success
   event:
     exclude:
       - promote
@@ -39,15 +77,6 @@ steps:
         exclude:
           - pull_request
 
-  - name: lint_dockerfile
-    pull: if-not-exists
-    image: hadolint/hadolint:latest-alpine
-    commands:
-      - hadolint Dockerfile
-    when:
-      event:
-        - push
-        - pull_request
 
   - name: build_tag_push_ecr
     pull: if-not-exists
@@ -81,22 +110,16 @@ platform:
   os: linux
   arch: amd64
 
+depends_on:
+  - lint-files
+
 trigger:
+  status: success
   event:
     exclude:
       - promote
 
 steps:
-  - name: lint_dockerfile
-    pull: if-not-exists
-    image: hadolint/hadolint:latest-alpine
-    commands:
-      - hadolint db/Dockerfile
-    when:
-      event:
-        - push
-        - pull_request
-
   - name: build_tag_push_ecr
     pull: if-not-exists
     image: plugins/ecr
@@ -140,14 +163,6 @@ trigger:
       - promote
 
 steps:
-  - name: lint_helm_files
-    image: pelotech/drone-helm3
-    settings:
-      mode: lint
-      chart: ./helm
-      values_files:
-        - ./helm/values.yaml
-
   - name: deploy_to_dev
     image: pelotech/drone-helm3
     settings:
@@ -181,18 +196,16 @@ platform:
 
 depends_on:
   - callisto-timecard-restapi-deploy
-  - callisto-timecard-database-schema
 
+#TODO: EAHW-2428 - move to prod pipeline
+trigger:
+  status: success
+  event:
+    - promote
+  target:
+    - test
 
 steps:
-  - name: lint_helm_files
-    image: pelotech/drone-helm3
-    settings:
-      mode: lint
-      chart: ./helm
-      values_files:
-        - ./helm/test-values.yaml
-
   - name: deploy_to_test
     image: pelotech/drone-helm3
     settings:
@@ -210,13 +223,11 @@ steps:
         from_secret: not_prod_kube_api_url
       kube_token:
         from_secret: test_kube_token
-      when:
-        event:
-          - promote #TODO: EAHW-2428 - move to prod pipeline
-#          - push #commented out for testing, to be uncommented when creating PR
-        target:
-          - test #TODO: EAHW-2428 - move to prod pipeline
-#        branch: #commented out for testing, to be uncommented when creating PR
+#commented out for testing, to be uncommented when creating PR
+#      when:
+#        event:
+#          - push
+#        branch:
 #          - main
 
 
