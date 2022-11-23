@@ -19,7 +19,7 @@ public class TimeEntryListener {
   }
 
   @PostPersist
-  private void prePersistEvent(TimeEntry entry) {
+  private void postPersistEvent(TimeEntry entry) {
     log.info("Running postPersistEvent");
 
     kafkaProducerService.sendMessage(entry);
