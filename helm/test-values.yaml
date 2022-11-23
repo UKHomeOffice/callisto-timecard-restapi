@@ -12,11 +12,11 @@ image:
 
 env:
   database:
-    - name: DATABASE_NAME
-      valueFrom:
-        secretKeyRef:
-          name: callisto-test-aurora
-          key: db_name
+#    - name: DATABASE_NAME
+#      valueFrom:
+#        secretKeyRef:
+#          name: callisto-test-aurora
+#          key: db_name
     - name: DATABASE_USERNAME
       valueFrom:
         secretKeyRef:
