@@ -41,6 +41,7 @@ class TimeEntryValidatorTest {
             2022, 1, 1, 9, 0, 0);
     private final static LocalDateTime EXISTING_SHIFT_END_TIME = LocalDateTime.of(
             2022, 1, 1, 17, 0, 0);
+    private static final UUID TENANT_ID = UUID.randomUUID();
 
     @BeforeEach
     void saveTimeEntry() {
@@ -382,6 +383,7 @@ class TimeEntryValidatorTest {
         var timeEntry = new TimeEntry();
         timeEntry.setOwnerId(ownerId);
         timeEntry.setActualStartTime(actualStartTime);
+        timeEntry.setTenantId(TENANT_ID);
         return timeEntry;
     }
     private TimeEntry createTimeEntry(UUID ownerId, Date actualStartTime, Date actualEndTime) {
