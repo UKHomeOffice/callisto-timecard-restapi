@@ -32,27 +32,10 @@ steps:
         - ./helm/values/dev-values.yaml
         - ./helm/values/test-values.yaml
 
-#  - name: lint_dev_helm_files
-#    image: pelotech/drone-helm3
-#    settings:
-#      mode: lint
-#      chart: ./helm
-#      values_files:
-#        - ./helm/values/dev-values.yaml
-#
-#  - name: lint_test_helm_files
-#    image: pelotech/drone-helm3
-#    settings:
-#      mode: lint
-#      chart: ./helm
-#      values_files:
-#        - ./helm/values/test-values.yaml
-
-
 ---
 kind: pipeline
 type: kubernetes
-name: callisto-timecard-restapi
+name: callisto-timecard-restapi-build
 
 platform:
   os: linux
@@ -163,14 +146,14 @@ steps:
 ---
 kind: pipeline
 type: kubernetes
-name: callisto-timecard-restapi-deploy
+name: callisto-timecard-restapi-dev-deploy
 
 platform:
   os: linux
   arch: amd64
 
 depends_on:
-  - callisto-timecard-restapi
+  - callisto-timecard-restapi-build
   - callisto-timecard-database-schema
 
 trigger:
@@ -212,7 +195,7 @@ platform:
   arch: amd64
 
 depends_on:
-  - callisto-timecard-restapi-deploy
+  - callisto-timecard-restapi-dev-deploy
 
 #TODO: EAHW-2428 - move to prod pipeline
 trigger:
@@ -263,7 +246,7 @@ trigger:
 #    - push
 
 depends_on:
-  - callisto-timecard-restapi-deploy
+  - callisto-timecard-restapi-dev-deploy
   - callisto-timecard-restapi-test-deploy
 
 slack: &slack
