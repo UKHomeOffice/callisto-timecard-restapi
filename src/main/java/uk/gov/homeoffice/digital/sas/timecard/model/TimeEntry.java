@@ -11,7 +11,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 import uk.gov.homeoffice.digital.sas.jparest.annotation.Resource;
 import uk.gov.homeoffice.digital.sas.jparest.models.BaseEntity;
-import uk.gov.homeoffice.digital.sas.timecard.Listeners.TimeEntryListener;
+import uk.gov.homeoffice.digital.sas.timecard.listeners.TimeEntryListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
