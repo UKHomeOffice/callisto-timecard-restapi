@@ -9,10 +9,11 @@ platform:
 
 trigger:
   event:
+    include:
     - push
     - pull_request
     exclude:
-      - promote
+    - promote
 
 steps:
   - name: lint_dockerfiles
