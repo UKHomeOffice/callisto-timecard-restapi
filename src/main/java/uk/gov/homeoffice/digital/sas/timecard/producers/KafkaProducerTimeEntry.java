@@ -14,12 +14,9 @@ public class KafkaProducerTimeEntry {
   @Autowired
   private KafkaTemplate<String, TimeEntry> kafkaTimeEntryTemplate;
 
-  @Value(value = "${timeEntry.topic.name}")
-  private String timeEntryTopic;
-
   public void sendMessage(TimeEntry message) {
     try {
-      kafkaTimeEntryTemplate.send(timeEntryTopic, message);
+      kafkaTimeEntryTemplate.send("kafka-trial-dev", message);
     } catch (Exception ex) {
       log.info(String.format("Sent message has failed=[ %s ]", message));
     }
