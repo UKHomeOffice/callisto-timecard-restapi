@@ -11,18 +11,18 @@ import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 @Slf4j
 public class KafkaProducerTimeEntry {
 
-    @Autowired
-    private KafkaTemplate<String, TimeEntry> kafkaTimeEntryTemplate;
+  @Autowired
+  private KafkaTemplate<String, TimeEntry> kafkaTimeEntryTemplate;
 
-    @Value(value = "${timeEntry.topic.name}")
-    private String timeEntryTopic;
+  @Value(value = "${timeEntry.topic.name}")
+  private String timeEntryTopic;
 
-    public void sendMessage(TimeEntry message) {
-      try {
-        kafkaTimeEntryTemplate.send(timeEntryTopic, message);
-      } catch(Exception ex ) {
-        log.info(String.format("Sent message has failed=[ %s ]", message));
-      }
+  public void sendMessage(TimeEntry message) {
+    try {
+      kafkaTimeEntryTemplate.send(timeEntryTopic, message);
+    } catch (Exception ex) {
+      log.info(String.format("Sent message has failed=[ %s ]", message));
     }
+  }
 
 }

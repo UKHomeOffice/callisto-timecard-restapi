@@ -20,8 +20,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 import uk.gov.homeoffice.digital.sas.jparest.annotation.Resource;
 import uk.gov.homeoffice.digital.sas.jparest.models.BaseEntity;
-import uk.gov.homeoffice.digital.sas.timecard.validators.timeentry.TimeEntryConstraint;
 import uk.gov.homeoffice.digital.sas.timecard.listeners.TimeEntryListener;
+import uk.gov.homeoffice.digital.sas.timecard.validators.timeentry.TimeEntryConstraint;
 
 @Resource(path = "time-entries")
 @Entity(name = "time_entry")
