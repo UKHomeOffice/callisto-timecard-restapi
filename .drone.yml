@@ -23,13 +23,13 @@ steps:
       - hadolint Dockerfile
       - hadolint db/Dockerfile
 
-#  - name: lint_dev_helm_files
-#    image: pelotech/drone-helm3
-#    settings:
-#      mode: lint
-#      chart: ./helm
-#      values_files:
-#        - ./helm/values.yaml
+  - name: lint_dev_helm_files
+    image: pelotech/drone-helm3
+    settings:
+      mode: lint
+      chart: ./helm
+      values_files:
+        - ./helm/values/dev-values.yaml
 
   - name: lint_test_helm_files
     image: pelotech/drone-helm3
@@ -37,7 +37,7 @@ steps:
       mode: lint
       chart: ./helm
       values_files:
-        - ./helm/test-values.yaml
+        - ./helm/values/test-values.yaml
 
 
 ---
@@ -180,7 +180,7 @@ steps:
       values:
         - image.tag=${DRONE_COMMIT_SHA}
       values_files:
-        - ./helm/values.yaml
+        - ./helm/values/dev-values.yaml
       release: callisto-timecard-restapi
       kube_certificate: notprod_kube_api_certificate
       kube_api_server:
@@ -223,7 +223,7 @@ steps:
       values:
         - image.tag=latest #temporarily use latest instead of commit hash for testing, revert when creating PR
       values_files:
-        - ./helm/test-values.yaml
+        - ./helm/values/test-values.yaml
       release: callisto-timecard-restapi
       kube_certificate:
         from_secret: notprod_kube_api_certificate
