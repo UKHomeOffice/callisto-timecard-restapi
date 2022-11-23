@@ -23,13 +23,13 @@ steps:
       - hadolint Dockerfile
       - hadolint db/Dockerfile
 
-  - name: lint_dev_helm_files
-    image: pelotech/drone-helm3
-    settings:
-      mode: lint
-      chart: ./helm
-      values_files:
-        - ./helm/values.yaml
+#  - name: lint_dev_helm_files
+#    image: pelotech/drone-helm3
+#    settings:
+#      mode: lint
+#      chart: ./helm
+#      values_files:
+#        - ./helm/values.yaml
 
   - name: lint_test_helm_files
     image: pelotech/drone-helm3
