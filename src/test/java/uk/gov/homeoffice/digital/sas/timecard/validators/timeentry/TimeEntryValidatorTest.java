@@ -41,7 +41,6 @@ class TimeEntryValidatorTest {
             2022, 1, 1, 9, 0, 0);
     private final static LocalDateTime EXISTING_SHIFT_END_TIME = LocalDateTime.of(
             2022, 1, 1, 17, 0, 0);
-    private static final UUID TENANT_ID = UUID.randomUUID();
 
     @BeforeEach
     void saveTimeEntry() {
@@ -185,16 +184,6 @@ class TimeEntryValidatorTest {
         assertPropertyErrorType((ConstraintViolationException) thrown, ClashingProperty.END_TIME);
     }
 
-    @Test
-    void validate_differentTenants_newTimeEntryEntirelyOverlapsExistingTimeEntry_NoErrorReturned() {
-        var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1));
-        var newEndTime = getAsDate(EXISTING_SHIFT_END_TIME.plusHours(1));
-        var newTimeEntry = createTimeEntry(OWNER_ID_1, newStartTime, newEndTime);
-        newTimeEntry.setTenantId(TENANT_ID);
-
-        assertThatNoException().isThrownBy(() -> saveEntryAndFlushDatabase(newTimeEntry));
-    }
-
     // existing: 09:00-17:00, 17:00-20:00, new: 16:00-21:00
     @Test
     void validate_newTimeEntryEntirelyOverlapsTwoExistingTimeEntries_errorReturned() {
@@ -294,6 +283,17 @@ class TimeEntryValidatorTest {
 
         assertThatNoException().isThrownBy(() ->
                 saveEntryAndFlushDatabase(timeEntryNew));
+    }
+
+    @Test
+    void validate_clashingTimeEntryForSameOwnerAndDifferentTenants_NoErrorReturned() {
+        var tenantID = UUID.randomUUID();
+        var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME);
+
+        var newTimeEntry = createTimeEntry(OWNER_ID_1, newStartTime);
+        newTimeEntry.setTenantId(tenantID);
+
+        assertThatNoException().isThrownBy(() -> saveEntryAndFlushDatabase(newTimeEntry));
     }
 
     // existing: 07:00-08:00, updated: 05:00-06:00
