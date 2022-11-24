@@ -198,8 +198,11 @@ depends_on:
 trigger:
   event:
     - promote
+    - push
   target:
     - test
+  branch:
+    - main
 
 steps:
   - name: deploy_to_test
@@ -219,12 +222,6 @@ steps:
         from_secret: not_prod_kube_api_url
       kube_token:
         from_secret: test_kube_token
-      when:
-        event:
-          - push
-        branch:
-          - main
-
 
 
 ---
