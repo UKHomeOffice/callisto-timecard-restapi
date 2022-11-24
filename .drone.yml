@@ -257,8 +257,6 @@ trigger:
   status:
     - success
     - failure
-  event:
-    - push
 
 depends_on:
   - callisto-timecard-restapi-dev-deploy
