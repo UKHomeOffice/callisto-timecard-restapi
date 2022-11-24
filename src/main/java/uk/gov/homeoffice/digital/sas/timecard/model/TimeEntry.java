@@ -10,8 +10,6 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.PostPersist;
-import javax.persistence.PostUpdate;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Getter;
@@ -24,7 +22,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import uk.gov.homeoffice.digital.sas.jparest.annotation.Resource;
 import uk.gov.homeoffice.digital.sas.jparest.models.BaseEntity;
 import uk.gov.homeoffice.digital.sas.timecard.listeners.TimeEntryListener;
-import uk.gov.homeoffice.digital.sas.timecard.utils.BeanUtil;
 import uk.gov.homeoffice.digital.sas.timecard.validators.timeentry.TimeEntryConstraint;
 
 @Resource(path = "time-entries")
@@ -74,12 +71,5 @@ public class TimeEntry extends BaseEntity {
   @UpdateTimestamp
   @JsonIgnore
   private LocalDateTime updatedAt;
-
-  @PostPersist
-  @PostUpdate
-  private void postPersistEvent() {
-    TimeEntryListener timeEntryListener = BeanUtil.getBean(TimeEntryListener.class);
-    timeEntryListener.sendKafkaMessage(this);
-  }
 
 }
