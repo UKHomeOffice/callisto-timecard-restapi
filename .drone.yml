@@ -194,17 +194,24 @@ platform:
 depends_on:
   - callisto-timecard-restapi-dev-deploy
 
-#TODO: EAHW-2428 - move to prod pipeline
+#TODO: EAHW-2428 - move promotion to prod pipeline
 trigger:
   event:
     - promote
-    - push
   target:
     - test
-  branch:
-    - main
 
 steps:
+  - name: deploy_to_test
+    image: alpine:latest
+    commands:
+      - echo Cannot promote from non 'main' branch
+      - exit 1
+    when:
+      branch:
+        exclude:
+          - main
+
   - name: deploy_to_test
     image: pelotech/drone-helm3
     settings:
@@ -222,6 +229,11 @@ steps:
         from_secret: not_prod_kube_api_url
       kube_token:
         from_secret: test_kube_token
+      when:
+        event:
+          - push
+        branch:
+            - main
 
 
 ---
