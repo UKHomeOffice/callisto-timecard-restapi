@@ -45,7 +45,6 @@ depends_on:
   - lint-files
 
 trigger:
-  status: success
   event:
     exclude:
       - promote
@@ -114,7 +113,6 @@ depends_on:
   - lint-files
 
 trigger:
-  status: success
   event:
     exclude:
       - promote
@@ -157,7 +155,6 @@ depends_on:
   - callisto-timecard-database-schema
 
 trigger:
-  status: success
   event:
     exclude:
       - promote
@@ -199,7 +196,6 @@ depends_on:
 
 #TODO: EAHW-2428 - move to prod pipeline
 trigger:
-  status: success
   event:
     - promote
   target:
@@ -223,12 +219,11 @@ steps:
         from_secret: not_prod_kube_api_url
       kube_token:
         from_secret: test_kube_token
-#commented out for testing, to be uncommented when creating PR
-#      when:
-#        event:
-#          - push
-#        branch:
-#          - main
+      when:
+        event:
+          - push
+        branch:
+          - main
 
 
 
