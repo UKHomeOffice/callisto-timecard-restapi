@@ -210,7 +210,7 @@ steps:
     when:
       branch:
         exclude:
-          - main
+          - task/eahw-2337/manual-promote-to-test-pipeline
 
   - name: deploy_to_test
     image: pelotech/drone-helm3
@@ -233,7 +233,7 @@ steps:
         event:
           - push
         branch:
-            - main
+            - task/eahw-2337/manual-promote-to-test-pipeline
 
 
 ---
