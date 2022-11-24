@@ -16,7 +16,7 @@ public class KafkaProducerTimeEntry {
 
   public void sendMessage(TimeEntry message) {
     try {
-      kafkaTimeEntryTemplate.send("kafka-trial-dev", message);
+      kafkaTimeEntryTemplate.send("timecard", message);
     } catch (Exception ex) {
       log.info(String.format("Sent message has failed=[ %s ]", message));
     }
