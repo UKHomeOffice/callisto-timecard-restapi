@@ -202,7 +202,7 @@ trigger:
     - test
 
 steps:
-  - name: deploy_to_test
+  - name: deploy_to_test_check
     image: alpine:latest
     commands:
       - echo Cannot promote from non 'main' branch
