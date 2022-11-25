@@ -34,10 +34,9 @@ services:
     working_dir: /app
     command: sh run.sh
     ports:
-      - 50000:9090
+      - 50100:9090
       - 35729:35729
       - 5005:5005
-
     depends_on:
       - timecard-database-migrations
 
@@ -47,6 +46,11 @@ services:
     volumes:
       - ./db/changelog:/liquibase/changelog
       - ./db/sql:/liquibase/sql
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://127.0.0.1:12201" # Logstash UDP input port
+        tag: "timecard-migrations-localdev"
 
 networks:
   callisto:

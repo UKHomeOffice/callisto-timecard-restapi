@@ -67,18 +67,18 @@ components:
           description: The start time of the activity that was worked (to the minute)
           type: string
           format: date-time
-        actualEndTime: 
+        actualEndTime:
           description: The end time of the activity that was worked (to the minute)
           type: string
           format: date-time
-        plannedStartTime: 
+        plannedStartTime:
           description: The start time of the activity that has been planned (to the minute)
           type: string
           format: date-time
-        plannedEndTime: 
+        plannedEndTime:
           description: The end time of the activity that has been planned (to the minute)
           type: string
-          format: date-time   
+          format: date-time
         shiftType:
           description: a descriptor for the shift (eg 'early shift')
           type: string

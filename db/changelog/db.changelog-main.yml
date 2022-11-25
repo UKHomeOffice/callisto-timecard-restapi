@@ -7,5 +7,3 @@ databaseChangeLog:
       file: changelog/003-change-tenant-id-to-uuid-in-time-entry-table.json
   - include:
       file: changelog/004-delete-time-entries-with-old-ownerId-type.json
-  - include:
-      file: changelog/005-insert-timecard-periods.json
