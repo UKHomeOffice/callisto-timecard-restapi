@@ -170,8 +170,12 @@ depends_on:
 
 trigger:
   event:
+    include:
+      - push
     exclude:
       - promote
+    branch:
+      - main
 
 steps:
   - name: deploy_to_dev
@@ -191,11 +195,6 @@ steps:
         from_secret: not_prod_kube_api_url
       kube_token:
         from_secret: dev_kube_token
-    when:
-      event:
-        - push
-      branch:
-        - main
 
 ---
 kind: pipeline
@@ -209,24 +208,13 @@ platform:
 depends_on:
   - callisto-timecard-restapi-dev-deploy
 
-#TODO: EAHW-2428 - move promotion to prod pipeline
 trigger:
   event:
-    - promote
-  target:
-    - test
+    - push
+  branch:
+    - main
 
 steps:
-  - name: deploy_to_test_check
-    image: alpine:latest
-    commands:
-      - echo Cannot promote from non 'main' branch
-      - exit 1
-    when:
-      branch:
-        exclude:
-          - main
-
   - name: deploy_to_test
     image: pelotech/drone-helm3
     settings:
@@ -244,11 +232,59 @@ steps:
         from_secret: not_prod_kube_api_url
       kube_token:
         from_secret: test_kube_token
+
+
+---
+kind: pipeline
+type: kubernetes
+name: callisto-timecard-restapi-prod-deploy
+
+platform:
+  os: linux
+  arch: amd64
+
+depends_on:
+  - callisto-timecard-restapi-test-deploy
+
+trigger:
+  event:
+    - promote
+  target:
+    - production
+
+steps:
+  - name: deploy_to_prod_check
+    image: alpine:latest
+    commands:
+      - echo Cannot promote from non 'main' branch
+      - exit 1
+    when:
+      branch:
+        exclude:
+          - main
+
+  - name: deploy_to_prod
+    image: pelotech/drone-helm3
+    settings:
+      namespace: callisto-prod
+      mode: upgrade
+      chart: ./helm
+      values:
+        - image.tag=latest #tempoarily using latest for testing, use commit sha before creating PR
+      values_files:
+        - ./helm/values/prod-values.yaml
+      release: callisto-timecard-restapi
+      kube_certificate:
+        from_secret: prod_kube_api_certificate
+      kube_api_server:
+        from_secret: prod_kube_api_url
+      kube_token:
+        from_secret: prod_kube_token
       when:
         event:
           - push
         branch:
-            - main
+          - main
 
 
 ---
@@ -262,8 +298,10 @@ trigger:
     - failure
 
 depends_on:
+  - callisto-timecard-restapi-build
   - callisto-timecard-restapi-dev-deploy
   - callisto-timecard-restapi-test-deploy
+  - callisto-timecard-restapi-prod-deploy
 
 slack: &slack
     image: plugins/slack
