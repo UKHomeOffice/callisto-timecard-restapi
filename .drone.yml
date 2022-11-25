@@ -212,6 +212,8 @@ depends_on:
 trigger:
   event:
     - push
+  exclude:
+    - promote
   branch:
     #    - main
     - task/eahw-2428/manual-promote-to-prod-pipeline #temporarily use current branch for testing
