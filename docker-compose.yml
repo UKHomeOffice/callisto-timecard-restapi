@@ -27,16 +27,16 @@ services:
     <<: *db-settings
     build:
       context: ./
-      dockerfile: dev.dockerfile
+      dockerfile: Dockerfile.localdev
     volumes:
       - ./:/app
-      - $HOME/.m2:/root/.m2 # required for jparest dependencies (artifactory)
+      - $HOME/.m2:/root/.m2 # Required for jparest dependencies (artifactory)
     working_dir: /app
     command: sh run.sh
     ports:
       - 50100:9090
-      - 35729:35729
-      - 5005:5005
+      - 35729:35729 # Livereload port
+      - 5005:5005 # Makes debugger available for the IDE
     depends_on:
       - timecard-database-migrations
 
@@ -46,11 +46,6 @@ services:
     volumes:
       - ./db/changelog:/liquibase/changelog
       - ./db/sql:/liquibase/sql
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://127.0.0.1:12201" # Logstash UDP input port
-        tag: "timecard-migrations-localdev"
 
 networks:
   callisto:
