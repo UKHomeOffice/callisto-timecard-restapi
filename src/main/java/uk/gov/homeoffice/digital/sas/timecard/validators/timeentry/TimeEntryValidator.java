@@ -15,10 +15,10 @@ import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.repositories.TimeEntryRepository;
 import uk.gov.homeoffice.digital.sas.timecard.utils.BeanUtil;
 
-public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstraint, Object> {
+public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstraint, TimeEntry> {
 
   @Override
-  public boolean isValid(Object value, ConstraintValidatorContext context) {
+  public boolean isValid(TimeEntry timeEntry, ConstraintValidatorContext context) {
 
     EntityManager entityManager = BeanUtil.getBean(EntityManager.class);
     Session session = entityManager.unwrap(Session.class);
@@ -27,10 +27,10 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
      */
     session.setHibernateFlushMode(FlushMode.MANUAL);
 
-    var timeEntry = (TimeEntry) value;
     var timeEntryClashes = BeanUtil.getBean(TimeEntryRepository.class).findAllClashingTimeEntries(
         timeEntry.getOwnerId() != null ? timeEntry.getOwnerId().toString() : null,
         timeEntry.getId() != null ? timeEntry.getId().toString() : null,
+        timeEntry.getTenantId() != null ? timeEntry.getTenantId().toString() : null,
         timeEntry.getActualStartTime(),
         timeEntry.getActualEndTime());
 

@@ -28,7 +28,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 
 @SpringBootTest
 @Transactional
-public class TimeEntryValidatorTest {
+class TimeEntryValidatorTest {
 
     @Autowired
     private TimeEntryRepository timeEntryRepository;
@@ -283,6 +283,17 @@ public class TimeEntryValidatorTest {
 
         assertThatNoException().isThrownBy(() ->
                 saveEntryAndFlushDatabase(timeEntryNew));
+    }
+
+    @Test
+    void validate_clashingTimeEntryForSameOwnerAndDifferentTenants_NoErrorReturned() {
+        var tenantID = UUID.randomUUID();
+        var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME);
+
+        var newTimeEntry = createTimeEntry(OWNER_ID_1, newStartTime);
+        newTimeEntry.setTenantId(tenantID);
+
+        assertThatNoException().isThrownBy(() -> saveEntryAndFlushDatabase(newTimeEntry));
     }
 
     // existing: 07:00-08:00, updated: 05:00-06:00
