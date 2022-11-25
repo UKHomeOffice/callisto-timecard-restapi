@@ -171,6 +171,8 @@ depends_on:
 trigger:
   event:
     - push
+    exclude:
+      - promote
   branch:
     - main
 
