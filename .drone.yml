@@ -170,8 +170,7 @@ depends_on:
 
 trigger:
   event:
-    include:
-      - push
+    - push
     exclude:
       - promote
     branch:
