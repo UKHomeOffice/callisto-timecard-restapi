@@ -32,6 +32,42 @@ steps:
         - ./helm/values/dev-values.yaml
         - ./helm/values/test-values.yaml
 
+
+---
+kind: pipeline
+type: kubernetes
+name: promotion-check
+
+platform:
+  os: linux
+  arch: amd64
+
+trigger:
+  event:
+    - promote
+
+steps:
+  - name: branch-check
+    image: alpine:latest
+    commands:
+      - echo Cannot promote from non 'main' branch
+      - exit 1
+    when:
+      branch:
+        exclude:
+          #          - main
+          - task/eahw-2428/manual-promote-to-prod-pipeline #temporarily use current branch for testing
+
+  - name: environment-check
+    image: alpine:latest
+    commands:
+      - echo Cannot promote to a non prod environment
+      - exit 1
+    when:
+      target:
+        exclude:
+          - production
+
 ---
 kind: pipeline
 type: kubernetes
@@ -117,41 +153,6 @@ steps:
         - push
       branch:
         - main
-
----
-kind: pipeline
-type: kubernetes
-name: promotion-check
-
-platform:
-  os: linux
-  arch: amd64
-
-trigger:
-  event:
-    - promote
-
-steps:
-  - name: branch-check
-    image: alpine:latest
-    commands:
-      - echo Cannot promote from non 'main' branch
-      - exit 1
-    when:
-      branch:
-        exclude:
-#          - main
-          - task/eahw-2428/manual-promote-to-prod-pipeline #temporarily use current branch for testing
-
-  - name: environment-check
-    image: alpine:latest
-    commands:
-      - echo Cannot promote to a non prod environment
-      - exit 1
-    when:
-      target:
-        exclude:
-          - production
 
 ---
 kind: pipeline
@@ -317,11 +318,6 @@ steps:
         from_secret: prod_kube_api_url
       kube_token:
         from_secret: prod_kube_token
-      when:
-        event:
-          - push
-        branch:
-          - main
 
 
 ---
