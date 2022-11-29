@@ -55,8 +55,7 @@ steps:
     when:
       branch:
         exclude:
-          #          - main
-          - task/eahw-2428/manual-promote-to-prod-pipeline #temporarily use current branch for testing
+          - main
 
   - name: environment-check
     image: alpine:latest
