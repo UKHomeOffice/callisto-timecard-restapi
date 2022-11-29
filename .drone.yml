@@ -119,6 +119,40 @@ steps:
 ---
 kind: pipeline
 type: kubernetes
+name: promotion-check
+
+platform:
+  os: linux
+  arch: amd64
+
+trigger:
+  event:
+    - promote
+
+steps:
+  - name: branch-check
+    image: alpine:latest
+    commands:
+      - echo Cannot promote from non 'main' branch
+      - exit 1
+    when:
+      branch:
+        exclude:
+          - main
+
+  - name: environment-check
+    image: alpine:latest
+    commands:
+      - echo Cannot promote to a non prod environment
+      - exit 1
+    when:
+      target:
+        exclude:
+          - production
+
+---
+kind: pipeline
+type: kubernetes
 name: callisto-timecard-database-schema
 
 platform:
@@ -253,6 +287,7 @@ platform:
   arch: amd64
 
 depends_on:
+  - promotion-check
   - callisto-timecard-restapi-test-deploy
 
 trigger:
@@ -262,16 +297,6 @@ trigger:
     - production
 
 steps:
-  - name: deploy_to_prod_check
-    image: alpine:latest
-    commands:
-      - echo Cannot promote from non 'main' branch
-      - exit 1
-    when:
-      branch:
-        exclude:
-          - main
-
   - name: deploy_to_prod
     image: pelotech/drone-helm3
     settings:
@@ -351,19 +376,19 @@ steps:
     when:
       event:
         - promote
-      target:
-        - production
+#      target:
+#        - production
 
-  - name: slack_deploy_non_prod_promotion
-    <<: *slack
-    settings:
-      template: >
-        {{#failure false}}
-          :zombie: Problem *{{uppercasefirst build.deployTo}}* deployment failed for *{{repo.name}} <${DRONE_BUILD_LINK}| build #{{build.number}}*>.
-        {{/failure}}
-    when:
-      event:
-        - promote
-      target:
-        exclude:
-          - production
+#  - name: slack_deploy_non_prod_promotion
+#    <<: *slack
+#    settings:
+#      template: >
+#        {{#failure false}}
+#          :zombie: Problem *{{uppercasefirst build.deployTo}}* deployment failed for *{{repo.name}} <${DRONE_BUILD_LINK}| build #{{build.number}}*>.
+#        {{/failure}}
+#    when:
+#      event:
+#        - promote
+#      target:
+#        exclude:
+#          - production
