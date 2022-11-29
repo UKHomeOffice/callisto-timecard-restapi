@@ -347,7 +347,7 @@ steps:
       target:
         - production
 
-  - name: slack_deploy
+  - name: slack_deploy_non_prod_promotion
     <<: *slack
     settings:
       template: >
