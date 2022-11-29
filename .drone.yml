@@ -61,7 +61,7 @@ steps:
       ARTIFACTORY_TOKEN:
         from_secret: artifactory_token
     commands:
-      - mvn -s ./timecard_settings.xml clean verify
+#      - mvn -s ./timecard_settings.xml clean verify #temporarily comment out for testing - to be reverted before PR
 
   - name: sonar
     image: maven:3.8.3-openjdk-17
@@ -85,8 +85,9 @@ steps:
         -Dsonar.qualitygate.wait=true
     when:
       event:
-        exclude:
-          - pull_request
+        - pull_request #temporarily add for testing - to be reverted before PR
+#        exclude:
+#          - pull_request #temporarily comment out for testing - to be reverted before PR
 
 
   - name: build_tag_push_ecr
@@ -194,6 +195,9 @@ steps:
         from_secret: not_prod_kube_api_url
       kube_token:
         from_secret: dev_kube_token
+    when: #temporarily add for testing - to be reverted before PR
+      event: #+
+        - pull_request #+
 
 ---
 kind: pipeline
@@ -351,9 +355,9 @@ steps:
     <<: *slack
     settings:
       template: >
-        {{#success false}}
+        {{#failure false}}
           :zombie: Problem *{{uppercasefirst build.deployTo}}* deployment failed for *{{repo.name}} <${DRONE_BUILD_LINK}| build #{{build.number}}*>.
-        {{/success}}
+        {{/failure}}
     when:
       event:
         - promote
