@@ -138,7 +138,8 @@ steps:
     when:
       branch:
         exclude:
-          - main
+#          - main
+          - task/eahw-2428/manual-promote-to-prod-pipeline #temporarily use current branch for testing
 
   - name: environment-check
     image: alpine:latest
@@ -376,19 +377,3 @@ steps:
     when:
       event:
         - promote
-#      target:
-#        - production
-
-#  - name: slack_deploy_non_prod_promotion
-#    <<: *slack
-#    settings:
-#      template: >
-#        {{#failure false}}
-#          :zombie: Problem *{{uppercasefirst build.deployTo}}* deployment failed for *{{repo.name}} <${DRONE_BUILD_LINK}| build #{{build.number}}*>.
-#        {{/failure}}
-#    when:
-#      event:
-#        - promote
-#      target:
-#        exclude:
-#          - production
