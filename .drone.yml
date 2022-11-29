@@ -338,15 +338,25 @@ steps:
     <<: *slack
     settings:
       template: >
-        {{#success build.deployTo == 'production'}}
-          {{#success build.status}}
-            :rocket: Successful *{{uppercasefirst build.deployTo}}* deployment for *{{repo.name}} build #{{build.number}}*.        
-          {{else}}
-            :zombie: Problem *{{uppercasefirst build.deployTo}}* deployment failed for *{{repo.name}} <${DRONE_BUILD_LINK}| build #{{build.number}}*>.
-          {{/success}}
+        {{#success build.status}}
+          :rocket: Successful *{{uppercasefirst build.deployTo}}* deployment for *{{repo.name}} build #{{build.number}}*.          
         {{else}}
           :zombie: Problem *{{uppercasefirst build.deployTo}}* deployment failed for *{{repo.name}} <${DRONE_BUILD_LINK}| build #{{build.number}}*>.
         {{/success}}
     when:
       event:
         - promote
+      target:
+        - production
+
+  - name: slack_deploy
+    <<: *slack
+    settings:
+      template: >
+        :zombie: Problem *{{uppercasefirst build.deployTo}}* deployment failed for *{{repo.name}} <${DRONE_BUILD_LINK}| build #{{build.number}}*>.
+    when:
+      event:
+        - promote
+      target:
+        exclude:
+          - production
