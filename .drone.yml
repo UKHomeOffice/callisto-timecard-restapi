@@ -63,7 +63,10 @@ steps:
       ARTIFACTORY_TOKEN:
         from_secret: artifactory_token
     commands:
-#      - mvn -s ./timecard_settings.xml clean verify #temporarily comment out for testing - to be reverted before PR
+      - mvn -s ./timecard_settings.xml clean verify
+    when: #temporarily add for testing - to be reverted before PR
+      event: #+
+        - pull_request #+
 
   - name: sonar
     image: maven:3.8.3-openjdk-17
