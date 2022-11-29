@@ -215,8 +215,8 @@ trigger:
   exclude:
     - promote
   branch:
-    #    - main
-    - task/eahw-2428/manual-promote-to-prod-pipeline #temporarily use current branch for testing
+    - main
+  #    - task/eahw-2428/manual-promote-to-prod-pipeline #temporarily use current branch for testing
 
 steps:
   - name: deploy_to_test
