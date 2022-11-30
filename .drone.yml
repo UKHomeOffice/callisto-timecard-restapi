@@ -69,7 +69,7 @@ steps:
           - production
 
   - name: build-check
-    image: drone/cli:1.6.2-alpine
+    image: alpine:latest
     environment:
       DRONE_SERVER: https://drone-gl.acp.homeoffice.gov.uk/
       DRONE_TOKEN:
@@ -103,6 +103,7 @@ trigger:
   event:
     exclude:
       - promote
+      - push  #temporarily add for testing - to be reverted before PR
 
 steps:
   - name: fetch
@@ -119,9 +120,9 @@ steps:
         from_secret: artifactory_token
     commands:
       - mvn -s ./timecard_settings.xml clean verify
-    when: #temporarily add for testing - to be reverted before PR
-      event: #+
-        - pull_request #+
+#    when: #temporarily add for testing - to be reverted before PR
+#      event: #+
+#        - pull_request #+
 
   - name: sonar
     image: maven:3.8.3-openjdk-17
@@ -143,9 +144,9 @@ steps:
         -Dsonar.branch.name=$DRONE_BRANCH 
         -Dsonar.projectName=callisto-timecard-restapi 
         -Dsonar.qualitygate.wait=true
-    when:
-      event:
-        - pull_request #temporarily add for testing - to be reverted before PR
+#    when:
+#      event:
+#        - pull_request #temporarily add for testing - to be reverted before PR
 #        exclude:
 #          - pull_request #temporarily comment out for testing - to be reverted before PR
 
@@ -234,8 +235,8 @@ trigger:
     exclude:
       - promote
   branch:
-#    - main #temporarily comment out for testing - to be reverted before PR
-    - task/eahw-2428/manual-promote-to-prod-pipeline #temporarily use current branch for testing
+    - main
+#    - task/eahw-2428/manual-promote-to-prod-pipeline #temporarily use current branch for testing
 
 steps:
   - name: deploy_to_dev
@@ -255,9 +256,9 @@ steps:
         from_secret: not_prod_kube_api_url
       kube_token:
         from_secret: dev_kube_token
-    when: #temporarily add for testing - to be reverted before PR
-      event: #+
-        - pull_request #+
+#    when: #temporarily add for testing - to be reverted before PR
+#      event: #+
+#        - pull_request #+
 
 ---
 kind: pipeline
