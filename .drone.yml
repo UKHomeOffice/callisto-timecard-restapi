@@ -48,6 +48,7 @@ trigger:
 
 steps:
   - name: branch-check
+    pull: if-not-exists
     image: alpine:latest
     commands:
       - echo Cannot promote from non 'main' branch
@@ -55,10 +56,11 @@ steps:
     when:
       branch:
         exclude:
-          #          - main
-          - task/eahw-2428/manual-promote-to-prod-pipeline #temporarily use current branch for testing
+          - main
+#          - task/eahw-2428/manual-promote-to-prod-pipeline #temporarily use current branch for testing
 
   - name: environment-check
+    pull: if-not-exists
     image: alpine:latest
     commands:
       - echo Cannot promote to a non prod environment
@@ -69,6 +71,7 @@ steps:
           - production
 
   - name: build-check
+    pull: if-not-exists
     image: alpine:latest
     environment:
       DRONE_SERVER: https://drone-gl.acp.homeoffice.gov.uk/
@@ -103,7 +106,7 @@ trigger:
   event:
     exclude:
       - promote
-      - push  #temporarily add for testing - to be reverted before PR
+      - push  #temporarily add to speed up testing - to be reverted before PR
 
 steps:
   - name: fetch
@@ -118,9 +121,6 @@ steps:
         from_secret: artifactory_token
     commands:
       - mvn -s ./timecard_settings.xml clean verify
-#    when: #temporarily add for testing - to be reverted before PR
-#      event: #+
-#        - pull_request #+
 
   - name: sonar
     image: maven:3.8.3-openjdk-17
@@ -142,11 +142,10 @@ steps:
         -Dsonar.branch.name=$DRONE_BRANCH 
         -Dsonar.projectName=callisto-timecard-restapi 
         -Dsonar.qualitygate.wait=true
-#    when:
-#      event:
-#        - pull_request #temporarily add for testing - to be reverted before PR
-#        exclude:
-#          - pull_request #temporarily comment out for testing - to be reverted before PR
+    when:
+      event:
+        exclude:
+          - pull_request
 
 
   - name: build_tag_push_ecr
@@ -188,6 +187,7 @@ trigger:
   event:
     exclude:
       - promote
+      - push  #temporarily add to speed up testing - to be reverted before PR
 
 steps:
   - name: build_tag_push_ecr
