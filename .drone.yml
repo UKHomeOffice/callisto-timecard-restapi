@@ -79,10 +79,6 @@ steps:
       - echo 'this build =' $DRONE_BUILD_NUMBER
       - echo 'repo =' $DRONE_REPO
       - echo 'branch =' $DRONE_BRANCH
-    when:
-      target:
-        exclude:
-          - production
 
   - name: build-check
     pull: if-not-exists
@@ -366,8 +362,9 @@ trigger:
   status:
     - success
     - failure
-  exclude: #temporarily add to speed up testing - to be reverted before PR
-    - push  #+
+  event: #temporarily add to speed up testing - to be reverted before PR
+    exclude: #+
+      - push  #+
 depends_on:
   - callisto-timecard-restapi-build
   - callisto-timecard-restapi-dev-deploy
