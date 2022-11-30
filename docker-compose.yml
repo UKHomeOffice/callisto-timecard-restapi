@@ -29,7 +29,7 @@ services:
     entrypoint: [ "java","-jar","timecard-api.jar" ]
     working_dir: '/usr/src/main'
     ports:
-      - "50000:9090"
+      - "50100:9090"
     volumes:
       - './target:/usr/src/main'
     depends_on:
