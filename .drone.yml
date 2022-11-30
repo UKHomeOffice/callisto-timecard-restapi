@@ -75,7 +75,7 @@ steps:
     pull: if-not-exists
     image: drone/cli:1.6.2-alpine
     environment:
-      DRONE_BUILD_PARENT: $DRONE_BUILD_PARENT
+      DRONE_BUILD_PARENT: ${DRONE_BUILD_PARENT}
       DRONE_SERVER: https://drone-gl.acp.homeoffice.gov.uk/
       DRONE_TOKEN:
         from_secret: drone_token
