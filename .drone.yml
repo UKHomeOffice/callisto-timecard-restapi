@@ -69,7 +69,7 @@ steps:
           - production
 
   - name: build-check
-    image: drone/cli:alpine
+    image: drone/cli:1.6.2-alpine
     environment:
       DRONE_SERVER: https://drone-gl.acp.homeoffice.gov.uk/
       DRONE_TOKEN:
