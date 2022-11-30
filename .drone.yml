@@ -55,7 +55,8 @@ steps:
     when:
       branch:
         exclude:
-          - main
+          #          - main
+          - task/eahw-2428/manual-promote-to-prod-pipeline #temporarily use current branch for testing
 
   - name: environment-check
     image: alpine:latest
@@ -66,6 +67,25 @@ steps:
       target:
         exclude:
           - production
+
+  - name: build-check
+    image: drone/cli:alpine
+    environment:
+      DRONE_SERVER: https://drone-gl.acp.homeoffice.gov.uk/
+      DRONE_TOKEN:
+        from_secret: drone_token
+    commands:
+      - echo 'parent build = $DRONE_BUILD_PARENT'
+      - LAST_BUILD="$(
+          drone build ls --format '{{.Number}}' --branch "task/eahw-2428/manual-promote-to-prod-pipeline" --status success \
+          --event push "UKHomeOffice/callisto-timecard-restapi" | head -n 1
+        )"
+      - echo 'last succesful build = $LAST_BUILD'
+      - if [ "$LAST_BUILD" != $DRONE_BUILD_PARENT ]; then
+          echo 'Could not promote as last build was not successful'
+          exit 1
+        fi
+
 
 ---
 kind: pipeline
