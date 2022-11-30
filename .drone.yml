@@ -10,10 +10,11 @@ platform:
 trigger:
   event:
     include:
-    - push
+#    - push #temporarily comment out to speed up testing - to be reverted before PR
     - pull_request
     exclude:
     - promote
+    - push  #temporarily add to speed up testing - to be reverted before PR
 
 steps:
   - name: lint_dockerfiles
@@ -56,8 +57,8 @@ steps:
     when:
       branch:
         exclude:
-          - main
-#          - task/eahw-2428/manual-promote-to-prod-pipeline #temporarily use current branch for testing
+#          - main #temporarily comment out for testing - to be reverted before PR
+          - task/eahw-2428/manual-promote-to-prod-pipeline #temporarily use current branch for testing
 
   - name: environment-check
     pull: if-not-exists
