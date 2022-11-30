@@ -70,6 +70,19 @@ steps:
       target:
         exclude:
           - production
+          -
+  - name: var-check #temporary step for debugging - remove before PR
+    pull: if-not-exists
+    image: alpine:latest
+    commands:
+      - echo 'parent build =' $DRONE_BUILD_PARENT
+      - echo 'this build =' $DRONE_BUILD_NUMBER
+      - echo 'repo =' $DRONE_REPO
+      - echo 'branch =' $DRONE_BRANCH
+    when:
+      target:
+        exclude:
+          - production
 
   - name: build-check
     pull: if-not-exists
@@ -85,7 +98,7 @@ steps:
           drone build ls --format '{{.Number}}' --branch "task/eahw-2428/manual-promote-to-prod-pipeline" --status success \
           --event push "UKHomeOffice/callisto-timecard-restapi" | head -n 1
         )"
-      - echo 'last succesful build = ' ${LAST_BUILD}
+      - echo 'last succesful build = ' $LAST_BUILD
       - if [ "$LAST_BUILD" != $DRONE_BUILD_PARENT ]; then
           echo 'Could not promote as last build was not successful'
           exit 1
@@ -353,7 +366,8 @@ trigger:
   status:
     - success
     - failure
-
+  exclude: #temporarily add to speed up testing - to be reverted before PR
+    - push  #+
 depends_on:
   - callisto-timecard-restapi-build
   - callisto-timecard-restapi-dev-deploy
