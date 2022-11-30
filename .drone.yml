@@ -91,8 +91,8 @@ steps:
     commands:
       - echo 'parent build =' $DRONE_BUILD_PARENT
       - LAST_BUILD="$(
-          drone build ls --format '{{.Number}}' --branch "task/eahw-2428/manual-promote-to-prod-pipeline" --status success \
-          --event push "UKHomeOffice/callisto-timecard-restapi" | head -n 1
+          drone build ls --format '{{.Number}}' --branch "task/eahw-2428/manual-promote-to-prod-pipeline" --status success \ 
+          --event push --limit 100 "UKHomeOffice/callisto-timecard-restapi" | head -n 1
         )"
       - echo 'last succesful build = ' $LAST_BUILD
       - if [ "$LAST_BUILD" != $DRONE_BUILD_PARENT ]; then
