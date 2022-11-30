@@ -10,7 +10,7 @@ public class KafkaTopicConfig {
 
   @Bean
   public NewTopic timecardTopicBuilder() {
-    return TopicBuilder.name("timecard")
+    return TopicBuilder.name("callisto-timecard")
         .build();
   }
 }

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,9 +21,8 @@ public class KafkaProducerConfig {
   private String bootstrapServers;
 
   @Bean
-  public ProducerFactory<String, TimeEntry> producerFactory() {
+  public ProducerFactory<String, JSONObject> producerFactory() {
 
-    // Kafka Producer Configurations
     Map<String, Object> config = new HashMap<>();
 
     config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -36,7 +36,7 @@ public class KafkaProducerConfig {
   }
 
   @Bean
-  public KafkaTemplate<String, TimeEntry> kafkaTemplate() {
+  public KafkaTemplate<String, JSONObject> kafkaTemplate() {
     return new KafkaTemplate<>(producerFactory());
   }
 
