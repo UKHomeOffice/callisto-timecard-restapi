@@ -34,11 +34,6 @@ services:
       - './target:/usr/src/main'
     depends_on:
       - timecard-database-migrations
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://127.0.0.1:12201" # Logstash UDP input port
-        tag: "timecard-api"
 
   timecard-database-migrations:
     <<: *liquibase-setting
@@ -46,11 +41,7 @@ services:
     volumes:
       - ./db/changelog:/liquibase/changelog
       - ./db/sql:/liquibase/sql
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://localhost:12201" # Logstash UDP input port
-        tag: "timecard-database-migrations"
+
 
 networks:
   callisto:
