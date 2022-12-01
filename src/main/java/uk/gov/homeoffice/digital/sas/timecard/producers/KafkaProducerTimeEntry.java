@@ -11,14 +11,18 @@ import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 @Slf4j
 public class KafkaProducerTimeEntry {
 
-  @Autowired
   private KafkaTemplate<String, JSONObject> kafkaTimeEntryTemplate;
+
+  public KafkaProducerTimeEntry(KafkaTemplate<String, JSONObject> kafkaTimeEntryTemplate) {
+    this.kafkaTimeEntryTemplate = kafkaTimeEntryTemplate;
+  }
 
   public void sendMessage(TimeEntry timeEntry) {
     try {
       var message = generateKafkaWrapper(timeEntry);
       kafkaTimeEntryTemplate.send("callisto-timecard", timeEntry.getOwnerId().toString(), message);
     } catch (Exception ex) {
+      System.out.println("ERRORRRRRR");
       log.info(String.format("Sent message has failed=[ %s ]", timeEntry));
     }
   }

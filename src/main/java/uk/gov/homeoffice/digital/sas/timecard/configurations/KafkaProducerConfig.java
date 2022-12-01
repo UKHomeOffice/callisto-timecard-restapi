@@ -36,8 +36,9 @@ public class KafkaProducerConfig {
   }
 
   @Bean
-  public KafkaTemplate<String, JSONObject> kafkaTemplate() {
-    return new KafkaTemplate<>(producerFactory());
+  public KafkaTemplate<String, JSONObject> kafkaTemplate(
+      ProducerFactory<String, JSONObject> producerFactory
+  ) {
+    return new KafkaTemplate<>(producerFactory);
   }
-
 }
