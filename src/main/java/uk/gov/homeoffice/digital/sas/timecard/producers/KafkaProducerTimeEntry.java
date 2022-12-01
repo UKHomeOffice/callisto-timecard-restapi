@@ -22,7 +22,6 @@ public class KafkaProducerTimeEntry {
       var message = generateKafkaWrapper(timeEntry);
       kafkaTimeEntryTemplate.send("callisto-timecard", timeEntry.getOwnerId().toString(), message);
     } catch (Exception ex) {
-      System.out.println("ERRORRRRRR");
       log.info(String.format("Sent message has failed=[ %s ]", timeEntry));
     }
   }
