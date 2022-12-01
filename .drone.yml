@@ -280,8 +280,6 @@ trigger:
 steps:
   - name: deploy_to_test
     image: pelotech/drone-helm3
-    commands: #temporarily add for testing - to be reverted before PR
-      - exit 1  #+
     settings:
       namespace: callisto-test
       mode: upgrade
