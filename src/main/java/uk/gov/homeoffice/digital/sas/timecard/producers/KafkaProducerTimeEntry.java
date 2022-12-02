@@ -1,41 +1,30 @@
 package uk.gov.homeoffice.digital.sas.timecard.producers;
 
 import lombok.extern.slf4j.Slf4j;
-import org.json.simple.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
+import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
+import uk.gov.homeoffice.digital.sas.timecard.model.KafkaEventMessage;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 
 @Component
 @Slf4j
 public class KafkaProducerTimeEntry {
 
-  private KafkaTemplate<String, JSONObject> kafkaTimeEntryTemplate;
+  private KafkaTemplate<String, KafkaEventMessage> kafkaTimeEntryTemplate;
 
-  public KafkaProducerTimeEntry(KafkaTemplate<String, JSONObject> kafkaTimeEntryTemplate) {
+  public KafkaProducerTimeEntry(KafkaTemplate<String, KafkaEventMessage> kafkaTimeEntryTemplate) {
     this.kafkaTimeEntryTemplate = kafkaTimeEntryTemplate;
   }
 
-  public void sendMessage(TimeEntry timeEntry) {
+  public void sendMessage(TimeEntry timeEntry, KafkaAction action) throws Exception {
     try {
-      var message = generateKafkaWrapper(timeEntry);
-      kafkaTimeEntryTemplate.send("callisto-timecard", timeEntry.getOwnerId().toString(), message);
+      KafkaEventMessage kafkaEventMessage = new KafkaEventMessage(timeEntry, action);
+      kafkaTimeEntryTemplate.send("callisto-timecard", timeEntry.getOwnerId().toString(), kafkaEventMessage);
     } catch (Exception ex) {
       log.info(String.format("Sent message has failed=[ %s ]", timeEntry));
+      throw new Exception();
     }
-  }
-
-  private JSONObject generateKafkaWrapper(TimeEntry timeEntry) {
-    var resource = new JSONObject();
-    resource.put("schema", "blahblah");
-    resource.put("content", timeEntry);
-
-    var result = new JSONObject();
-    result.put("action", "update");
-    result.put("resource", resource);
-
-    return result;
   }
 
 }

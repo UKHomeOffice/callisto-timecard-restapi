@@ -5,6 +5,7 @@ import javax.persistence.PostUpdate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.producers.KafkaProducerTimeEntry;
 
@@ -20,8 +21,12 @@ public class TimeEntryListener {
   }
 
   @PostPersist
+  private void sendKafkaMessageOnCreate(TimeEntry timeEntry) throws Exception {
+    kafkaProducerService.sendMessage(timeEntry, KafkaAction.CREATE);
+  }
+
   @PostUpdate
-  private void sendKafkaMessage(TimeEntry timeEntry) {
-    kafkaProducerService.sendMessage(timeEntry);
+  private void sendKafkaMessageOnUpdate(TimeEntry timeEntry) throws Exception {
+    kafkaProducerService.sendMessage(timeEntry, KafkaAction.UPDATE);
   }
 }
