@@ -1,7 +1,5 @@
 package uk.gov.homeoffice.digital.sas.timecard.producers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
@@ -18,6 +16,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
 import uk.gov.homeoffice.digital.sas.timecard.model.KafkaEventMessage;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @EmbeddedKafka(topics = "callisto-timecard")
 @ExtendWith(SpringExtension.class)
@@ -56,17 +56,18 @@ public class KafkaProducerTimeEntryTest {
     Mockito.verify(kafkaTimeEntryTemplate).send("callisto-timecard", timeEntry.getOwnerId().toString(), result);
   }
 
-//  @Test
-//  void sendMessage_sendErrors_exceptionIsThrown() throws Exception {
-//    TimeEntry timeEntry = createTimeEntry();
-//
-//    KafkaEventMessage result = new KafkaEventMessage(timeEntry, KafkaAction.UPDATE);
-//
-//    Mockito.when(kafkaTimeEntryTemplate.send("callisto-timecard", timeEntry.getOwnerId().toString(),
-//        result)).thenThrow();
-//    Assertions.assertThrows(Exception.class).isThrownBy(
-//        kafkaProducerTimeEntry.sendMessage(timeEntry, KafkaAction.UPDATE));
-//  }
+  @Test
+  void sendMessage_sendErrors_exceptionIsThrown() throws Exception {
+    TimeEntry timeEntry = createTimeEntry();
+
+    KafkaEventMessage result = new KafkaEventMessage(timeEntry, KafkaAction.UPDATE);
+
+    kafkaProducerTimeEntry.sendMessage(timeEntry, KafkaAction.UPDATE);
+
+    Mockito.when(kafkaTimeEntryTemplate.send("callisto-timecard", timeEntry.getOwnerId().toString(),
+        result)).thenThrow(NullPointerException.class);
+
+  }
 
   private TimeEntry createTimeEntry() {
     UUID ownerId = UUID.fromString("ec703cac-de76-49c8-b1c4-83da6f8b42ce");

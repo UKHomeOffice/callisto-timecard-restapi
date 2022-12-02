@@ -1,8 +1,12 @@
 package uk.gov.homeoffice.digital.sas.timecard.producers;
 
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
+import org.springframework.util.concurrent.ListenableFuture;
+import org.springframework.util.concurrent.ListenableFutureCallback;
 import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
 import uk.gov.homeoffice.digital.sas.timecard.model.KafkaEventMessage;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
@@ -17,14 +21,33 @@ public class KafkaProducerTimeEntry {
     this.kafkaTimeEntryTemplate = kafkaTimeEntryTemplate;
   }
 
-  public void sendMessage(TimeEntry timeEntry, KafkaAction action) throws Exception {
+  public void sendMessage(TimeEntry timeEntry, KafkaAction action) {
     try {
       KafkaEventMessage kafkaEventMessage = new KafkaEventMessage(timeEntry, action);
-      kafkaTimeEntryTemplate.send("callisto-timecard", timeEntry.getOwnerId().toString(), kafkaEventMessage);
-    } catch (Exception ex) {
-      log.info(String.format("Sent message has failed=[ %s ]", timeEntry));
-      throw new Exception();
+      ListenableFuture<SendResult<String, KafkaEventMessage>> future =
+          kafkaTimeEntryTemplate.send("callisto-timecard", timeEntry.getOwnerId().toString(),
+              kafkaEventMessage);
+
+      listenableFutureReporting(timeEntry, kafkaEventMessage, future);
+
+    } catch (Exception exception) {
+      log.info(String.format("Sent message has failed=[ %s ] with exception %s", timeEntry, exception));
     }
+  }
+
+  private static void listenableFutureReporting(TimeEntry timeEntry, KafkaEventMessage kafkaEventMessage, ListenableFuture<SendResult<String, KafkaEventMessage>> future) {
+    future.addCallback(new ListenableFutureCallback<SendResult<String, KafkaEventMessage>>() {
+
+      @Override
+      public void onFailure(Throwable ex) {
+        log.info(String.format("Sent message has failed=[ %s ]", Objects.toString(kafkaEventMessage)));
+      }
+
+      @Override
+      public void onSuccess(SendResult<String, KafkaEventMessage> result) {
+        log.info(String.format("Sent message=[ %s ]", Objects.toString(timeEntry)));
+      }
+    });
   }
 
 }
