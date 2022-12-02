@@ -80,9 +80,7 @@ steps:
       DRONE_TOKEN:
         from_secret: drone_token
     commands:
-      - echo 'parent build =' $DRONE_BUILD_PARENT
       - LAST_BUILD=$(drone build ls --format '{{.Number}}' --branch "$DRONE_BRANCH" --status success --event push --limit 100 "$DRONE_REPO" | head -n 1)
-      - echo 'last succesful build = ' $LAST_BUILD
       - if [ $LAST_BUILD != $DRONE_BUILD_PARENT ]; then echo 'Could not promote as last build was not successful'; exit 1; fi
 
 
@@ -358,7 +356,7 @@ slack: &slack
       username: Drone
 
 steps:
-  - name: slack_build
+  - name: slack
     <<: *slack
     settings:
       template: |
@@ -376,7 +374,7 @@ steps:
       event:
         - push
 
-  - name: slack_deploy
+  - name: slack_promotion
     <<: *slack
     settings:
       template: >
