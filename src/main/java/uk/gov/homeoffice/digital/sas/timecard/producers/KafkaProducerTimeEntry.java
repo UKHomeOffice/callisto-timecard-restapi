@@ -20,7 +20,11 @@ public class KafkaProducerTimeEntry {
   public void sendMessage(TimeEntry timeEntry, KafkaAction action) throws Exception {
     try {
       KafkaEventMessage kafkaEventMessage = new KafkaEventMessage(timeEntry, action);
-      kafkaTimeEntryTemplate.send("callisto-timecard", timeEntry.getOwnerId().toString(), kafkaEventMessage);
+      kafkaTimeEntryTemplate.send(
+          "callisto-timecard",
+          timeEntry.getOwnerId().toString(),
+          kafkaEventMessage
+      );
     } catch (Exception ex) {
       log.info(String.format("Sent message has failed=[ %s ]", timeEntry));
       throw new Exception();
