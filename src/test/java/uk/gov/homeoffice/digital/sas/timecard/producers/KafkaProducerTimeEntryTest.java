@@ -39,11 +39,16 @@ public class KafkaProducerTimeEntryTest {
 
     kafkaProducerTimeEntry.sendMessage(timeEntry, KafkaAction.CREATE);
 
-    KafkaEventMessage result = new KafkaEventMessage(timeEntry, KafkaAction.CREATE);
+    ArgumentCaptor<String> topicArgument = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<String> ownerIdArgument = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<KafkaEventMessage> messageArgument = ArgumentCaptor.forClass(KafkaEventMessage.class);
 
-    ArgumentCaptor<KafkaEventMessage> argument = ArgumentCaptor.forClass(KafkaEventMessage.class);
-    Mockito.verify(kafkaTimeEntryTemplate).send("callisto-timecard", timeEntry.getOwnerId().toString(), argument.capture());
-    assertEquals("John", argument.getValue().getAction());
+    Mockito.verify(kafkaTimeEntryTemplate).send(topicArgument.capture(), ownerIdArgument.capture(), messageArgument.capture());
+
+    assertEquals("callisto-timecard", topicArgument.getValue());
+    assertEquals(timeEntry.getOwnerId().toString(), ownerIdArgument.getValue());
+    assertEquals(timeEntry, messageArgument.getValue().getResource());
+    assertEquals(KafkaAction.CREATE, messageArgument.getValue().getAction());
   }
 
   @Test
@@ -52,8 +57,16 @@ public class KafkaProducerTimeEntryTest {
 
     kafkaProducerTimeEntry.sendMessage(timeEntry, KafkaAction.UPDATE);
 
-    KafkaEventMessage result = new KafkaEventMessage(timeEntry, KafkaAction.UPDATE);
-    Mockito.verify(kafkaTimeEntryTemplate).send("callisto-timecard", timeEntry.getOwnerId().toString(), result);
+    ArgumentCaptor<String> topicArgument = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<String> ownerIdArgument = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<KafkaEventMessage> messageArgument = ArgumentCaptor.forClass(KafkaEventMessage.class);
+
+    Mockito.verify(kafkaTimeEntryTemplate).send(topicArgument.capture(), ownerIdArgument.capture(), messageArgument.capture());
+
+    assertEquals("callisto-timecard", topicArgument.getValue());
+    assertEquals(timeEntry.getOwnerId().toString(), ownerIdArgument.getValue());
+    assertEquals(timeEntry, messageArgument.getValue().getResource());
+    assertEquals(KafkaAction.UPDATE, messageArgument.getValue().getAction());
   }
 
   @Test
