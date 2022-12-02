@@ -34,7 +34,7 @@ public class KafkaProducerTimeEntryTest {
   }
 
   @Test
-  void sendMessage_newTimeEntryCreated_messageIsSent() throws Exception {
+  void sendMessage_newTimeEntryCreated_messageIsSent() {
     TimeEntry timeEntry = createTimeEntry();
 
     kafkaProducerTimeEntry.sendMessage(timeEntry, KafkaAction.CREATE);
@@ -52,7 +52,7 @@ public class KafkaProducerTimeEntryTest {
   }
 
   @Test
-  void sendMessage_timeEntryUpdated_messageIsSent() throws Exception {
+  void sendMessage_timeEntryUpdated_messageIsSent() {
     TimeEntry timeEntry = createTimeEntry();
 
     kafkaProducerTimeEntry.sendMessage(timeEntry, KafkaAction.UPDATE);
