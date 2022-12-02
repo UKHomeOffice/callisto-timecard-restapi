@@ -15,25 +15,25 @@ env:
     - name: DATABASE_NAME
       valueFrom:
         secretKeyRef:
-          name: callisto-prod-aurora
+          name: callisto-prod-1
           key: db_name
     - name: DATABASE_USERNAME
       valueFrom:
         secretKeyRef:
-          name: callisto-prod-aurora
+          name: callisto-prod-1
           key: username
     - name: DATABASE_PASSWORD
       valueFrom:
         secretKeyRef:
-          name: callisto-prod-aurora
+          name: callisto-prod-1
           key: password
     - name: DATABASE_ENDPOINT
       valueFrom:
         secretKeyRef:
-          name: callisto-prod-aurora
+          name: callisto-prod-1
           key: endpoint
     - name: DATABASE_PORT
       valueFrom:
         secretKeyRef:
-          name: callisto-prod-aurora
+          name: callisto-prod-1
           key: port
