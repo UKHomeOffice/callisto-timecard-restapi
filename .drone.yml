@@ -9,12 +9,8 @@ platform:
 
 trigger:
   event:
-    include:
-#    - push #temporarily comment out to speed up testing - to be reverted before PR
-    - pull_request
     exclude:
     - promote
-    - push  #temporarily add to speed up testing - to be reverted before PR
 
 steps:
   - name: lint_dockerfiles
@@ -100,7 +96,6 @@ trigger:
   event:
     exclude:
       - promote
-      - push  #temporarily add to speed up testing - to be reverted before PR
 
 steps:
   - name: fetch
@@ -183,7 +178,6 @@ trigger:
   event:
     exclude:
       - promote
-      - push  #temporarily add to speed up testing - to be reverted before PR
 
 steps:
   - name: build_tag_push_ecr
@@ -207,7 +201,8 @@ steps:
       event:
         - push
       branch:
-        - main
+        #          - main #temporarily comment out for testing - to be reverted before PR
+        - task/eahw-2428/manual-promote-to-prod-pipeline #temporarily use current branch for testing
 
 ---
 kind: pipeline
