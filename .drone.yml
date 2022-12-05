@@ -10,11 +10,11 @@ platform:
 trigger:
   event:
     include:
-#    - push #temporarily comment out to speed up testing - to be reverted before PR
-    - pull_request
+    - push #temporarily comment out to speed up testing - to be reverted before PR
+#    - pull_request
     exclude:
     - promote
-    - push  #temporarily add to speed up testing - to be reverted before PR
+#    - push  #temporarily add to speed up testing - to be reverted before PR
 
 steps:
   - name: lint_dockerfiles
