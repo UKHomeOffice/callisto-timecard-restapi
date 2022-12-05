@@ -1,6 +1,5 @@
 package uk.gov.homeoffice.digital.sas.timecard.producers;
 
-import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
@@ -21,10 +20,10 @@ public class KafkaProducerTimeEntry {
     this.kafkaTimeEntryTemplate = kafkaTimeEntryTemplate;
   }
 
-  public void sendMessage(TimeEntry timeEntry, KafkaAction action)  {
+  public void sendMessage(TimeEntry timeEntry, KafkaAction action) throws Exception {
     try {
       KafkaEventMessage kafkaEventMessage = new KafkaEventMessage(timeEntry, action);
-      ListenableFuture future = kafkaTimeEntryTemplate.send(
+      ListenableFuture<SendResult<String, KafkaEventMessage>> future = kafkaTimeEntryTemplate.send(
           "callisto-timecard",
           timeEntry.getOwnerId().toString(),
           kafkaEventMessage
@@ -34,6 +33,7 @@ public class KafkaProducerTimeEntry {
 
     } catch (Exception ex) {
       log.info(String.format("Sent message has failed=[ %s ]", timeEntry));
+      throw new Exception();
     }
   }
 
@@ -41,17 +41,17 @@ public class KafkaProducerTimeEntry {
                                                 KafkaEventMessage kafkaEventMessage,
                                                 ListenableFuture<SendResult<String,
                                                     KafkaEventMessage>> future) {
-    future.addCallback(new ListenableFutureCallback<SendResult<String, KafkaEventMessage>>() {
+    future.addCallback(new ListenableFutureCallback<>() {
 
       @Override
       public void onFailure(Throwable ex) {
         log.info(String.format("Sent message has failed=[ %s ]",
-            Objects.toString(kafkaEventMessage)));
+            kafkaEventMessage));
       }
 
       @Override
       public void onSuccess(SendResult<String, KafkaEventMessage> result) {
-        log.info(String.format("Sent message=[ %s ]", Objects.toString(timeEntry)));
+        log.info(String.format("Sent message=[ %s ]", timeEntry));
       }
     });
   }
