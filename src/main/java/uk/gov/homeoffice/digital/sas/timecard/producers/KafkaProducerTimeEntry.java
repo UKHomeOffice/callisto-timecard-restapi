@@ -20,7 +20,7 @@ public class KafkaProducerTimeEntry {
     this.kafkaTimeEntryTemplate = kafkaTimeEntryTemplate;
   }
 
-  public void sendMessage(TimeEntry timeEntry, KafkaAction action) throws Exception {
+  public void sendMessage(TimeEntry timeEntry, KafkaAction action) {
     try {
       KafkaEventMessage kafkaEventMessage = new KafkaEventMessage(timeEntry, action);
       ListenableFuture<SendResult<String, KafkaEventMessage>> future = kafkaTimeEntryTemplate.send(
@@ -33,7 +33,6 @@ public class KafkaProducerTimeEntry {
 
     } catch (Exception ex) {
       log.info(String.format("Sent message has failed=[ %s ]", timeEntry));
-      throw new Exception();
     }
   }
 
