@@ -14,13 +14,13 @@ import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 @Slf4j
 public class KafkaProducerTimeEntry {
 
-  private KafkaTemplate<String, KafkaEventMessage> kafkaTimeEntryTemplate;
+  private final KafkaTemplate<String, KafkaEventMessage> kafkaTimeEntryTemplate;
 
   public KafkaProducerTimeEntry(KafkaTemplate<String, KafkaEventMessage> kafkaTimeEntryTemplate) {
     this.kafkaTimeEntryTemplate = kafkaTimeEntryTemplate;
   }
 
-  public void sendMessage(TimeEntry timeEntry, KafkaAction action) {
+  public void sendMessage(TimeEntry timeEntry, KafkaAction action) throws Exception {
     try {
       KafkaEventMessage kafkaEventMessage = new KafkaEventMessage(timeEntry, action);
       ListenableFuture<SendResult<String, KafkaEventMessage>> future = kafkaTimeEntryTemplate.send(
@@ -32,7 +32,8 @@ public class KafkaProducerTimeEntry {
       listenableFutureReporting(timeEntry, kafkaEventMessage, future);
 
     } catch (Exception ex) {
-      log.info(String.format("Sent message has failed=[ %s ]", timeEntry));
+      log.error(String.format("Sent message has failed=[ %s ]", timeEntry), ex);
+      throw new Exception(String.format("Sent message has failed=[ %s ]", timeEntry));
     }
   }
 
@@ -44,8 +45,8 @@ public class KafkaProducerTimeEntry {
 
       @Override
       public void onFailure(Throwable ex) {
-        log.info(String.format("Sent message has failed=[ %s ]",
-            kafkaEventMessage));
+        log.error(String.format("Sent message has failed=[ %s ]",
+            kafkaEventMessage), ex);
       }
 
       @Override

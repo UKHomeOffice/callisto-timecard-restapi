@@ -2,6 +2,7 @@ package uk.gov.homeoffice.digital.sas.timecard.validators.timeentry;
 
 
 import java.util.ArrayList;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.validator.engine.HibernateConstraintViolation;
@@ -9,8 +10,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import uk.gov.homeoffice.digital.sas.timecard.enums.ClashingProperty;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
+import uk.gov.homeoffice.digital.sas.timecard.producers.KafkaProducerTimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.repositories.TimeEntryRepository;
 
 import javax.persistence.EntityManager;
@@ -28,13 +31,19 @@ import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 
 @SpringBootTest
 @Transactional
-public class TimeEntryValidatorTest {
+class TimeEntryValidatorTest {
 
     @Autowired
     private TimeEntryRepository timeEntryRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @MockBean
+    private KafkaProducerTimeEntry kafkaProducerTimeEntry;
+
+    @MockBean
+    private NewTopic timecardTopicBuilder;
 
     private final static UUID OWNER_ID_1 = UUID.fromString("ec703cac-de76-49c8-b1c4-83da6f8b42ce");
     private final static LocalDateTime EXISTING_SHIFT_START_TIME = LocalDateTime.of(
