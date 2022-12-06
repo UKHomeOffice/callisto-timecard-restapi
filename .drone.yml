@@ -160,8 +160,7 @@ steps:
       event:
         - push
       branch:
-        #          - main #temporarily comment out for testing - to be reverted before PR
-        - task/eahw-2428/manual-promote-to-prod-pipeline #temporarily use current branch for testing
+        - main
 
 ---
 kind: pipeline
@@ -202,8 +201,7 @@ steps:
       event:
         - push
       branch:
-        #          - main #temporarily comment out for testing - to be reverted before PR
-        - task/eahw-2428/manual-promote-to-prod-pipeline #temporarily use current branch for testing
+        - main
 
 ---
 kind: pipeline
@@ -313,7 +311,7 @@ steps:
       mode: upgrade
       chart: ./helm
       values:
-        - image.tag=${DRONE_COMMIT_SHA}
+        - image.tag=latest #temporarily use 'latest' for testing - Revert to SHA before PR
       values_files:
         - ./helm/values/prod-values.yaml
       release: callisto-timecard-restapi
