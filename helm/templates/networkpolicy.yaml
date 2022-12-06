@@ -10,22 +10,24 @@ spec:
   ingress:
     - {}
   egress:
-    - to:
-      - namespaceSelector:
-          matchLabels:
-            name: kube-tls
-    - to:
-      - namespaceSelector:
-          matchLabels:
-            name: kube-certificates
-    - to:
-      - namespaceSelector:
-          matchLabels:
-            name: kube-system
-    - to:
-      ports:
-        - port: 5432
-          protocol: TCP
+    - {}
+#for testing - potentially remove
+#    - to:
+#      - namespaceSelector:
+#          matchLabels:
+#            name: kube-tls
+#    - to:
+#      - namespaceSelector:
+#          matchLabels:
+#            name: kube-certificates
+#    - to:
+#      - namespaceSelector:
+#          matchLabels:
+#            name: kube-system
+#    - to:
+#      ports:
+#        - port: 5432
+#          protocol: TCP
 
   policyTypes:
     - Egress
