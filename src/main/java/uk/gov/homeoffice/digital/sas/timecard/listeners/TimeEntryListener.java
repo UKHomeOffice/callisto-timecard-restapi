@@ -21,12 +21,12 @@ public class TimeEntryListener {
   }
 
   @PostPersist
-  private void sendKafkaMessageOnCreate(TimeEntry timeEntry) throws Exception {
+  private void sendKafkaMessageOnCreate(TimeEntry timeEntry) {
     kafkaProducerService.sendMessage(timeEntry, KafkaAction.CREATE);
   }
 
   @PostUpdate
-  private void sendKafkaMessageOnUpdate(TimeEntry timeEntry) throws Exception {
+  private void sendKafkaMessageOnUpdate(TimeEntry timeEntry) {
     kafkaProducerService.sendMessage(timeEntry, KafkaAction.UPDATE);
   }
 }
