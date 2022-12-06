@@ -135,7 +135,8 @@ steps:
         -Dsonar.qualitygate.wait=true
     when:
       event:
-        exclude:
+#        exclude: #temporarily comment to speed up testing - to be reverted before PR
+        include: #temporarily add to speed up testing - to be reverted before PR
           - pull_request
 
 

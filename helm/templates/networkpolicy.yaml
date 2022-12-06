@@ -10,7 +10,10 @@ spec:
   ingress:
     - {}
   egress:
-    - {}
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: callisto-timecard-tls-7c4n6-2hm4n-n5x4d
   policyTypes:
     - Egress
     - Ingress
