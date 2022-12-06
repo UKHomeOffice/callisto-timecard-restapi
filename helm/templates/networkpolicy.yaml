@@ -11,9 +11,22 @@ spec:
     - {}
   egress:
     - to:
-        - namespaceSelector:
-            matchLabels:
-              name: cert-manager.io/next-private-key=true
+      - namespaceSelector:
+          matchLabels:
+            name: kube-tls
+    - to:
+      - namespaceSelector:
+          matchLabels:
+            name: kube-certificates
+    - to:
+      - namespaceSelector:
+          matchLabels:
+            name: kube-system
+    - to:
+      ports:
+        - port: 5432
+          protocol: TCP
+
   policyTypes:
     - Egress
     - Ingress
