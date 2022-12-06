@@ -76,8 +76,14 @@ steps:
       DRONE_TOKEN:
         from_secret: drone_token
     commands:
-      - chmod +x ./pipeline-scripts/check-build-promotion.sh
-      - ./pipeline-scripts/check-build-promotion.sh
+      - mvn -s ./timecard_settings.xml sonar:sonar
+        -Dsonar.host.url=$${SONAR_HOST}
+        -Dsonar.login=$${SONAR_TOKEN}
+        -Dsonar.organization=ukhomeoffice
+        -Dsonar.projectKey=callisto-timecard-restapi
+        -Dsonar.branch.name=$DRONE_BRANCH
+        -Dsonar.projectName=callisto-timecard-restapi
+        -Dsonar.qualitygate.wait=true
 
 
 ---
