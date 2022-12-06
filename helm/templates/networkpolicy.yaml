@@ -10,18 +10,7 @@ spec:
   ingress:
     - {}
   egress:
-    - to:
-        - namespaceSelector:
-            matchLabels:
-              name: kube-tls
-    - to:
-        - namespaceSelector:
-            matchLabels:
-              name: kube-certificates
-    - to:
-        - namespaceSelector:
-            matchLabels:
-              name: kube-system
+    - {}
   policyTypes:
     - Egress
     - Ingress
