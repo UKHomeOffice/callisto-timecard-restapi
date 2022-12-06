@@ -125,14 +125,8 @@ steps:
       SONAR_TOKEN:
         from_secret: sonar_cloud_token
     commands:
-      - mvn -s ./timecard_settings.xml sonar:sonar 
-        -Dsonar.host.url=$${SONAR_HOST} 
-        -Dsonar.login=$${SONAR_TOKEN} 
-        -Dsonar.organization=ukhomeoffice 
-        -Dsonar.projectKey=callisto-timecard-restapi 
-        -Dsonar.branch.name=$DRONE_BRANCH 
-        -Dsonar.projectName=callisto-timecard-restapi 
-        -Dsonar.qualitygate.wait=true
+      - chmod +x ./pipeline-scripts/run-sonarqube.sh
+      - ./pipeline-scripts/run-sonarqube.sh
     when:
       event:
         exclude:
