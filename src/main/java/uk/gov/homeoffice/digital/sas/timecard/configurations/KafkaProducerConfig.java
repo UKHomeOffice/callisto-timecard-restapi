@@ -1,6 +1,5 @@
 package uk.gov.homeoffice.digital.sas.timecard.configurations;
 
-import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -22,11 +21,11 @@ public class KafkaProducerConfig {
   @Bean
   public ProducerFactory<String, KafkaEventMessage> producerFactory() {
 
-    Map<String, Object> config = new HashMap<>();
-
-    config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-    config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-    config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+    Map<String, Object> config = Map.of(
+        ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers,
+        ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class,
+        ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class
+    );
 
     return new DefaultKafkaProducerFactory<>(config);
   }

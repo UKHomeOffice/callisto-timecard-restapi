@@ -31,10 +31,11 @@ public class KafkaProducerTimeEntry {
     listenableFutureReporting(timeEntry, kafkaEventMessage, future);
   }
 
-  private static void listenableFutureReporting(TimeEntry timeEntry,
-                                                KafkaEventMessage kafkaEventMessage,
-                                                ListenableFuture<SendResult<String,
-                                                    KafkaEventMessage>> future) {
+  private void listenableFutureReporting(
+      TimeEntry timeEntry,
+      KafkaEventMessage kafkaEventMessage,
+      ListenableFuture<SendResult<String, KafkaEventMessage>> future
+  ) {
     future.addCallback(new ListenableFutureCallback<>() {
 
       @Override

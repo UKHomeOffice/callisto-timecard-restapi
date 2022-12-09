@@ -1,8 +1,7 @@
 package uk.gov.homeoffice.digital.sas.timecard.producers;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -32,17 +31,19 @@ class KafkaProducerTimeEntryTest {
   @InjectMocks
   private KafkaProducerTimeEntry kafkaProducerTimeEntry;
 
+  @Mock
+  private ListenableFuture<SendResult<String, KafkaEventMessage>> responseFuture;
+
   @ParameterizedTest
   @EnumSource(value = KafkaAction.class, names = {"CREATE", "UPDATE"})
   void sendMessage_actionOnTimeEntry_messageIsSentWithCorrectArguments(KafkaAction action) {
     TimeEntry timeEntry = createTimeEntry();
 
-    ListenableFuture<SendResult<String, KafkaEventMessage>> responseFuture =
-        mock(ListenableFuture.class);
     Mockito.when(kafkaTimeEntryTemplate.send(Mockito.any(), Mockito.any(), Mockito.any()))
         .thenReturn(responseFuture);
 
-    kafkaProducerTimeEntry.sendMessage(timeEntry, action);
+    assertThatNoException().isThrownBy(() ->
+        kafkaProducerTimeEntry.sendMessage(timeEntry, action));
 
     ArgumentCaptor<String> topicArgument = ArgumentCaptor.forClass(String.class);
     ArgumentCaptor<String> ownerIdArgument = ArgumentCaptor.forClass(String.class);
@@ -52,24 +53,10 @@ class KafkaProducerTimeEntryTest {
     Mockito.verify(kafkaTimeEntryTemplate)
         .send(topicArgument.capture(), ownerIdArgument.capture(), messageArgument.capture());
 
-    assertEquals("callisto-timecard", topicArgument.getValue());
-    assertEquals(timeEntry.getOwnerId().toString(), ownerIdArgument.getValue());
-    assertEquals(timeEntry, messageArgument.getValue().getResource());
-    assertEquals(action, messageArgument.getValue().getAction());
-  }
-
-  @ParameterizedTest
-  @EnumSource(value = KafkaAction.class, names = {"CREATE", "UPDATE"})
-  void sendMessage_actionOnTimeEntry_noExceptionThrown(KafkaAction action) {
-    TimeEntry timeEntry = createTimeEntry();
-
-    ListenableFuture<SendResult<String, KafkaEventMessage>> responseFuture =
-        mock(ListenableFuture.class);
-    Mockito.when(kafkaTimeEntryTemplate.send(Mockito.any(), Mockito.any(), Mockito.any()))
-        .thenReturn(responseFuture);
-
-    assertThatNoException().isThrownBy(() ->
-        kafkaProducerTimeEntry.sendMessage(timeEntry, action));
+    assertThat(topicArgument.getValue()).isEqualTo("callisto-timecard");
+    assertThat(ownerIdArgument.getValue()).isEqualTo(timeEntry.getOwnerId().toString());
+    assertThat(messageArgument.getValue().getResource()).isEqualTo(timeEntry);
+    assertThat(messageArgument.getValue().getAction()).isEqualTo(action);
   }
 
   private TimeEntry createTimeEntry() {
