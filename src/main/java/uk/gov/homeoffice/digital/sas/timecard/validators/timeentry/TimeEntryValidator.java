@@ -20,6 +20,45 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
   @Override
   public boolean isValid(TimeEntry timeEntry, ConstraintValidatorContext context) {
 
+    if (timeEntry.getActualEndTime() != null
+        && timeEntry.getActualStartTime().after(timeEntry.getActualEndTime())) {
+      String message = "End time must be after start time";
+      ClashingProperty clashingProperty = ClashingProperty.END_TIME;
+
+      addConstraintViolationToContext(context, message, clashingProperty, null);
+      return false;
+    }
+
+    List<TimeEntry> timeEntryClashes = getClashingTimeEntries(timeEntry);
+    if (!timeEntryClashes.isEmpty()) {
+      ClashingProperty clashingProperty = getClashingProperty(timeEntry, timeEntryClashes);
+      var payload = timeEntryClashes.stream().map(this::transformTimeEntry)
+          .collect(Collectors.toCollection(ArrayList::new));
+      String message = "Time periods must not overlap with another time period";
+
+      addConstraintViolationToContext(context, message, clashingProperty, payload);
+      return false;
+    }
+    return true;
+  }
+
+  private static void addConstraintViolationToContext(ConstraintValidatorContext context,
+                                                      String message,
+                                                      ClashingProperty clashingProperty,
+                                                      ArrayList<TimeClash> payload) {
+    HibernateConstraintValidatorContext hibernateContext =
+        context.unwrap(HibernateConstraintValidatorContext.class);
+
+    hibernateContext.disableDefaultConstraintViolation();
+    hibernateContext.withDynamicPayload(payload);
+    hibernateContext
+        .buildConstraintViolationWithTemplate(
+            message)
+        .addPropertyNode(clashingProperty.toString())
+        .addConstraintViolation();
+  }
+
+  private static List<TimeEntry> getClashingTimeEntries(TimeEntry timeEntry) {
     EntityManager entityManager = BeanUtil.getBean(EntityManager.class);
     Session session = entityManager.unwrap(Session.class);
     /* We need to manually control the session here as auto flushing after the db read
@@ -35,24 +74,7 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
         timeEntry.getActualEndTime());
 
     session.setHibernateFlushMode(FlushMode.AUTO);
-    if (!timeEntryClashes.isEmpty()) {
-      ClashingProperty clashingProperty = getClashingProperty(timeEntry, timeEntryClashes);
-      var payload = timeEntryClashes.stream().map(this::transformTimeEntry)
-          .collect(Collectors.toCollection(ArrayList::new));
-
-      HibernateConstraintValidatorContext hibernateContext =
-          context.unwrap(HibernateConstraintValidatorContext.class);
-
-      hibernateContext.disableDefaultConstraintViolation();
-      hibernateContext.withDynamicPayload(payload);
-      hibernateContext
-          .buildConstraintViolationWithTemplate(
-              "Time periods must not overlap with another time period")
-          .addPropertyNode(clashingProperty.toString())
-          .addConstraintViolation();
-      return false;
-    }
-    return true;
+    return timeEntryClashes;
   }
 
   private TimeClash transformTimeEntry(TimeEntry timeEntry) {

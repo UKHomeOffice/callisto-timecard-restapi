@@ -50,6 +50,20 @@ class TimeEntryValidatorTest {
                 getAsDate(EXISTING_SHIFT_END_TIME)));
     }
 
+    @Test
+    void validate_startTimeBeforeEndTime_errorReturned() {
+        var time = LocalDateTime.of(
+            2022, 1, 1, 6, 0, 0);
+        var startTime = getAsDate(time);
+        var endTime = getAsDate(time.minusMinutes(1));
+        var timeEntryNew = createTimeEntry(OWNER_ID_1, startTime, endTime);
+
+        Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
+
+        assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
+        assertPropertyErrorType((ConstraintViolationException) thrown, ClashingProperty.END_TIME);
+    }
+
     // region clashing_error_tests
 
     // existing: 08:00-, new: 08:00-
