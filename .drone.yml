@@ -54,8 +54,7 @@ steps:
     when:
       branch:
         exclude:
-#          - main #temporarily comment out for testing - to be reverted before PR
-          - task/eahw-2428/manual-promote-to-prod-pipeline #temporarily use current branch for testing
+          - main
 
   - name: environment-check
     pull: if-not-exists
