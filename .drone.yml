@@ -136,8 +136,7 @@ steps:
         -Dsonar.qualitygate.wait=true
     when:
       event:
-#        exclude: #temporarily comment to speed up testing - to be reverted before PR
-        include: #temporarily add to speed up testing - to be reverted before PR
+        exclude:
           - pull_request
 
 
@@ -334,9 +333,7 @@ trigger:
   status:
     - success
     - failure
-  event: #temporarily add to speed up testing - to be reverted before PR
-    exclude: #+
-      - push  #+
+
 depends_on:
   - callisto-timecard-restapi-build
   - callisto-timecard-restapi-dev-deploy
