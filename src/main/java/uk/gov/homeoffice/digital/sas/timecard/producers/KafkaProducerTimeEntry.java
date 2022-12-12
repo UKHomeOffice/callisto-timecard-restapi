@@ -16,17 +16,20 @@ public class KafkaProducerTimeEntry {
 
   private final KafkaTemplate<String, KafkaEventMessage<TimeEntry>> kafkaTimeEntryTemplate;
 
-  public KafkaProducerTimeEntry(KafkaTemplate<String, KafkaEventMessage<TimeEntry>> kafkaTimeEntryTemplate) {
+  public KafkaProducerTimeEntry(
+      KafkaTemplate<String, KafkaEventMessage<TimeEntry>> kafkaTimeEntryTemplate) {
     this.kafkaTimeEntryTemplate = kafkaTimeEntryTemplate;
   }
 
   public void sendMessage(TimeEntry timeEntry, KafkaAction action) {
-    KafkaEventMessage<TimeEntry> kafkaEventMessage = new KafkaEventMessage<>(TimeEntry.class, timeEntry, action);
-    ListenableFuture<SendResult<String, KafkaEventMessage<TimeEntry>>> future = kafkaTimeEntryTemplate.send(
-        "callisto-timecard",
-        timeEntry.getOwnerId().toString(),
-        kafkaEventMessage
-    );
+    KafkaEventMessage<TimeEntry> kafkaEventMessage =
+        new KafkaEventMessage<>(TimeEntry.class, timeEntry, action);
+    ListenableFuture<SendResult<String, KafkaEventMessage<TimeEntry>>> future =
+        kafkaTimeEntryTemplate.send(
+            "callisto-timecard",
+            timeEntry.getOwnerId().toString(),
+            kafkaEventMessage
+        );
 
     listenableFutureReporting(timeEntry, kafkaEventMessage, future);
   }
