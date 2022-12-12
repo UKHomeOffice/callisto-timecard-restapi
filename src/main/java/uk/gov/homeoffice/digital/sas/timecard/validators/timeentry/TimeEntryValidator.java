@@ -43,7 +43,7 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
     return true;
   }
 
-  private static void addConstraintViolationToContext(ConstraintValidatorContext context,
+  private void addConstraintViolationToContext(ConstraintValidatorContext context,
                                                       String message,
                                                       Property clashingProperty,
                                                       ArrayList<TimeClash> payload) {
@@ -59,7 +59,7 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
         .addConstraintViolation();
   }
 
-  private static List<TimeEntry> getClashingTimeEntries(TimeEntry timeEntry) {
+  private List<TimeEntry> getClashingTimeEntries(TimeEntry timeEntry) {
     var entityManager = BeanUtil.getBean(EntityManager.class);
     var session = entityManager.unwrap(Session.class);
     /* We need to manually control the session here as auto flushing after the db read
