@@ -18,6 +18,7 @@ x-liquibase-settings: &liquibase-setting
     - "--username=dev"
     - "--password=dev"
     - "--changeLogFile=changelog/db.changelog-main.yml"
+    - "--liquibaseSchemaName=timecard"
     - "update"
   networks:
     - callisto
