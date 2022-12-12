@@ -22,19 +22,19 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
 
     if (timeEntry.getActualEndTime() != null
         && timeEntry.getActualStartTime().after(timeEntry.getActualEndTime())) {
-      String message = "End time must be after start time";
-      ClashingProperty clashingProperty = ClashingProperty.END_TIME;
+      var message = "End time must be after start time";
+      var clashingProperty = ClashingProperty.END_TIME;
 
       addConstraintViolationToContext(context, message, clashingProperty, null);
       return false;
     }
 
-    List<TimeEntry> timeEntryClashes = getClashingTimeEntries(timeEntry);
+    var timeEntryClashes = getClashingTimeEntries(timeEntry);
     if (!timeEntryClashes.isEmpty()) {
-      ClashingProperty clashingProperty = getClashingProperty(timeEntry, timeEntryClashes);
+      var clashingProperty = getClashingProperty(timeEntry, timeEntryClashes);
       var payload = timeEntryClashes.stream().map(this::transformTimeEntry)
           .collect(Collectors.toCollection(ArrayList::new));
-      String message = "Time periods must not overlap with another time period";
+      var message = "Time periods must not overlap with another time period";
 
       addConstraintViolationToContext(context, message, clashingProperty, payload);
       return false;
@@ -59,8 +59,8 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
   }
 
   private static List<TimeEntry> getClashingTimeEntries(TimeEntry timeEntry) {
-    EntityManager entityManager = BeanUtil.getBean(EntityManager.class);
-    Session session = entityManager.unwrap(Session.class);
+    var entityManager = BeanUtil.getBean(EntityManager.class);
+    var session = entityManager.unwrap(Session.class);
     /* We need to manually control the session here as auto flushing after the db read
     will cause an infinite loop of entity validation
      */
