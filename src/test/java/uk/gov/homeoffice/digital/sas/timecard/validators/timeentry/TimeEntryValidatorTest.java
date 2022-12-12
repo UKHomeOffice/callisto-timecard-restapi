@@ -1,7 +1,19 @@
 package uk.gov.homeoffice.digital.sas.timecard.validators.timeentry;
 
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
+import static uk.gov.homeoffice.digital.sas.timecard.utils.CommonUtils.getAsDate;
+import static uk.gov.homeoffice.digital.sas.timecard.utils.TimeEntryFactory.createTimeEntry;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.UUID;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
+import javax.validation.ConstraintViolationException;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
@@ -15,19 +27,6 @@ import uk.gov.homeoffice.digital.sas.timecard.enums.ClashingProperty;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.producers.KafkaProducerTimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.repositories.TimeEntryRepository;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
-import javax.validation.ConstraintViolationException;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Date;
-import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNoException;
-import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 
 @SpringBootTest
 @Transactional
@@ -393,22 +392,6 @@ class TimeEntryValidatorTest {
     }
 
     // endregion
-
-    private Date getAsDate(LocalDateTime dateTime) {
-        return Date.from(dateTime.toInstant(ZoneOffset.UTC));
-    }
-
-    private TimeEntry createTimeEntry(UUID ownerId, Date actualStartTime) {
-        var timeEntry = new TimeEntry();
-        timeEntry.setOwnerId(ownerId);
-        timeEntry.setActualStartTime(actualStartTime);
-        return timeEntry;
-    }
-    private TimeEntry createTimeEntry(UUID ownerId, Date actualStartTime, Date actualEndTime) {
-        var timeEntry = createTimeEntry(ownerId, actualStartTime);
-        timeEntry.setActualEndTime(actualEndTime);
-        return timeEntry;
-    }
 
     private void saveEntryAndFlushDatabase(TimeEntry existingTimeEntry) {
         Session session = entityManager.unwrap(Session.class);

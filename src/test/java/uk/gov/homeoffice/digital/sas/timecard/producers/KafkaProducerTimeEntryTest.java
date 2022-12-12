@@ -2,10 +2,10 @@ package uk.gov.homeoffice.digital.sas.timecard.producers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
+import static uk.gov.homeoffice.digital.sas.timecard.utils.CommonUtils.getAsDate;
+import static uk.gov.homeoffice.digital.sas.timecard.utils.TimeEntryFactory.createTimeEntry;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Date;
 import java.util.UUID;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -37,7 +37,11 @@ class KafkaProducerTimeEntryTest {
   @ParameterizedTest
   @EnumSource(value = KafkaAction.class, names = {"CREATE", "UPDATE"})
   void sendMessage_actionOnTimeEntry_messageIsSentWithCorrectArguments(KafkaAction action) {
-    TimeEntry timeEntry = createTimeEntry();
+
+    UUID ownerId = UUID.fromString("ec703cac-de76-49c8-b1c4-83da6f8b42ce");
+    LocalDateTime actualStartTime = LocalDateTime.of(
+        2022, 1, 1, 9, 0, 0);
+    TimeEntry timeEntry = createTimeEntry(ownerId, getAsDate(actualStartTime));
 
     Mockito.when(kafkaTimeEntryTemplate.send(Mockito.any(), Mockito.any(), Mockito.any()))
         .thenReturn(responseFuture);
@@ -57,20 +61,5 @@ class KafkaProducerTimeEntryTest {
     assertThat(ownerIdArgument.getValue()).isEqualTo(timeEntry.getOwnerId().toString());
     assertThat(messageArgument.getValue().getResource()).isEqualTo(timeEntry);
     assertThat(messageArgument.getValue().getAction()).isEqualTo(action);
-  }
-
-  private TimeEntry createTimeEntry() {
-    UUID ownerId = UUID.fromString("ec703cac-de76-49c8-b1c4-83da6f8b42ce");
-    LocalDateTime actualStartTime = LocalDateTime.of(
-        2022, 1, 1, 9, 0, 0);
-
-    var timeEntry = new TimeEntry();
-    timeEntry.setOwnerId(ownerId);
-    timeEntry.setActualStartTime(getAsDate(actualStartTime));
-    return timeEntry;
-  }
-
-  private Date getAsDate(LocalDateTime dateTime) {
-    return Date.from(dateTime.toInstant(ZoneOffset.UTC));
   }
 }
