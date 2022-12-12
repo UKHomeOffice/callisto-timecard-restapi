@@ -10,6 +10,7 @@ import javax.validation.ConstraintValidatorContext;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
+import uk.gov.homeoffice.digital.sas.timecard.enums.ErrorMessage;
 import uk.gov.homeoffice.digital.sas.timecard.enums.Property;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.repositories.TimeEntryRepository;
@@ -22,7 +23,7 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
 
     if (timeEntry.getActualEndTime() != null
         && timeEntry.getActualStartTime().after(timeEntry.getActualEndTime())) {
-      var message = "End time must be after start time";
+      var message = ErrorMessage.END_TIME_BEFORE_START_TIME.toString();
       var errorProperty = Property.END_TIME;
 
       addConstraintViolationToContext(context, message, errorProperty, null);
@@ -34,7 +35,7 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
       var clashingProperty = getClashingProperty(timeEntry, timeEntryClashes);
       var payload = timeEntryClashes.stream().map(this::transformTimeEntry)
           .collect(Collectors.toCollection(ArrayList::new));
-      var message = "Time periods must not overlap with another time period";
+      var message = ErrorMessage.TIME_PERIOD_CLASH.toString();
 
       addConstraintViolationToContext(context, message, clashingProperty, payload);
       return false;

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import uk.gov.homeoffice.digital.sas.timecard.enums.ErrorMessage;
 import uk.gov.homeoffice.digital.sas.timecard.enums.Property;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.repositories.TimeEntryRepository;
@@ -51,21 +52,6 @@ class TimeEntryValidatorTest {
     }
 
     @Test
-    void validate_startTimeBeforeEndTime_errorReturned() {
-        var time = LocalDateTime.of(
-            2022, 1, 1, 6, 0, 0);
-        var startTime = getAsDate(time);
-        var endTime = getAsDate(time.minusMinutes(1));
-        var timeEntryNew = createTimeEntry(OWNER_ID_1, startTime, endTime);
-
-        Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
-
-        assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, Property.END_TIME);
-        assertThat(thrown.getMessage()).contains("End time must be after start time");
-    }
-
-    @Test
     void validate_startTimeAfterEndTime_errorReturned() {
         var time = LocalDateTime.of(
             2022, 1, 1, 6, 0, 0);
@@ -77,7 +63,7 @@ class TimeEntryValidatorTest {
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
         assertPropertyErrorType((ConstraintViolationException) thrown, Property.END_TIME);
-        assertThat(thrown.getMessage()).contains("End time must be after start time");
+        assertThat(thrown.getMessage()).contains(ErrorMessage.END_TIME_BEFORE_START_TIME.toString());
     }
 
     // region clashing_error_tests
@@ -100,6 +86,7 @@ class TimeEntryValidatorTest {
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
         assertPropertyErrorType((ConstraintViolationException) thrown, Property.START_TIME);
+        assertThat(thrown.getMessage()).contains(ErrorMessage.TIME_PERIOD_CLASH.toString());
     }
 
     // existing: 08:00-, new: 08:00-08:01
