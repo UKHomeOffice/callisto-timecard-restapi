@@ -1,20 +1,23 @@
 package uk.gov.homeoffice.digital.sas.timecard.model;
 
 import javax.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
 
-@AllArgsConstructor
 @Getter
 @Setter
-@Builder
-public class KafkaEventMessage {
+public class KafkaEventMessage<T> {
+  public KafkaEventMessage(Class<T> resourceType, T resource, KafkaAction action) {
+    this.schema = resourceType.getPackage().getImplementationVersion();
+    this.resource = resource;
+    this.action = action;
+  }
+
+  private String schema;
 
   @NotNull
-  private TimeEntry resource;
+  private T resource;
 
   @NotNull
   private KafkaAction action;

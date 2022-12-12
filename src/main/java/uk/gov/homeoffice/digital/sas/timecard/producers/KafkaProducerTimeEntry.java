@@ -14,15 +14,15 @@ import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 @Slf4j
 public class KafkaProducerTimeEntry {
 
-  private final KafkaTemplate<String, KafkaEventMessage> kafkaTimeEntryTemplate;
+  private final KafkaTemplate<String, KafkaEventMessage<TimeEntry>> kafkaTimeEntryTemplate;
 
-  public KafkaProducerTimeEntry(KafkaTemplate<String, KafkaEventMessage> kafkaTimeEntryTemplate) {
+  public KafkaProducerTimeEntry(KafkaTemplate<String, KafkaEventMessage<TimeEntry>> kafkaTimeEntryTemplate) {
     this.kafkaTimeEntryTemplate = kafkaTimeEntryTemplate;
   }
 
   public void sendMessage(TimeEntry timeEntry, KafkaAction action) {
-    KafkaEventMessage kafkaEventMessage = new KafkaEventMessage(timeEntry, action);
-    ListenableFuture<SendResult<String, KafkaEventMessage>> future = kafkaTimeEntryTemplate.send(
+    KafkaEventMessage<TimeEntry> kafkaEventMessage = new KafkaEventMessage<>(TimeEntry.class, timeEntry, action);
+    ListenableFuture<SendResult<String, KafkaEventMessage<TimeEntry>>> future = kafkaTimeEntryTemplate.send(
         "callisto-timecard",
         timeEntry.getOwnerId().toString(),
         kafkaEventMessage
@@ -33,8 +33,8 @@ public class KafkaProducerTimeEntry {
 
   private void listenableFutureReporting(
       TimeEntry timeEntry,
-      KafkaEventMessage kafkaEventMessage,
-      ListenableFuture<SendResult<String, KafkaEventMessage>> future
+      KafkaEventMessage<TimeEntry> kafkaEventMessage,
+      ListenableFuture<SendResult<String, KafkaEventMessage<TimeEntry>>> future
   ) {
     future.addCallback(new ListenableFutureCallback<>() {
 
@@ -45,7 +45,7 @@ public class KafkaProducerTimeEntry {
       }
 
       @Override
-      public void onSuccess(SendResult<String, KafkaEventMessage> result) {
+      public void onSuccess(SendResult<String, KafkaEventMessage<TimeEntry>> result) {
         log.info(String.format("Sent message=[ %s ]", timeEntry));
       }
     });

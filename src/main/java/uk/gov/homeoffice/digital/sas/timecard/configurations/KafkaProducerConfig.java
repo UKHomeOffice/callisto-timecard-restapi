@@ -11,6 +11,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import uk.gov.homeoffice.digital.sas.timecard.model.KafkaEventMessage;
+import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 
 @Configuration
 public class KafkaProducerConfig {
@@ -19,7 +20,7 @@ public class KafkaProducerConfig {
   private String bootstrapServers;
 
   @Bean
-  public ProducerFactory<String, KafkaEventMessage> producerFactory() {
+  public ProducerFactory<String, KafkaEventMessage<TimeEntry>> producerFactory() {
 
     Map<String, Object> config = Map.of(
         ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers,
@@ -31,8 +32,8 @@ public class KafkaProducerConfig {
   }
 
   @Bean
-  public KafkaTemplate<String, KafkaEventMessage> kafkaTemplate(
-      ProducerFactory<String, KafkaEventMessage> producerFactory
+  public KafkaTemplate<String, KafkaEventMessage<TimeEntry>> kafkaTemplate(
+      ProducerFactory<String, KafkaEventMessage<TimeEntry>> producerFactory
   ) {
     return new KafkaTemplate<>(producerFactory);
   }
