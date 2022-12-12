@@ -11,7 +11,7 @@ import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
 import uk.gov.homeoffice.digital.sas.timecard.enums.ErrorMessage;
-import uk.gov.homeoffice.digital.sas.timecard.enums.Property;
+import uk.gov.homeoffice.digital.sas.timecard.enums.InvalidField;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.repositories.TimeEntryRepository;
 import uk.gov.homeoffice.digital.sas.timecard.utils.BeanUtil;
@@ -24,20 +24,20 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
     if (timeEntry.getActualEndTime() != null
         && timeEntry.getActualStartTime().after(timeEntry.getActualEndTime())) {
       var message = ErrorMessage.END_TIME_BEFORE_START_TIME.toString();
-      var errorProperty = Property.END_TIME;
+      var invalidField = InvalidField.END_TIME;
 
-      addConstraintViolationToContext(context, message, errorProperty, null);
+      addConstraintViolationToContext(context, message, invalidField, null);
       return false;
     }
 
     var timeEntryClashes = getClashingTimeEntries(timeEntry);
     if (!timeEntryClashes.isEmpty()) {
-      var clashingProperty = getClashingProperty(timeEntry, timeEntryClashes);
+      var invalidField = getClashingField(timeEntry, timeEntryClashes);
       var payload = timeEntryClashes.stream().map(this::transformTimeEntry)
           .collect(Collectors.toCollection(ArrayList::new));
       var message = ErrorMessage.TIME_PERIOD_CLASH.toString();
 
-      addConstraintViolationToContext(context, message, clashingProperty, payload);
+      addConstraintViolationToContext(context, message, invalidField, payload);
       return false;
     }
     return true;
@@ -45,7 +45,7 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
 
   private void addConstraintViolationToContext(ConstraintValidatorContext context,
                                                       String message,
-                                                      Property clashingProperty,
+                                                      InvalidField clashingProperty,
                                                       ArrayList<TimeClash> payload) {
     HibernateConstraintValidatorContext hibernateContext =
         context.unwrap(HibernateConstraintValidatorContext.class);
@@ -84,7 +84,7 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
         timeEntry.getTimePeriodTypeId());
   }
 
-  private Property getClashingProperty(
+  private InvalidField getClashingField(
       TimeEntry timeEntry, List<TimeEntry> timeEntryClashes) {
     var startTimeClash = false;
     var endTimeClash = false;
@@ -104,16 +104,16 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
     }
 
     if (startTimeClash && endTimeClash) {
-      return Property.START_AND_END_TIME;
+      return InvalidField.START_AND_END_TIME;
     }
     if (startTimeClash) {
-      return Property.START_TIME;
+      return InvalidField.START_TIME;
     }
     if (endTimeClash) {
-      return Property.END_TIME;
+      return InvalidField.END_TIME;
     }
 
-    return Property.START_AND_END_TIME;
+    return InvalidField.START_AND_END_TIME;
   }
 
   private boolean startTimeClashes(TimeEntry timeEntry, TimeEntry timeEntryClash) {

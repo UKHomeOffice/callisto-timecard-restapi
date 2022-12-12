@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.homeoffice.digital.sas.timecard.enums.ErrorMessage;
-import uk.gov.homeoffice.digital.sas.timecard.enums.Property;
+import uk.gov.homeoffice.digital.sas.timecard.enums.InvalidField;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.repositories.TimeEntryRepository;
 
@@ -62,7 +62,7 @@ class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, Property.END_TIME);
+        assertPropertyErrorType((ConstraintViolationException) thrown, InvalidField.END_TIME);
         assertThat(thrown.getMessage()).contains(ErrorMessage.END_TIME_BEFORE_START_TIME.toString());
     }
 
@@ -85,7 +85,7 @@ class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, Property.START_TIME);
+        assertPropertyErrorType((ConstraintViolationException) thrown, InvalidField.START_TIME);
         assertThat(thrown.getMessage()).contains(ErrorMessage.TIME_PERIOD_CLASH.toString());
     }
 
@@ -106,7 +106,7 @@ class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, Property.START_TIME);
+        assertPropertyErrorType((ConstraintViolationException) thrown, InvalidField.START_TIME);
     }
 
 
@@ -120,7 +120,7 @@ class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, Property.START_TIME);
+        assertPropertyErrorType((ConstraintViolationException) thrown, InvalidField.START_TIME);
     }
 
     // existing: 09:00-17:00, new: 09:01-
@@ -132,7 +132,7 @@ class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, Property.START_TIME);
+        assertPropertyErrorType((ConstraintViolationException) thrown, InvalidField.START_TIME);
     }
 
     // existing: 09:00-17:00, new: 09:01-09:02
@@ -145,7 +145,7 @@ class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, Property.START_AND_END_TIME);
+        assertPropertyErrorType((ConstraintViolationException) thrown, InvalidField.START_AND_END_TIME);
 
     }
 
@@ -159,7 +159,7 @@ class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, Property.END_TIME);
+        assertPropertyErrorType((ConstraintViolationException) thrown, InvalidField.END_TIME);
     }
 
     // existing: 09:00-17:00, new: 16:59-17:01
@@ -172,7 +172,7 @@ class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, Property.START_TIME);
+        assertPropertyErrorType((ConstraintViolationException) thrown, InvalidField.START_TIME);
     }
 
     // existing: 09:00-17:00, new: 09:00-17:00
@@ -185,7 +185,7 @@ class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, Property.START_AND_END_TIME);
+        assertPropertyErrorType((ConstraintViolationException) thrown, InvalidField.START_AND_END_TIME);
     }
 
     // existing: 09:00-17:00, new: 08:00-18:00
@@ -198,7 +198,7 @@ class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, Property.END_TIME);
+        assertPropertyErrorType((ConstraintViolationException) thrown, InvalidField.END_TIME);
     }
 
     // existing: 09:00-17:00, 17:00-20:00, new: 16:00-21:00
@@ -219,7 +219,7 @@ class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, Property.START_AND_END_TIME);
+        assertPropertyErrorType((ConstraintViolationException) thrown, InvalidField.START_AND_END_TIME);
     }
 
     // existing: 07:00-08:00, updated: 06:00-08:00
@@ -241,7 +241,7 @@ class TimeEntryValidatorTest {
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
-        assertPropertyErrorType((ConstraintViolationException) thrown, Property.END_TIME);
+        assertPropertyErrorType((ConstraintViolationException) thrown, InvalidField.END_TIME);
     }
 
     // endregion
@@ -428,7 +428,7 @@ class TimeEntryValidatorTest {
         session.setHibernateFlushMode(FlushMode.AUTO);
     }
 
-    private static void assertPropertyErrorType(ConstraintViolationException thrown, Property property) {
+    private static void assertPropertyErrorType(ConstraintViolationException thrown, InvalidField property) {
         assertThat(thrown.getConstraintViolations().iterator().next().getPropertyPath()).hasToString(property.toString());
     }
 

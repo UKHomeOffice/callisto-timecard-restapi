@@ -1,12 +1,12 @@
 package uk.gov.homeoffice.digital.sas.timecard.enums;
 
-public enum Property {
+public enum InvalidField {
   START_TIME("startTime"),
   END_TIME("endTime"),
   START_AND_END_TIME("startAndEndTime");
   private final String stringValue;
 
-  Property(final String s) {
+  InvalidField(final String s) {
     stringValue = s;
   }
 
