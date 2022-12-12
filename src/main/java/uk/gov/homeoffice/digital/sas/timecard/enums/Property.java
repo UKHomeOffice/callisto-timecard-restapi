@@ -1,12 +1,12 @@
 package uk.gov.homeoffice.digital.sas.timecard.enums;
 
-public enum ClashingProperty {
+public enum Property {
   START_TIME("startTime"),
   END_TIME("endTime"),
   START_AND_END_TIME("startAndEndTime");
   private final String stringValue;
 
-  ClashingProperty(final String s) {
+  Property(final String s) {
     stringValue = s;
   }
 

@@ -10,7 +10,7 @@ import javax.validation.ConstraintValidatorContext;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
-import uk.gov.homeoffice.digital.sas.timecard.enums.ClashingProperty;
+import uk.gov.homeoffice.digital.sas.timecard.enums.Property;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.repositories.TimeEntryRepository;
 import uk.gov.homeoffice.digital.sas.timecard.utils.BeanUtil;
@@ -23,9 +23,9 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
     if (timeEntry.getActualEndTime() != null
         && timeEntry.getActualStartTime().after(timeEntry.getActualEndTime())) {
       var message = "End time must be after start time";
-      var clashingProperty = ClashingProperty.END_TIME;
+      var errorProperty = Property.END_TIME;
 
-      addConstraintViolationToContext(context, message, clashingProperty, null);
+      addConstraintViolationToContext(context, message, errorProperty, null);
       return false;
     }
 
@@ -44,7 +44,7 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
 
   private static void addConstraintViolationToContext(ConstraintValidatorContext context,
                                                       String message,
-                                                      ClashingProperty clashingProperty,
+                                                      Property clashingProperty,
                                                       ArrayList<TimeClash> payload) {
     HibernateConstraintValidatorContext hibernateContext =
         context.unwrap(HibernateConstraintValidatorContext.class);
@@ -83,7 +83,7 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
         timeEntry.getTimePeriodTypeId());
   }
 
-  private ClashingProperty getClashingProperty(
+  private Property getClashingProperty(
       TimeEntry timeEntry, List<TimeEntry> timeEntryClashes) {
     var startTimeClash = false;
     var endTimeClash = false;
@@ -103,16 +103,16 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
     }
 
     if (startTimeClash && endTimeClash) {
-      return ClashingProperty.START_AND_END_TIME;
+      return Property.START_AND_END_TIME;
     }
     if (startTimeClash) {
-      return ClashingProperty.START_TIME;
+      return Property.START_TIME;
     }
     if (endTimeClash) {
-      return ClashingProperty.END_TIME;
+      return Property.END_TIME;
     }
 
-    return ClashingProperty.START_AND_END_TIME;
+    return Property.START_AND_END_TIME;
   }
 
   private boolean startTimeClashes(TimeEntry timeEntry, TimeEntry timeEntryClash) {
