@@ -62,6 +62,7 @@ class TimeEntryValidatorTest {
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
         assertPropertyErrorType((ConstraintViolationException) thrown, ClashingProperty.END_TIME);
+        assertThat(thrown.getMessage()).contains("End time must be after start time");
     }
 
     // region clashing_error_tests
