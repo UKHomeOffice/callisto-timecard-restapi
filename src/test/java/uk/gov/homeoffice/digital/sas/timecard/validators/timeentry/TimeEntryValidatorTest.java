@@ -25,7 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import uk.gov.homeoffice.digital.sas.timecard.enums.ClashingProperty;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
-import uk.gov.homeoffice.digital.sas.timecard.producers.KafkaProducerTimeEntry;
+import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerService;
 import uk.gov.homeoffice.digital.sas.timecard.repositories.TimeEntryRepository;
 
 @SpringBootTest
@@ -39,7 +39,7 @@ class TimeEntryValidatorTest {
     private EntityManager entityManager;
 
     @MockBean
-    private KafkaProducerTimeEntry kafkaProducerTimeEntry;
+    private KafkaProducerService kafkaProducerService;
 
     @MockBean
     private NewTopic timecardTopicBuilder;

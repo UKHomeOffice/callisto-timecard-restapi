@@ -19,20 +19,21 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.concurrent.ListenableFuture;
 import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
-import uk.gov.homeoffice.digital.sas.timecard.model.KafkaEventMessage;
+import uk.gov.homeoffice.digital.sas.timecard.kafka.KafkaEventMessage;
+import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerService;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 
 @ExtendWith(SpringExtension.class)
-class KafkaProducerTimeEntryTest {
+class KafkaProducerServiceTest {
 
   @Mock
-  private KafkaTemplate<String, KafkaEventMessage> kafkaTimeEntryTemplate;
+  private KafkaTemplate<String, KafkaEventMessage<TimeEntry>> kafkaTimeEntryTemplate;
 
   @InjectMocks
-  private KafkaProducerTimeEntry kafkaProducerTimeEntry;
+  private KafkaProducerService<TimeEntry> kafkaProducerService;
 
   @Mock
-  private ListenableFuture<SendResult<String, KafkaEventMessage>> responseFuture;
+  private ListenableFuture<SendResult<String, KafkaEventMessage<TimeEntry>>> responseFuture;
 
   @ParameterizedTest
   @EnumSource(value = KafkaAction.class, names = {"CREATE", "UPDATE"})
@@ -47,11 +48,11 @@ class KafkaProducerTimeEntryTest {
         .thenReturn(responseFuture);
 
     assertThatNoException().isThrownBy(() ->
-        kafkaProducerTimeEntry.sendMessage(timeEntry, action));
+        kafkaProducerService.sendMessage(TimeEntry.class, timeEntry, action));
 
     ArgumentCaptor<String> topicArgument = ArgumentCaptor.forClass(String.class);
     ArgumentCaptor<String> ownerIdArgument = ArgumentCaptor.forClass(String.class);
-    ArgumentCaptor<KafkaEventMessage> messageArgument =
+    ArgumentCaptor<KafkaEventMessage<TimeEntry>> messageArgument =
         ArgumentCaptor.forClass(KafkaEventMessage.class);
 
     Mockito.verify(kafkaTimeEntryTemplate)
