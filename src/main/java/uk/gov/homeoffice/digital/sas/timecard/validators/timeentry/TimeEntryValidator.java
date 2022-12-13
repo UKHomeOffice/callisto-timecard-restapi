@@ -10,7 +10,8 @@ import javax.validation.ConstraintValidatorContext;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
-import uk.gov.homeoffice.digital.sas.timecard.enums.ClashingProperty;
+import uk.gov.homeoffice.digital.sas.timecard.enums.ErrorMessage;
+import uk.gov.homeoffice.digital.sas.timecard.enums.InvalidField;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.repositories.TimeEntryRepository;
 import uk.gov.homeoffice.digital.sas.timecard.utils.BeanUtil;
@@ -20,8 +21,47 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
   @Override
   public boolean isValid(TimeEntry timeEntry, ConstraintValidatorContext context) {
 
-    EntityManager entityManager = BeanUtil.getBean(EntityManager.class);
-    Session session = entityManager.unwrap(Session.class);
+    if (timeEntry.getActualEndTime() != null
+        && timeEntry.getActualStartTime().after(timeEntry.getActualEndTime())) {
+      var message = ErrorMessage.END_TIME_BEFORE_START_TIME.toString();
+      var invalidField = InvalidField.END_TIME;
+
+      addConstraintViolationToContext(context, message, invalidField, null);
+      return false;
+    }
+
+    var timeEntryClashes = getClashingTimeEntries(timeEntry);
+    if (!timeEntryClashes.isEmpty()) {
+      var invalidField = getClashingField(timeEntry, timeEntryClashes);
+      var payload = timeEntryClashes.stream().map(this::transformTimeEntry)
+          .collect(Collectors.toCollection(ArrayList::new));
+      var message = ErrorMessage.TIME_PERIOD_CLASH.toString();
+
+      addConstraintViolationToContext(context, message, invalidField, payload);
+      return false;
+    }
+    return true;
+  }
+
+  private void addConstraintViolationToContext(ConstraintValidatorContext context,
+                                                      String message,
+                                                      InvalidField clashingProperty,
+                                                      ArrayList<TimeClash> payload) {
+    HibernateConstraintValidatorContext hibernateContext =
+        context.unwrap(HibernateConstraintValidatorContext.class);
+
+    hibernateContext.disableDefaultConstraintViolation();
+    hibernateContext.withDynamicPayload(payload);
+    hibernateContext
+        .buildConstraintViolationWithTemplate(
+            message)
+        .addPropertyNode(clashingProperty.toString())
+        .addConstraintViolation();
+  }
+
+  private List<TimeEntry> getClashingTimeEntries(TimeEntry timeEntry) {
+    var entityManager = BeanUtil.getBean(EntityManager.class);
+    var session = entityManager.unwrap(Session.class);
     /* We need to manually control the session here as auto flushing after the db read
     will cause an infinite loop of entity validation
      */
@@ -35,24 +75,7 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
         timeEntry.getActualEndTime());
 
     session.setHibernateFlushMode(FlushMode.AUTO);
-    if (!timeEntryClashes.isEmpty()) {
-      ClashingProperty clashingProperty = getClashingProperty(timeEntry, timeEntryClashes);
-      var payload = timeEntryClashes.stream().map(this::transformTimeEntry)
-          .collect(Collectors.toCollection(ArrayList::new));
-
-      HibernateConstraintValidatorContext hibernateContext =
-          context.unwrap(HibernateConstraintValidatorContext.class);
-
-      hibernateContext.disableDefaultConstraintViolation();
-      hibernateContext.withDynamicPayload(payload);
-      hibernateContext
-          .buildConstraintViolationWithTemplate(
-              "Time periods must not overlap with another time period")
-          .addPropertyNode(clashingProperty.toString())
-          .addConstraintViolation();
-      return false;
-    }
-    return true;
+    return timeEntryClashes;
   }
 
   private TimeClash transformTimeEntry(TimeEntry timeEntry) {
@@ -61,7 +84,7 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
         timeEntry.getTimePeriodTypeId());
   }
 
-  private ClashingProperty getClashingProperty(
+  private InvalidField getClashingField(
       TimeEntry timeEntry, List<TimeEntry> timeEntryClashes) {
     var startTimeClash = false;
     var endTimeClash = false;
@@ -81,16 +104,16 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
     }
 
     if (startTimeClash && endTimeClash) {
-      return ClashingProperty.START_AND_END_TIME;
+      return InvalidField.START_AND_END_TIME;
     }
     if (startTimeClash) {
-      return ClashingProperty.START_TIME;
+      return InvalidField.START_TIME;
     }
     if (endTimeClash) {
-      return ClashingProperty.END_TIME;
+      return InvalidField.END_TIME;
     }
 
-    return ClashingProperty.START_AND_END_TIME;
+    return InvalidField.START_AND_END_TIME;
   }
 
   private boolean startTimeClashes(TimeEntry timeEntry, TimeEntry timeEntryClash) {
