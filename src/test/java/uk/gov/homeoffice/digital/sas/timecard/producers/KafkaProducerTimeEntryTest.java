@@ -17,6 +17,7 @@ import org.mockito.Mockito;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.concurrent.ListenableFuture;
 import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
 import uk.gov.homeoffice.digital.sas.timecard.model.KafkaEventMessage;
@@ -26,17 +27,18 @@ import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 class KafkaProducerTimeEntryTest {
 
   @Mock
-  private KafkaTemplate<String, KafkaEventMessage> kafkaTimeEntryTemplate;
+  private KafkaTemplate<String, KafkaEventMessage<TimeEntry>> kafkaTimeEntryTemplate;
 
   @InjectMocks
   private KafkaProducerTimeEntry kafkaProducerTimeEntry;
 
   @Mock
-  private ListenableFuture<SendResult<String, KafkaEventMessage>> responseFuture;
+  private ListenableFuture<SendResult<String, KafkaEventMessage<TimeEntry>>> responseFuture;
 
   @ParameterizedTest
   @EnumSource(value = KafkaAction.class, names = {"CREATE", "UPDATE"})
   void sendMessage_actionOnTimeEntry_messageIsSentWithCorrectArguments(KafkaAction action) {
+    ReflectionTestUtils.setField(kafkaProducerTimeEntry, "topicName", "callisto-timecard");
 
     UUID ownerId = UUID.fromString("ec703cac-de76-49c8-b1c4-83da6f8b42ce");
     LocalDateTime actualStartTime = LocalDateTime.of(
@@ -51,7 +53,7 @@ class KafkaProducerTimeEntryTest {
 
     ArgumentCaptor<String> topicArgument = ArgumentCaptor.forClass(String.class);
     ArgumentCaptor<String> ownerIdArgument = ArgumentCaptor.forClass(String.class);
-    ArgumentCaptor<KafkaEventMessage> messageArgument =
+    ArgumentCaptor<KafkaEventMessage<TimeEntry>> messageArgument =
         ArgumentCaptor.forClass(KafkaEventMessage.class);
 
     Mockito.verify(kafkaTimeEntryTemplate)

@@ -1,6 +1,7 @@
 package uk.gov.homeoffice.digital.sas.timecard.producers;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,9 @@ import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 @Slf4j
 public class KafkaProducerTimeEntry {
 
+  @Value("${spring.kafka.template.default-topic}")
+  private String topicName;
+
   private final KafkaTemplate<String, KafkaEventMessage<TimeEntry>> kafkaTimeEntryTemplate;
 
   public KafkaProducerTimeEntry(
@@ -26,7 +30,7 @@ public class KafkaProducerTimeEntry {
         new KafkaEventMessage<>(TimeEntry.class, timeEntry, action);
     ListenableFuture<SendResult<String, KafkaEventMessage<TimeEntry>>> future =
         kafkaTimeEntryTemplate.send(
-            "callisto-timecard",
+            topicName,
             timeEntry.getOwnerId().toString(),
             kafkaEventMessage
         );
