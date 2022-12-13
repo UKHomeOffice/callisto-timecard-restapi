@@ -39,7 +39,7 @@ class KafkaProducerServiceTest {
   @ParameterizedTest
   @EnumSource(value = KafkaAction.class, names = {"CREATE", "UPDATE"})
   void sendMessage_actionOnTimeEntry_messageIsSentWithCorrectArguments(KafkaAction action) {
-    ReflectionTestUtils.setField(kafkaProducerTimeEntry, "topicName", "callisto-timecard");
+    ReflectionTestUtils.setField(kafkaProducerService, "topicName", "callisto-timecard");
 
     UUID ownerId = UUID.fromString("ec703cac-de76-49c8-b1c4-83da6f8b42ce");
     LocalDateTime actualStartTime = LocalDateTime.of(
