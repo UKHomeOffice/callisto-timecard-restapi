@@ -17,6 +17,7 @@ import org.mockito.Mockito;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.concurrent.ListenableFuture;
 import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.KafkaEventMessage;
@@ -38,6 +39,7 @@ class KafkaProducerServiceTest {
   @ParameterizedTest
   @EnumSource(value = KafkaAction.class, names = {"CREATE", "UPDATE"})
   void sendMessage_actionOnTimeEntry_messageIsSentWithCorrectArguments(KafkaAction action) {
+    ReflectionTestUtils.setField(kafkaProducerTimeEntry, "topicName", "callisto-timecard");
 
     UUID ownerId = UUID.fromString("ec703cac-de76-49c8-b1c4-83da6f8b42ce");
     LocalDateTime actualStartTime = LocalDateTime.of(
