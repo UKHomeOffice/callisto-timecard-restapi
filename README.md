@@ -17,11 +17,11 @@ Then the timecard-restapi application in the form of a container will be launche
 
 **Restarting the container** after making changes to the application or building its new image is not necessary or advisable.
 
-### Authenticate with the Home Office private Maven repository (Artifactory)
+## Authenticate with the Home Office private Maven repository (Artifactory)
 
 In order to retrieve private Maven packages, you’ll need to [configure authentication for Artifactory](https://collaboration.homeoffice.gov.uk/display/EAHW/Artifactory).
 
-## Create database
+## Create database manually
 
 If you need to create your own postgres database you can use docker. This works well if you create a container and name it, then you can stop and start it as you please
 
@@ -59,7 +59,7 @@ DATABASE_USERNAME=postgres
 DATABASE_PASSWORD=Welcome
 ```
 
-## Updating the database schema
+## Updating the database schema manually
 
 The following command will deploy the liquibase config using the docker image when run from the root of the project.
 You will need to replace the value [YOUR IP ADDRESS] with the IP address for your database. If you are not running on the default port you may also need to update that in the connection string. Check that the username and password are also correct
