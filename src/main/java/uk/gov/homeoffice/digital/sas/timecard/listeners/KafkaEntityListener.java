@@ -20,13 +20,13 @@ public abstract class KafkaEntityListener<T> {
   }
 
   @PostPersist
-  private void sendKafkaMessageOnCreate(T resource) {
+  protected void sendKafkaMessageOnCreate(T resource) {
     kafkaProducerService.sendMessage(resolveMessageKey(resource),
         (Class<T>) resource.getClass(), resource, KafkaAction.CREATE);
   }
 
   @PostUpdate
-  private void sendKafkaMessageOnUpdate(T resource) {
+  protected void sendKafkaMessageOnUpdate(T resource) {
     kafkaProducerService.sendMessage(resolveMessageKey(resource),
         (Class<T>) resource.getClass(), resource, KafkaAction.UPDATE);
   }
