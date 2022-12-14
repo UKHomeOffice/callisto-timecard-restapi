@@ -1,6 +1,6 @@
 # Callisto REST API
 
-## Running locally
+## Running locally as a Docker container
 
 Before running the application locally in the form of a Docker container, any already running instances of the application (also in the form of a Docker container) should be stopped to avoid port conflicts, unless
 other ports have been assigned to each application instance.
