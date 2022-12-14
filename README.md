@@ -21,7 +21,7 @@ Then the timecard-restapi application in the form of a container will be launche
 
 In order to retrieve private Maven packages, you’ll need to [configure authentication for Artifactory](https://collaboration.homeoffice.gov.uk/display/EAHW/Artifactory).
 
-### Create database
+## Create database
 
 If you need to create your own postgres database you can use docker. This works well if you create a container and name it, then you can stop and start it as you please
 
@@ -47,7 +47,7 @@ Create the database
 CREATE DATABASE callisto;
 ```
 
-### Setting environment variables 
+## Setting environment variables 
 
 Before running the database locally, you need to set your local environment variables e.g.
 
