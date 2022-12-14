@@ -21,13 +21,13 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 import uk.gov.homeoffice.digital.sas.jparest.annotation.Resource;
 import uk.gov.homeoffice.digital.sas.jparest.models.BaseEntity;
-import uk.gov.homeoffice.digital.sas.timecard.listeners.KafkaEntityListener;
+import uk.gov.homeoffice.digital.sas.timecard.listeners.TimeEntryKafkaEntityListener;
 import uk.gov.homeoffice.digital.sas.timecard.validators.timeentry.TimeEntryConstraint;
 
 @Resource(path = "time-entries")
 @Entity(name = "time_entry")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@EntityListeners(KafkaEntityListener.class)
+@EntityListeners(TimeEntryKafkaEntityListener.class)
 @NoArgsConstructor
 @Getter
 @Setter
@@ -72,8 +72,4 @@ public class TimeEntry extends BaseEntity {
   @JsonIgnore
   private LocalDateTime updatedAt;
 
-  @Override
-  public String getMessageKey() {
-    return getOwnerId().toString();
-  }
 }

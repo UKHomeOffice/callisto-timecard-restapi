@@ -7,13 +7,12 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
-import uk.gov.homeoffice.digital.sas.jparest.models.BaseEntity;
 import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.KafkaEventMessage;
 
 @Component
 @Slf4j
-public class KafkaProducerService<T extends BaseEntity> {
+public class KafkaProducerService<T> {
 
   @Value("${spring.kafka.template.default-topic}")
   private String topicName;
@@ -25,13 +24,14 @@ public class KafkaProducerService<T extends BaseEntity> {
     this.kafkaTemplate = kafkaTemplate;
   }
 
-  public void sendMessage(Class<T> resourceType, T resource, KafkaAction action) {
+  public void sendMessage(String messageKey, Class<T> resourceType,
+      T resource, KafkaAction action) {
     KafkaEventMessage<T> kafkaEventMessage =
         new KafkaEventMessage<>(resourceType, resource, action);
     ListenableFuture<SendResult<String, KafkaEventMessage<T>>> future =
         kafkaTemplate.send(
             topicName,
-            resource.getMessageKey(),
+            messageKey,
             kafkaEventMessage
         );
 

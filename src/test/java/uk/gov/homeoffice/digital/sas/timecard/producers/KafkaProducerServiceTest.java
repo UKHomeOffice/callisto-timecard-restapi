@@ -50,7 +50,7 @@ class KafkaProducerServiceTest {
         .thenReturn(responseFuture);
 
     assertThatNoException().isThrownBy(() ->
-        kafkaProducerService.sendMessage(TimeEntry.class, timeEntry, action));
+        kafkaProducerService.sendMessage(ownerId.toString(), TimeEntry.class, timeEntry, action));
 
     ArgumentCaptor<String> topicArgument = ArgumentCaptor.forClass(String.class);
     ArgumentCaptor<String> ownerIdArgument = ArgumentCaptor.forClass(String.class);

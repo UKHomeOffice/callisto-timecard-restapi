@@ -4,27 +4,31 @@ import javax.persistence.PostPersist;
 import javax.persistence.PostUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.homeoffice.digital.sas.jparest.models.BaseEntity;
 import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerService;
 
 @Component
-public class KafkaEntityListener<T extends BaseEntity> {
+public abstract class KafkaEntityListener {
 
-  private KafkaProducerService<T> kafkaProducerService;
+  private KafkaProducerService<Object> kafkaProducerService;
+
+  public abstract String resolveMessageKey(Object resource) throws Exception;
 
   @Autowired
-  public void createProducerService(KafkaProducerService<T> kafkaProducerService) {
+  public void createProducerService(KafkaProducerService<Object> kafkaProducerService) {
     this.kafkaProducerService = kafkaProducerService;
   }
 
   @PostPersist
-  private void sendKafkaMessageOnCreate(T resource) {
-    kafkaProducerService.sendMessage((Class<T>) resource.getClass(), resource, KafkaAction.CREATE);
+  private void sendKafkaMessageOnCreate(Object resource) throws Exception {
+
+    kafkaProducerService.sendMessage(resolveMessageKey(resource),
+        (Class<Object>) resource.getClass(), resource, KafkaAction.CREATE);
   }
 
   @PostUpdate
-  private void sendKafkaMessageOnUpdate(T resource) {
-    kafkaProducerService.sendMessage((Class<T>) resource.getClass(), resource, KafkaAction.UPDATE);
+  private void sendKafkaMessageOnUpdate(Object resource) throws Exception {
+    kafkaProducerService.sendMessage(resolveMessageKey(resource),
+        (Class<Object>) resource.getClass(), resource, KafkaAction.UPDATE);
   }
 }
