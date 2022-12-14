@@ -8,27 +8,26 @@ import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerService;
 
 @Component
-public abstract class KafkaEntityListener {
+public abstract class KafkaEntityListener<T> {
 
-  private KafkaProducerService<Object> kafkaProducerService;
+  private KafkaProducerService<T> kafkaProducerService;
 
-  public abstract String resolveMessageKey(Object resource) throws Exception;
+  public abstract String resolveMessageKey(T resource);
 
   @Autowired
-  public void createProducerService(KafkaProducerService<Object> kafkaProducerService) {
+  public void createProducerService(KafkaProducerService<T> kafkaProducerService) {
     this.kafkaProducerService = kafkaProducerService;
   }
 
   @PostPersist
-  private void sendKafkaMessageOnCreate(Object resource) throws Exception {
-
+  private void sendKafkaMessageOnCreate(T resource) {
     kafkaProducerService.sendMessage(resolveMessageKey(resource),
-        (Class<Object>) resource.getClass(), resource, KafkaAction.CREATE);
+        (Class<T>) resource.getClass(), resource, KafkaAction.CREATE);
   }
 
   @PostUpdate
-  private void sendKafkaMessageOnUpdate(Object resource) throws Exception {
+  private void sendKafkaMessageOnUpdate(T resource) {
     kafkaProducerService.sendMessage(resolveMessageKey(resource),
-        (Class<Object>) resource.getClass(), resource, KafkaAction.UPDATE);
+        (Class<T>) resource.getClass(), resource, KafkaAction.UPDATE);
   }
 }

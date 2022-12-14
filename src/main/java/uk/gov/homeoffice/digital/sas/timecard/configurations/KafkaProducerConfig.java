@@ -10,11 +10,10 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
-import uk.gov.homeoffice.digital.sas.jparest.models.BaseEntity;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.KafkaEventMessage;
 
 @Configuration
-public class KafkaProducerConfig<T extends BaseEntity> {
+public class KafkaProducerConfig<T> {
 
   @Value("${spring.kafka.bootstrap-servers}")
   private String bootstrapServers;
