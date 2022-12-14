@@ -17,6 +17,9 @@ public class KafkaProducerService<T> {
   @Value("${spring.kafka.template.default-topic}")
   private String topicName;
 
+  @Value("${version}")
+  private String version;
+
   private final KafkaTemplate<String, KafkaEventMessage<T>> kafkaTemplate;
 
   public KafkaProducerService(
@@ -27,7 +30,7 @@ public class KafkaProducerService<T> {
   public void sendMessage(String messageKey, Class<T> resourceType,
       T resource, KafkaAction action) {
     KafkaEventMessage<T> kafkaEventMessage =
-        new KafkaEventMessage<>(resourceType, resource, action);
+        new KafkaEventMessage<>(version, resourceType, resource, action);
     ListenableFuture<SendResult<String, KafkaEventMessage<T>>> future =
         kafkaTemplate.send(
             topicName,
