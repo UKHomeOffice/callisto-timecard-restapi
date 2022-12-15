@@ -27,8 +27,10 @@ import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 @ExtendWith(SpringExtension.class)
 class KafkaProducerServiceTest {
 
+  private final static String TOPIC_NAME = "callisto-timecard";
+
   @Mock
-  private KafkaTemplate<String, KafkaEventMessage<TimeEntry>> kafkaTimeEntryTemplate;
+  private KafkaTemplate<String, KafkaEventMessage<TimeEntry>> kafkaTemplate;
 
   @InjectMocks
   private KafkaProducerService<TimeEntry> kafkaProducerService;
@@ -39,7 +41,7 @@ class KafkaProducerServiceTest {
   @ParameterizedTest
   @EnumSource(value = KafkaAction.class, names = {"CREATE", "UPDATE"})
   void sendMessage_actionOnTimeEntry_messageIsSentWithCorrectArguments(KafkaAction action) {
-    ReflectionTestUtils.setField(kafkaProducerService, "topicName", "callisto-timecard");
+    ReflectionTestUtils.setField(kafkaProducerService, "topicName", TOPIC_NAME);
     ReflectionTestUtils.setField(kafkaProducerService, "version", "1.0.0");
 
     UUID ownerId = UUID.fromString("ec703cac-de76-49c8-b1c4-83da6f8b42ce");
@@ -47,7 +49,7 @@ class KafkaProducerServiceTest {
         2022, 1, 1, 9, 0, 0);
     TimeEntry timeEntry = createTimeEntry(ownerId, getAsDate(actualStartTime));
 
-    Mockito.when(kafkaTimeEntryTemplate.send(Mockito.any(), Mockito.any(), Mockito.any()))
+    Mockito.when(kafkaTemplate.send(Mockito.any(), Mockito.any(), Mockito.any()))
         .thenReturn(responseFuture);
 
     assertThatNoException().isThrownBy(() ->
@@ -58,12 +60,13 @@ class KafkaProducerServiceTest {
     ArgumentCaptor<KafkaEventMessage<TimeEntry>> messageArgument =
         ArgumentCaptor.forClass(KafkaEventMessage.class);
 
-    Mockito.verify(kafkaTimeEntryTemplate)
+    Mockito.verify(kafkaTemplate)
         .send(topicArgument.capture(), ownerIdArgument.capture(), messageArgument.capture());
 
-    assertThat(topicArgument.getValue()).isEqualTo("callisto-timecard");
+    assertThat(topicArgument.getValue()).isEqualTo(TOPIC_NAME);
     assertThat(ownerIdArgument.getValue()).isEqualTo(timeEntry.getOwnerId().toString());
-    assertThat(messageArgument.getValue().getSchema()).isEqualTo("uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry, 1.0.0");
+    assertThat(messageArgument.getValue().getSchema()).isEqualTo(
+        String.format("%s, 1.0.0", TimeEntry.class.getCanonicalName()));
     assertThat(messageArgument.getValue().getResource()).isEqualTo(timeEntry);
     assertThat(messageArgument.getValue().getAction()).isEqualTo(action);
   }

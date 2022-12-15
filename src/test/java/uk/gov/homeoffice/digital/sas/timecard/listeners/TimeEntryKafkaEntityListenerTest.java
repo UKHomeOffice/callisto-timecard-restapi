@@ -1,7 +1,10 @@
 package uk.gov.homeoffice.digital.sas.timecard.listeners;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils.getAsDate;
+import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.createTimeEntry;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +19,7 @@ import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 @ExtendWith(MockitoExtension.class)
 class TimeEntryKafkaEntityListenerTest {
 
-  private final UUID ownerId = UUID.randomUUID();
+  private final static UUID OWNER_ID = UUID.randomUUID();
   private TimeEntry timeEntry;
 
   @Mock
@@ -26,15 +29,16 @@ class TimeEntryKafkaEntityListenerTest {
 
   @BeforeEach
   void setup() {
-    timeEntry = new TimeEntry();
-    timeEntry.setOwnerId(ownerId);
+    LocalDateTime actualStartTime = LocalDateTime.of(
+        2022, 1, 1, 9, 0, 0);
+    timeEntry = createTimeEntry(OWNER_ID, getAsDate(actualStartTime));
 
     kafkaEntityListener.createProducerService(kafkaProducerService);
   }
 
   @Test
-  void resolveMessageKey_timeEntryEntity_useOwnerIdAsMessageKey() {
-    assertThat(kafkaEntityListener.resolveMessageKey(timeEntry)).isEqualTo(ownerId.toString());
+  void resolveMessageKey_timeEntryEntity_ownerIdReturnedAsMessageKey() {
+    assertThat(kafkaEntityListener.resolveMessageKey(timeEntry)).isEqualTo(OWNER_ID.toString());
   }
 
   @Test
@@ -42,7 +46,7 @@ class TimeEntryKafkaEntityListenerTest {
     kafkaEntityListener.sendKafkaMessageOnCreate(timeEntry);
 
     Mockito.verify(kafkaProducerService)
-        .sendMessage(ownerId.toString(),
+        .sendMessage(OWNER_ID.toString(),
             TimeEntry.class,
             timeEntry,
             KafkaAction.CREATE);
@@ -53,7 +57,7 @@ class TimeEntryKafkaEntityListenerTest {
     kafkaEntityListener.sendKafkaMessageOnUpdate(timeEntry);
 
     Mockito.verify(kafkaProducerService)
-        .sendMessage(ownerId.toString(),
+        .sendMessage(OWNER_ID.toString(),
             TimeEntry.class,
             timeEntry,
             KafkaAction.UPDATE);

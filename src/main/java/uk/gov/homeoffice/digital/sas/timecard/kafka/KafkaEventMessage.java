@@ -7,12 +7,6 @@ import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
 @Getter
 public class KafkaEventMessage<T> {
 
-  public KafkaEventMessage(String version, Class<T> resourceType, T resource, KafkaAction action) {
-    this.schema = resourceType.getName() + ", " + version;
-    this.resource = resource;
-    this.action = action;
-  }
-
   private final String schema;
 
   @NotNull
@@ -21,4 +15,9 @@ public class KafkaEventMessage<T> {
   @NotNull
   private final KafkaAction action;
 
+  public KafkaEventMessage(String version, Class<T> resourceType, T resource, KafkaAction action) {
+    this.schema = resourceType.getName() + ", " + version;
+    this.resource = resource;
+    this.action = action;
+  }
 }

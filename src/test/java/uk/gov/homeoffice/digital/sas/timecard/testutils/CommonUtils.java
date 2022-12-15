@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 
-public class CommonUtils {
+public final class CommonUtils {
   public static Date getAsDate(LocalDateTime dateTime) {
     return Date.from(dateTime.toInstant(ZoneOffset.UTC));
   }

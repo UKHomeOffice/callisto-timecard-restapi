@@ -14,12 +14,15 @@ public abstract class KafkaEntityListener<T> {
   }
 
   protected void sendKafkaMessageOnCreate(T resource) {
-    kafkaProducerService.sendMessage(resolveMessageKey(resource),
-        (Class<T>) resource.getClass(), resource, KafkaAction.CREATE);
+    sendMessage(resource, KafkaAction.CREATE);
   }
 
   protected void sendKafkaMessageOnUpdate(T resource) {
+    sendMessage(resource, KafkaAction.UPDATE);
+  }
+
+  private void sendMessage(T resource, KafkaAction action) {
     kafkaProducerService.sendMessage(resolveMessageKey(resource),
-        (Class<T>) resource.getClass(), resource, KafkaAction.UPDATE);
+        (Class<T>) resource.getClass(), resource, action);
   }
 }

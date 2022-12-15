@@ -29,8 +29,7 @@ public class KafkaProducerService<T> {
 
   public void sendMessage(String messageKey, Class<T> resourceType,
       T resource, KafkaAction action) {
-    KafkaEventMessage<T> kafkaEventMessage =
-        new KafkaEventMessage<>(version, resourceType, resource, action);
+    var kafkaEventMessage = new KafkaEventMessage<>(version, resourceType, resource, action);
     ListenableFuture<SendResult<String, KafkaEventMessage<T>>> future =
         kafkaTemplate.send(
             topicName,
