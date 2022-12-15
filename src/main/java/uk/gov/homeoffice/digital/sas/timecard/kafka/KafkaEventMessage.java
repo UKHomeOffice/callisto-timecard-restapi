@@ -2,11 +2,9 @@ package uk.gov.homeoffice.digital.sas.timecard.kafka;
 
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.Setter;
 import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
 
 @Getter
-@Setter
 public class KafkaEventMessage<T> {
 
   public KafkaEventMessage(String version, Class<T> resourceType, T resource, KafkaAction action) {
@@ -15,12 +13,12 @@ public class KafkaEventMessage<T> {
     this.action = action;
   }
 
-  private String schema;
+  private final String schema;
 
   @NotNull
-  private T resource;
+  private final T resource;
 
   @NotNull
-  private KafkaAction action;
+  private final KafkaAction action;
 
 }

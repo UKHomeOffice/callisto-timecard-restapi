@@ -40,6 +40,7 @@ class KafkaProducerServiceTest {
   @EnumSource(value = KafkaAction.class, names = {"CREATE", "UPDATE"})
   void sendMessage_actionOnTimeEntry_messageIsSentWithCorrectArguments(KafkaAction action) {
     ReflectionTestUtils.setField(kafkaProducerService, "topicName", "callisto-timecard");
+    ReflectionTestUtils.setField(kafkaProducerService, "version", "1.0.0");
 
     UUID ownerId = UUID.fromString("ec703cac-de76-49c8-b1c4-83da6f8b42ce");
     LocalDateTime actualStartTime = LocalDateTime.of(
@@ -62,6 +63,7 @@ class KafkaProducerServiceTest {
 
     assertThat(topicArgument.getValue()).isEqualTo("callisto-timecard");
     assertThat(ownerIdArgument.getValue()).isEqualTo(timeEntry.getOwnerId().toString());
+    assertThat(messageArgument.getValue().getSchema()).isEqualTo("uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry, 1.0.0");
     assertThat(messageArgument.getValue().getResource()).isEqualTo(timeEntry);
     assertThat(messageArgument.getValue().getAction()).isEqualTo(action);
   }
