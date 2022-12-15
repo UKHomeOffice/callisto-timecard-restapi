@@ -15,7 +15,7 @@ import uk.gov.homeoffice.digital.sas.timecard.kafka.KafkaEventMessage;
 @Configuration
 public class KafkaProducerConfig<T> {
 
-  @Value("${spring.kafka.bootstrap-servers}")
+  @Value("${kafka.bootstrap-server}")
   private String bootstrapServers;
 
   @Bean

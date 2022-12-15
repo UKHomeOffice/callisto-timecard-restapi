@@ -14,7 +14,7 @@ import uk.gov.homeoffice.digital.sas.timecard.kafka.KafkaEventMessage;
 @Slf4j
 public class KafkaProducerService<T> {
 
-  @Value("${spring.kafka.template.default-topic}")
+  @Value("${kafka.topic}")
   private String topicName;
 
   @Value("${version}")
