@@ -2,8 +2,8 @@ package uk.gov.homeoffice.digital.sas.timecard.producers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
-import static uk.gov.homeoffice.digital.sas.timecard.utils.CommonUtils.getAsDate;
-import static uk.gov.homeoffice.digital.sas.timecard.utils.TimeEntryFactory.createTimeEntry;
+import static uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils.getAsDate;
+import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.createTimeEntry;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

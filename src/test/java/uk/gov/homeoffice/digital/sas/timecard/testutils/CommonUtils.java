@@ -1,4 +1,4 @@
-package uk.gov.homeoffice.digital.sas.timecard.utils;
+package uk.gov.homeoffice.digital.sas.timecard.testutils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;

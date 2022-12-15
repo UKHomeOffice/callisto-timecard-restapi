@@ -1,10 +1,10 @@
-package uk.gov.homeoffice.digital.sas.timecard.utils;
+package uk.gov.homeoffice.digital.sas.timecard.testutils;
 
 import java.util.Date;
 import java.util.UUID;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 
-public class TimeEntryFactory {
+public final class TimeEntryFactory {
 
   private TimeEntryFactory() {}
 
