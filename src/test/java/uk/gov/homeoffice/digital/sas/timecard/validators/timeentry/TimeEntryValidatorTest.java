@@ -40,7 +40,7 @@ class TimeEntryValidatorTest {
     private EntityManager entityManager;
 
     @MockBean
-    private KafkaProducerService<TimeEntry> kafkaProducerService;
+    private KafkaProducerService kafkaProducerService;
 
     @MockBean
     private NewTopic timecardTopicBuilder;
