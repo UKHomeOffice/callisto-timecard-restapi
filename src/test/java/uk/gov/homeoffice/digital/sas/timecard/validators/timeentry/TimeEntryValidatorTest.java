@@ -1,7 +1,20 @@
 package uk.gov.homeoffice.digital.sas.timecard.validators.timeentry;
 
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
+import static uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils.getAsDate;
+import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.createTimeEntry;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.UUID;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
+import javax.validation.ConstraintViolationException;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.validator.engine.HibernateConstraintViolation;
@@ -9,23 +22,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import uk.gov.homeoffice.digital.sas.timecard.enums.ErrorMessage;
 import uk.gov.homeoffice.digital.sas.timecard.enums.InvalidField;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
+import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerService;
 import uk.gov.homeoffice.digital.sas.timecard.repositories.TimeEntryRepository;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
-import javax.validation.ConstraintViolationException;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Date;
-import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNoException;
-import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 
 @SpringBootTest
 @Transactional
@@ -36,6 +38,12 @@ class TimeEntryValidatorTest {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @MockBean
+    private KafkaProducerService kafkaProducerService;
+
+    @MockBean
+    private NewTopic timecardTopicBuilder;
 
     private final static UUID OWNER_ID_1 = UUID.fromString("ec703cac-de76-49c8-b1c4-83da6f8b42ce");
     private final static LocalDateTime EXISTING_SHIFT_START_TIME = LocalDateTime.of(
@@ -401,22 +409,6 @@ class TimeEntryValidatorTest {
     }
 
     // endregion
-
-    private Date getAsDate(LocalDateTime dateTime) {
-        return Date.from(dateTime.toInstant(ZoneOffset.UTC));
-    }
-
-    private TimeEntry createTimeEntry(UUID ownerId, Date actualStartTime) {
-        var timeEntry = new TimeEntry();
-        timeEntry.setOwnerId(ownerId);
-        timeEntry.setActualStartTime(actualStartTime);
-        return timeEntry;
-    }
-    private TimeEntry createTimeEntry(UUID ownerId, Date actualStartTime, Date actualEndTime) {
-        var timeEntry = createTimeEntry(ownerId, actualStartTime);
-        timeEntry.setActualEndTime(actualEndTime);
-        return timeEntry;
-    }
 
     private void saveEntryAndFlushDatabase(TimeEntry existingTimeEntry) {
         Session session = entityManager.unwrap(Session.class);

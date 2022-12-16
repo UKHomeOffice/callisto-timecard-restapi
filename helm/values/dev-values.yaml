@@ -37,3 +37,9 @@ env:
         secretKeyRef:
           name: callistodev-rds
           key: port
+  kafka:
+    - name: BOOTSTRAP_SERVER
+      valueFrom:
+        secretKeyRef:
+          name: callisto-dev-bootstrap
+          key: bootstrap_server1
