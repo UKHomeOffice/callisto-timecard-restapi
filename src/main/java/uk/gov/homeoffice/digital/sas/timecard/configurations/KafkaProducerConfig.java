@@ -17,8 +17,11 @@ import uk.gov.homeoffice.digital.sas.timecard.kafka.KafkaEventMessage;
 @Profile("localhost")
 public class KafkaProducerConfig<T> {
 
-  @Value("${kafka.bootstrap-server}")
-  private String bootstrapServers;
+  private final String bootstrapServers;
+
+  public KafkaProducerConfig(@Value("${kafka.bootstrap-server}") String bootstrapServers) {
+    this.bootstrapServers = bootstrapServers;
+  }
 
   @Bean
   public ProducerFactory<String, KafkaEventMessage<T>> producerFactory() {

@@ -11,8 +11,11 @@ import org.springframework.kafka.config.TopicBuilder;
 @Profile("localhost")
 public class KafkaTopicConfig {
 
-  @Value("${kafka.topic}")
-  private String topicName;
+  private final String topicName;
+
+  public KafkaTopicConfig(@Value("${kafka.topic}") String topicName) {
+    this.topicName = topicName;
+  }
 
   @Bean
   public NewTopic timecardTopicBuilder() {

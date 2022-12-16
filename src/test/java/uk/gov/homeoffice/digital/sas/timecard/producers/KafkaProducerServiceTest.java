@@ -40,9 +40,9 @@ class KafkaProducerServiceTest {
 
   @ParameterizedTest
   @EnumSource(value = KafkaAction.class, names = {"CREATE", "UPDATE"})
-  void sendMessage_actionOnTimeEntry_messageIsSentWithCorrectArguments(KafkaAction action) {
+  void sendMessage_actionOnResource_messageIsSentWithCorrectArguments(KafkaAction action) {
     ReflectionTestUtils.setField(kafkaProducerService, "topicName", TOPIC_NAME);
-    ReflectionTestUtils.setField(kafkaProducerService, "version", "1.0.0");
+    ReflectionTestUtils.setField(kafkaProducerService, "projectVersion", "1.0.0");
 
     UUID ownerId = UUID.fromString("ec703cac-de76-49c8-b1c4-83da6f8b42ce");
     LocalDateTime actualStartTime = LocalDateTime.of(
@@ -66,7 +66,7 @@ class KafkaProducerServiceTest {
     assertThat(topicArgument.getValue()).isEqualTo(TOPIC_NAME);
     assertThat(ownerIdArgument.getValue()).isEqualTo(timeEntry.getOwnerId().toString());
     assertThat(messageArgument.getValue().getSchema()).isEqualTo(
-        String.format("%s, 1.0.0", TimeEntry.class.getCanonicalName()));
+        TimeEntry.class.getCanonicalName() + ", 1.0.0");
     assertThat(messageArgument.getValue().getResource()).isEqualTo(timeEntry);
     assertThat(messageArgument.getValue().getAction()).isEqualTo(action);
   }

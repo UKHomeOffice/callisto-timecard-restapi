@@ -2,6 +2,7 @@ package uk.gov.homeoffice.digital.sas.timecard.kafka.producers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
@@ -10,26 +11,26 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
 import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.KafkaEventMessage;
 
-@Component
 @Slf4j
+@Component
+@EnableAutoConfiguration
 public class KafkaProducerService<T> {
-
-  @Value("${kafka.topic}")
-  private String topicName;
-
-  @Value("${version}")
-  private String version;
-
   private final KafkaTemplate<String, KafkaEventMessage<T>> kafkaTemplate;
+  private final String topicName;
+  private final String projectVersion;
 
   public KafkaProducerService(
-      KafkaTemplate<String, KafkaEventMessage<T>> kafkaTemplate) {
+      KafkaTemplate<String, KafkaEventMessage<T>> kafkaTemplate,
+      @Value("${kafka.topic}") String topicName,
+      @Value("${projectVersion}") String projectVersion) {
     this.kafkaTemplate = kafkaTemplate;
+    this.topicName = topicName;
+    this.projectVersion = projectVersion;
   }
 
   public void sendMessage(String messageKey, Class<T> resourceType,
-      T resource, KafkaAction action) {
-    var kafkaEventMessage = new KafkaEventMessage<>(version, resourceType, resource, action);
+                          T resource, KafkaAction action) {
+    var kafkaEventMessage = new KafkaEventMessage<>(projectVersion, resourceType, resource, action);
     ListenableFuture<SendResult<String, KafkaEventMessage<T>>> future =
         kafkaTemplate.send(
             topicName,
