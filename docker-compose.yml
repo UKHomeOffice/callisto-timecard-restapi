@@ -8,6 +8,8 @@ x-db-settings: &db-settings
     - DATABASE_PASSWORD=dev
     - DATABASE_ENDPOINT=postgres
     - DATABASE_PORT=5432
+    - HOME=/Users/1000
+    - MAVEN_USER_HOME=/Users/1000/.m2
   networks:
     - callisto
 
@@ -26,15 +28,23 @@ x-liquibase-settings: &liquibase-setting
 services:
   timecard-restapi:
     <<: *db-settings
-    image: openjdk:17-alpine
-    entrypoint: [ "java","-jar","timecard-api.jar" ]
-    working_dir: '/usr/src/main'
+    image: maven:3.8.3-openjdk-17
+    entrypoint: ["mvn", "spring-boot:run",
+                 "-Duser.home=/Users/1000",
+                 "-Duser.name=1000",
+                 "-Dspring-boot.run.jvmArguments=-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=*:5005" ]
+
+    user: "1000"
+    working_dir: '/app'
     ports:
       - "50100:9090"
+      - "5005:5005"
     volumes:
-      - './target:/usr/src/main'
+      - ./:/app
+      - $HOME/.m2:/Users/1000/.m2 # Required for jparest dependencies (artifactory)s
     depends_on:
       - timecard-database-migrations
+
 
   timecard-database-migrations:
     <<: *liquibase-setting
