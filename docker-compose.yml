@@ -41,7 +41,7 @@ services:
       - "5005:5005"
     volumes:
       - ./:/app
-      - $HOME/.m2:/Users/1000/.m2 # Required for jparest dependencies (artifactory)s
+      - $HOME/.m2:/Users/1000/.m2 # Required for jparest dependencies (artifactory)
     depends_on:
       - timecard-database-migrations
 
