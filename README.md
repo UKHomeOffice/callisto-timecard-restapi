@@ -17,6 +17,19 @@ Then the timecard-restapi application in the form of a container will be launche
 
 **Restarting the container** after making changes to the application or building its new image is not necessary or advisable.
 
+
+### Devtools Hot Deployment in local environment 
+
+Devtools allows you to reload the application after changing the state of the file, but to see the effect of the changes you need to do one of the following options:
+
+ - 1 - Build project manually (InteliJ IDEA: Build/Build Project )
+ - 2 - [or] IntelliJ IDEA has 2 properties that will allow you to execute `Build Project` automatically. 
+   1) Go to `Preferences/Build,Execution,Deployment/Compiler` and select option
+      `Build project automatically`
+   2) [Optional] Go to `Preferences/Advanced Settings` and select `Allow auto-make to start even if developed application is currently running`
+
+
+
 ### Authenticate with the Home Office private Maven repository (Artifactory)
 
 In order to retrieve private Maven packages, you’ll need to [configure authentication for Artifactory](https://collaboration.homeoffice.gov.uk/display/EAHW/Artifactory).
