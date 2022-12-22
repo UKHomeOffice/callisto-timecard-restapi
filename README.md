@@ -11,7 +11,7 @@ The database engine containing the `timecard schema` should be running already.
 
 #### Flow
 
-First, Docker Compose will run the container containing Liquibase, which will perform any necessary DB migrations. This container will be killed automatically. The container logs contain a message about the success/failure of the migration execution.
+First, Docker Compose will run the container containing Liquibase, which will perform any necessary DB migrations. This container will be terminated with zero exit code automatically. The container logs contain a message about the success/failure of the migration execution.
 
 Then the timecard-restapi application in the form of a container will be launched, but it will be possible to edit the application code. Changes will be visible almost automatically thanks to hot-reload.
 
@@ -33,6 +33,8 @@ Devtools allows you to reload the application after changing the state of the fi
 ### Authenticate with the Home Office private Maven repository (Artifactory)
 
 In order to retrieve private Maven packages, you’ll need to [configure authentication for Artifactory](https://collaboration.homeoffice.gov.uk/display/EAHW/Artifactory).
+
+Running it on **minikube** ? This is problematic, as it doesn't support VPN connections out of the box. 
 
 ### Create database
 
