@@ -1,38 +1,12 @@
 version: '3.3'
 
-x-db-settings: &db-settings
-  pull_policy: always
-  environment:
-    - DATABASE_NAME=callisto
-    - DATABASE_USERNAME=dev
-    - DATABASE_PASSWORD=dev
-    - DATABASE_ENDPOINT=postgres
-    - DATABASE_PORT=5432
-    - HOME=/Users/1000
-    - MAVEN_USER_HOME=/Users/1000/.m2
-  networks:
-    - callisto
-
-x-liquibase-settings: &liquibase-setting
-  pull_policy: always
-  command:
-    - "--url=jdbc:postgresql://postgres:5432/callisto"
-    - "--username=dev"
-    - "--password=dev"
-    - "--changeLogFile=changelog/db.changelog-main.yml"
-    - "--liquibaseSchemaName=timecard"
-    - "update"
-  networks:
-    - callisto
-
 services:
   timecard-restapi:
-    <<: *db-settings
     image: maven:3.8.3-openjdk-17
     entrypoint: ["mvn", "spring-boot:run",
                  "-Duser.home=/Users/1000",
                  "-Duser.name=1000",
-                 "-Dspring-boot.run.jvmArguments=-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=*:5005" ]
+                 "-Dspring-boot.run.jvmArguments=-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=*:5005"]
 
     user: "1000"
     working_dir: '/app'
@@ -42,17 +16,34 @@ services:
     volumes:
       - ./:/app
       - $HOME/.m2:/Users/1000/.m2 # Required for jparest dependencies (artifactory)
+    environment:
+      - DATABASE_NAME=callisto
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=Welcome
+      - DATABASE_ENDPOINT=postgres
+      - DATABASE_PORT=5432
+      - HOME=/Users/1000
+      - MAVEN_USER_HOME=/Users/1000/.m2
     depends_on:
       - timecard-database-migrations
+    networks:
+      - callisto
 
 
   timecard-database-migrations:
-    <<: *liquibase-setting
     image: "340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/timecard-database:latest"
     volumes:
       - ./db/changelog:/liquibase/changelog
       - ./db/sql:/liquibase/sql
-
+    command:
+      - "--url=jdbc:postgresql://postgres:5432/callisto"
+      - "--username=postgres"
+      - "--password=Welcome"
+      - "--changeLogFile=changelog/db.changelog-main.yml"
+      - "--liquibaseSchemaName=timecard"
+      - "update"
+    networks:
+      - callisto
 
 networks:
   callisto:

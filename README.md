@@ -2,34 +2,6 @@
 
 ## Running locally
 
-Before running the application locally in the form of a Docker container, any already running instances of the application (also in the form of a Docker container) should be stopped to avoid port conflicts, unless
-other ports have been assigned to each application instance. 
-
-To run the application in the form of a Docker container, run the command `docker compose up -d` from the root of the application directory.
-
-The database engine containing the `timecard schema` should be running already.
-
-#### Flow
-
-First, Docker Compose will run the container containing Liquibase, which will perform any necessary DB migrations. This container will be terminated with zero exit code automatically. The container logs contain a message about the success/failure of the migration execution.
-
-Then the timecard-restapi application in the form of a container will be launched, but it will be possible to edit the application code. Changes will be visible almost automatically thanks to hot-reload.
-
-**Restarting the container** after making changes to the application or building its new image is not necessary or advisable.
-
-
-### Devtools Hot Deployment in local environment 
-
-Devtools allows you to reload the application after changing the state of the file, but to see the effect of the changes you need to do one of the following options:
-
- - 1 - Build project manually (InteliJ IDEA: Build/Build Project )
- - 2 - [or] IntelliJ IDEA has 2 properties that will allow you to execute `Build Project` automatically. 
-   1) Go to `Preferences/Build,Execution,Deployment/Compiler` and select option
-      `Build project automatically`
-   2) [Optional] Go to `Preferences/Advanced Settings` and select `Allow auto-make to start even if developed application is currently running`
-
-
-
 ### Authenticate with the Home Office private Maven repository (Artifactory)
 
 In order to retrieve private Maven packages, you’ll need to [configure authentication for Artifactory](https://collaboration.homeoffice.gov.uk/display/EAHW/Artifactory).
@@ -86,3 +58,26 @@ docker run -it --rm -v $(pwd)/db/changelog:/liquibase/changelog -v $(pwd)/db/sql
 
 ## Considerations
 A `DRONE_TOKEN` is used in the drone yaml file to get access to execute drone cli commands. This token is tied to a specific user and stored in the drone secrets for this repo. If the user is removed from drone the `DRONE_TOKEN` must be replaced with someone else.
+
+
+## Running Timecard-restapi locally as part of LocalDev environment.
+
+1. Download LocalDev repository from https://github.com/UKHomeOffice/callisto-localdev and run it locally as described in Scenario 1.
+
+2. From the LocalDev project root, stop Timecard-restapi service by running `docker compose stop timecard-restapi` command.
+
+3. Pull Timecard-restapi repository and from its root directory, run command `docker compose up -d` 
+
+After successful start, you should be able to work with Timecard-restapi code and all changes will be reflected within LocalDev environment.
+
+
+### Devtools Hot Deployment in local environment
+
+Devtools allows you to reload the application after making any changes to the project files. 
+However, it may need stage of building project manually (InteliJ IDEA: Build/Build Project)
+or  IntelliJ IDEA has 2 properties that will allow you to execute `Build Project` automatically. To enable that :
+   1) Go to `Preferences/Build,Execution,Deployment/Compiler` and select option
+      `Build project automatically`
+   2) [Optional] Go to `Preferences/Advanced Settings` and select `Allow auto-make to start even if developed application is currently running`
+
+
