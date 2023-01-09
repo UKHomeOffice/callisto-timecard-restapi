@@ -1,0 +1,52 @@
+version: '3.3'
+
+services:
+  timecard-restapi:
+    image: maven:3.8.3-openjdk-17
+    entrypoint: ["mvn", "spring-boot:run",
+                 "-Duser.home=/Users/1000",
+                 "-Duser.name=1000",
+                 "-Dspring-boot.run.jvmArguments=-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=*:5005"]
+
+    user: "1000"
+    working_dir: '/app'
+    ports:
+      - "50100:9090"
+      - "5005:5005"
+    volumes:
+      - ./:/app
+      - $HOME/.m2:/Users/1000/.m2 # Required for jparest dependencies (artifactory)
+    environment:
+      - DATABASE_NAME=callisto
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=Welcome
+      - DATABASE_ENDPOINT=postgres
+      - DATABASE_PORT=5432
+      - HOME=/Users/1000
+      - MAVEN_USER_HOME=/Users/1000/.m2
+    depends_on:
+      - timecard-database-migrations
+    networks:
+      - callisto
+
+
+  timecard-database-migrations:
+    image: "340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/timecard-database:latest"
+    volumes:
+      - ./db/changelog:/liquibase/changelog
+      - ./db/sql:/liquibase/sql
+    command:
+      - "--url=jdbc:postgresql://postgres:5432/callisto"
+      - "--username=postgres"
+      - "--password=Welcome"
+      - "--changeLogFile=changelog/db.changelog-main.yml"
+      - "--liquibaseSchemaName=timecard"
+      - "update"
+    networks:
+      - callisto
+
+networks:
+  callisto:
+    name: callisto-localdev_callisto
+    driver: bridge
+    external: true
