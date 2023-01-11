@@ -94,7 +94,7 @@ class TimeEntryValidatorTest {
 
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
         assertPropertyErrorType((ConstraintViolationException) thrown, InvalidField.START_TIME);
-        assertThat(thrown.getMessage()).contains("blaaaah");
+        assertThat(thrown.getMessage()).contains(ErrorMessage.TIME_PERIOD_CLASH.toString());
     }
 
     // existing: 08:00-, new: 08:00-08:01
