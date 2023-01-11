@@ -414,7 +414,7 @@ steps:
 #      branch:
 #        - main
 
-  - name: slack_deploy_urgent
+  - name: slack_promote_urgent
     <<: *slack
     settings:
       template: |
