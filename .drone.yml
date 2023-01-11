@@ -377,3 +377,48 @@ steps:
     when:
       event:
         - promote
+
+---
+kind: pipeline
+type: kubernetes
+name: urgent notifications
+
+trigger:
+  status:
+    - failure
+
+depends_on:
+  - callisto-timecard-restapi-build
+  - callisto-timecard-restapi-dev-deploy
+  - callisto-timecard-restapi-test-deploy
+  - callisto-timecard-restapi-prod-deploy
+
+slack: &slack
+  image: plugins/slack
+  settings:
+    webhook:
+      from_secret: slack_urgent_webhook_url
+    channel: callisto-urgent-tech-notifications
+    username: Drone
+
+steps:
+  - name: slack_build_urgent
+    <<: *slack
+    settings:
+      template: |
+        <${DRONE_BUILD_LINK}|Build #{{build.number}}> failed :this-is-fine-fire:
+        Commit: <${DRONE_REPO_LINK}/commit/{{ build.commit }}|{{ truncate build.commit 8 }}> - {{{ trim build.message }}}
+        Repo: {{ repo.name }}
+        Author: {{ build.author }}
+#    when:
+#      branch:
+#        - main
+
+  - name: slack_deploy_urgent
+    <<: *slack
+    settings:
+      template: |
+        :alert: Problem *{{uppercasefirst build.deployTo}}* deployment failed for *{{repo.name}}* <${DRONE_BUILD_LINK}| build #{{build.number}}>.
+    when:
+      event:
+        - promote
