@@ -1,0 +1,45 @@
+name: callisto-timecard-restapi
+
+service:
+  name: callisto-timecard-restapi
+  port: 3000
+
+replicaCount: 1
+
+image:
+  repo: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/
+  tag: default # this value will be overridden by drone.yml
+
+env:
+  database:
+    - name: DATABASE_NAME
+      valueFrom:
+        secretKeyRef:
+          name: callistodev-rds
+          key: db_name
+    - name: DATABASE_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: callistodev-rds
+          key: username
+    - name: DATABASE_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: callistodev-rds
+          key: password
+    - name: DATABASE_ENDPOINT
+      valueFrom:
+        secretKeyRef:
+          name: callistodev-rds
+          key: endpoint
+    - name: DATABASE_PORT
+      valueFrom:
+        secretKeyRef:
+          name: callistodev-rds
+          key: port
+  kafka:
+    - name: BOOTSTRAP_SERVER
+      valueFrom:
+        secretKeyRef:
+          name: callisto-dev-bootstrap
+          key: bootstrap_server1

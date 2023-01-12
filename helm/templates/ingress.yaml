@@ -2,9 +2,9 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: callisto-timecard-restapi-eahw2492
+  name: {{ .Values.name }}
   labels:
-    app: callisto-timecard-restapi-eahw2492
+    app: {{ .Values.name }}
     cert-manager.io/solver: route53
   annotations:
     cert-manager.io/enabled: "true"
@@ -16,16 +16,16 @@ metadata:
 spec:
   tls:
     - hosts:
-        - eahw2492-timecard.dev.callisto-notprod.homeoffice.gov.uk
-      secretName: callisto-timecard-tls-eahw2492
+        - {{ .Values.image.tag }}-timecard.dev.callisto-notprod.homeoffice.gov.uk
+      secretName: callisto-timecard-tls-{{ .Values.image.tag }}
   rules:
-    - host: eahw2492-timecard.dev.callisto-notprod.homeoffice.gov.uk
+    - host: {{ .Values.image.tag }}-timecard.dev.callisto-notprod.homeoffice.gov.uk
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: callisto-timecard-restapi
+                name: {{ .Values.name }}
                 port:
                   number: 9090
