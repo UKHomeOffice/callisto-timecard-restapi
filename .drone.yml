@@ -30,7 +30,6 @@ steps:
         - ./helm/values/test-values.yaml
         - ./helm/values/prod-values.yaml
 
-
 ---
 kind: pipeline
 type: kubernetes
@@ -103,10 +102,45 @@ steps:
     commands:
       - "git fetch origin +refs/heads/main:"
 
-  - name: build
-    image: maven:3.8.3-openjdk-17
+  - name: terraform
+    image: hashicorp/terraform:latest
     depends_on:
       - fetch
+    environment:
+      AWS_ACCESS_KEY:
+        from_secret: aws_access_key
+      AWS_SECRET_KEY:
+        from_secret: aws_secret_key
+      CERTIFICATE_AUTHORITY_ARN:
+        from_secret: certificate_authority_arn
+    commands:
+      - terraform init
+      - terraform validate
+      - terraform plan -input=false -out=tfplan
+        -var 'aws-access-key'=$${AWS_ACCESS_KEY}
+        -var 'aws-secret-key'=$${AWS_SECRET_KEY}
+        -var 'certificate-authority-arn'=$${CERTIFICATE_AUTHORITY_ARN}
+      - terraform apply -input=false -auto-approve tfplan
+        -var 'aws-access-key'=$${AWS_ACCESS_KEY}
+        -var 'aws-secret-key'=$${AWS_SECRET_KEY}
+        -var 'certificate-authority-arn'=$${CERTIFICATE_AUTHORITY_ARN}
+
+  - name: create keystore
+    image: ubuntu:latest
+    depends_on:
+      - terraform
+    commands:
+      - openssl pkcs12 -export -in config/timecard-certificate.pem -inkey config/timecard-key.pem -name shared > /usr/src/main/key-pair.p12
+      - keytool -importkeystore -srckeystore key-pair.p12 -destkeystore /usr/src/main/kafka.client.keystore.jks -srcstoretype pkcs12 -srcstorepass password -storepass password -keypass password -alias shared
+      - cp /opt/openjdk-17/lib/security/cacerts /usr/src/main/kafka.client.truststore.jks
+    when:
+      event:
+        - push
+      branch:
+        - main
+
+  - name: build
+    image: maven:3.8.3-openjdk-17
     environment:
       ARTIFACTORY_TOKEN:
         from_secret: artifactory_token
@@ -377,3 +411,58 @@ steps:
     when:
       event:
         - promote
+---
+kind: pipeline
+type: kubernetes
+name: callisto-timecard-create-certificates
+
+platform:
+  os: linux
+  arch: amd64
+
+trigger:
+  event:
+  - cron:
+  cron:
+  - monthly
+
+steps:
+  - name: Terraform Workspace
+    image: hashicorp/terraform:latest
+    commands:
+      - terraform workspace dev
+  - name: Terraform Init
+    image: hashicorp/terraform:latest
+    commands:
+      - terraform init
+  - name: Terraform Validate
+    image: hashicorp/terraform:latest
+    commands:
+      - terraform validate
+  - name: Terraform Plan
+    image: hashicorp/terraform:latest
+    environment:
+      AWS_ACCESS_KEY:
+        from_secret: aws_access_key
+      AWS_SECRET_KEY:
+        from_secret: aws_secret_key
+      CERTIFICATE_AUTHORITY_ARN:
+        from_secret: certificate_authority_arn
+    commands:
+      - terraform plan -input=false -out=tfplan 
+        -var 'aws-access-key'=$${AWS_ACCESS_KEY} 
+        -var 'aws-secret-key'=$${AWS_SECRET_KEY}
+        -var 'certificate-authority-arn'=$${CERTIFICATE_AUTHORITY_ARN}
+  - name: Terraform Apply
+    image: hashicorp/terraform:latest
+    commands:
+      - terraform apply -input=false -auto-approve tfplan
+        -var 'aws-access-key'=$${AWS_ACCESS_KEY}
+        -var 'aws-secret-key'=$${AWS_SECRET_KEY}
+        -var 'certificate-authority-arn'=$${CERTIFICATE_AUTHORITY_ARN}
+  - name: create p12 file
+    image: ubuntu:latest
+    commands:
+        - openssl pkcs12 -export -in config/timecard-certificate.pem -inkey config/timecard-key.pem -name shared > /usr/src/main/key-pair.p12
+        - keytool -importkeystore -srckeystore key-pair.p12 -destkeystore /usr/src/main/kafka.client.keystore.jks -srcstoretype pkcs12 -srcstorepass password -storepass password -keypass password -alias shared
+        - cp /opt/openjdk-17/lib/security/cacerts /usr/src/main/kafka.client.truststore.jks
