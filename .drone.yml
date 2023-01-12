@@ -122,9 +122,6 @@ steps:
         -var 'aws_secret_key'=$${AWS_SECRET_KEY}
         -var 'certificate_authority_arn'=$${CERTIFICATE_AUTHORITY_ARN}
       - terraform apply tfplan
-        -var 'aws_access_key'=$${AWS_ACCESS_KEY}
-        -var 'aws_secret_key'=$${AWS_SECRET_KEY}
-        -var 'certificate_authority_arn'=$${CERTIFICATE_AUTHORITY_ARN}
 
   - name: create keystore
     image: ubuntu:latest
