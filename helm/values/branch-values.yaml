@@ -1,7 +1,7 @@
-name: callisto-timecard-restapi-eahw-2492
+name: callisto-timecard-restapi
 
 service:
-  name: callisto-timecard-restapi-eahw-2492
+  name: callisto-timecard-restapi
   port: 3000
 
 replicaCount: 1

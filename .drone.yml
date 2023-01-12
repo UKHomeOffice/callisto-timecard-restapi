@@ -312,8 +312,8 @@ steps:
       chart: ./helm
       values:
         - image.tag=${DRONE_BRANCH%%/*}
-#        - name=callisto-timecard-restapi-${DRONE_BRANCH%%/*}
-#        - service.name=callisto-timecard-restapi-${DRONE_BRANCH%%/*}
+        - name=callisto-timecard-restapi-${DRONE_BRANCH%%/*}
+        - service.name=callisto-timecard-restapi-${DRONE_BRANCH%%/*}
       values_files:
         - ./helm/values/branch-values.yaml
       release: callisto-timecard-restapi
