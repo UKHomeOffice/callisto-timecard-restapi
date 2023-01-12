@@ -118,13 +118,13 @@ steps:
       - terraform init
       - terraform validate
       - terraform plan -input=false -out=tfplan
-        -var 'aws-access-key'=$${AWS_ACCESS_KEY}
-        -var 'aws-secret-key'=$${AWS_SECRET_KEY}
-        -var 'certificate-authority-arn'=$${CERTIFICATE_AUTHORITY_ARN}
+        -var 'aws_access_key'=$${AWS_ACCESS_KEY}
+        -var 'aws_secret_key'=$${AWS_SECRET_KEY}
+        -var 'certificate_authority_arn'=$${CERTIFICATE_AUTHORITY_ARN}
       - terraform apply -input=false -auto-approve tfplan
-        -var 'aws-access-key'=$${AWS_ACCESS_KEY}
-        -var 'aws-secret-key'=$${AWS_SECRET_KEY}
-        -var 'certificate-authority-arn'=$${CERTIFICATE_AUTHORITY_ARN}
+        -var 'aws_access_key'=$${AWS_ACCESS_KEY}
+        -var 'aws_secret_key'=$${AWS_SECRET_KEY}
+        -var 'certificate_authority_arn'=$${CERTIFICATE_AUTHORITY_ARN}
 
   - name: create keystore
     image: ubuntu:latest
