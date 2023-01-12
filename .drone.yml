@@ -162,6 +162,29 @@ steps:
       branch:
         - main
 
+  - name: build_tag_push_ecr_branch
+    pull: if-not-exists
+    image: plugins/ecr
+    depends_on:
+      - sonar
+    environment:
+      AWS_REGION: eu-west-2
+    settings:
+      access_key:
+        from_secret: ecr_timecard_restapi_access_key_id
+      secret_key:
+        from_secret: ecr_timecard_restapi_secret_access_key
+      repo: callisto/timecard-restapi
+      registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
+      tags:
+      - ${DRONE_BRANCH##*eahw-}
+      - ${DRONE_COMMIT_SHA}
+    commands:
+      - echo ${DRONE_BRANCH##*eahw-}
+    when:
+      event:
+        - push
+
 ---
 kind: pipeline
 type: kubernetes
@@ -202,6 +225,42 @@ steps:
         - push
       branch:
         - main
+
+---
+kind: pipeline
+type: kubernetes
+name: callisto-timecard-restapi-branch-deploy
+
+platform:
+  os: linux
+  arch: amd64
+
+depends_on:
+  - callisto-timecard-restapi-build
+  - callisto-timecard-database-schema
+
+trigger:
+  event:
+    - push
+
+steps:
+  - name: branch_deploy
+    image: pelotech/drone-helm3
+    settings:
+      namespace: callisto-dev
+      mode: upgrade
+      chart: ./helm
+      values:
+        - image.tag=${DRONE_COMMIT_SHA}
+      values_files:
+        - ./helm/values/dev-values.yaml
+      release: callisto-timecard-restapi
+      kube_certificate:
+        from_secret: notprod_kube_api_certificate
+      kube_api_server:
+        from_secret: not_prod_kube_api_url
+      kube_token:
+        from_secret: dev_kube_token
 
 ---
 kind: pipeline
