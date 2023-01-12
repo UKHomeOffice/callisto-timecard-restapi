@@ -1,31 +1,31 @@
-#---
-#apiVersion: networking.k8s.io/v1
-#kind: Ingress
-#metadata:
-#  name: callisto-timecard-restapi-eahw2492
-#  labels:
-#    app: callisto-timecard-restapi-eahw2492
-#    cert-manager.io/solver: route53
-#  annotations:
-#    cert-manager.io/enabled: "true"
-#    ingress.kubernetes.io/force-ssl-redirect: "true"
-#    kubernetes.io/ingress.class: "nginx-internal"
-#    kubernetes.io/backend-protocol: "HTTPS"
-#    ingress.kubernetes.io/enable-cors: "true"
-#    ingress.kubernetes.io/cors-allow-origin: "https://web.dev.callisto-notprod.homeoffice.gov.uk"
-#spec:
-#  tls:
-#    - hosts:
-#        - eahw2492-timecard.dev.callisto-notprod.homeoffice.gov.uk
-#      secretName: callisto-timecard-tls-eahw2492
-#  rules:
-#    - host: eahw2492-timecard.dev.callisto-notprod.homeoffice.gov.uk
-#      http:
-#        paths:
-#          - path: /
-#            pathType: Prefix
-#            backend:
-#              service:
-#                name: callisto-timecard-restapi
-#                port:
-#                  number: 9090
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: callisto-timecard-restapi-eahw-2492
+  labels:
+    app: callisto-timecard-restapi-eahw-2492
+    cert-manager.io/solver: route53
+  annotations:
+    cert-manager.io/enabled: "true"
+    ingress.kubernetes.io/force-ssl-redirect: "true"
+    kubernetes.io/ingress.class: "nginx-internal"
+    kubernetes.io/backend-protocol: "HTTPS"
+    ingress.kubernetes.io/enable-cors: "true"
+    ingress.kubernetes.io/cors-allow-origin: "https://web.dev.callisto-notprod.homeoffice.gov.uk"
+spec:
+  tls:
+    - hosts:
+        - eahw-2492-timecard.dev.callisto-notprod.homeoffice.gov.uk
+      secretName: callisto-timecard-tls-eahw-2492
+  rules:
+    - host: eahw-2492-timecard.dev.callisto-notprod.homeoffice.gov.uk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: callisto-timecard-restapi-eahw-2492
+                port:
+                  number: 9090
