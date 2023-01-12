@@ -114,6 +114,7 @@ steps:
       CERTIFICATE_AUTHORITY_ARN:
         from_secret: certificate_authority_arn
     commands:
+      - cd config
       - terraform init
       - terraform validate
       - terraform plan -input=false -out=tfplan
