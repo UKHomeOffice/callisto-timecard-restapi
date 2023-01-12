@@ -102,46 +102,6 @@ steps:
     commands:
       - "git fetch origin +refs/heads/main:"
 
-  - name: terraform
-    image: hashicorp/terraform:latest
-    depends_on:
-      - fetch
-    environment:
-      AWS_ACCESS_KEY:
-        from_secret: aws_access_key
-      AWS_SECRET_KEY:
-        from_secret: aws_secret_key
-      CERTIFICATE_AUTHORITY_ARN:
-        from_secret: certificate_authority_arn
-    commands:
-      - cd config
-      - terraform init
-      - terraform validate
-      - terraform plan -input=false -out=tfplan
-        -var 'aws_access_key'=$${AWS_ACCESS_KEY}
-        -var 'aws_secret_key'=$${AWS_SECRET_KEY}
-        -var 'certificate_authority_arn'=$${CERTIFICATE_AUTHORITY_ARN}
-      - terraform apply tfplan
-    when:
-      event:
-        - push
-      branch:
-        - main
-
-  - name: create keystore
-    image: ubuntu:latest
-    depends_on:
-      - terraform
-    commands:
-      - openssl pkcs12 -export -in config/timecard-certificate.pem -inkey config/timecard-key.pem -name shared > /usr/src/main/key-pair.p12
-      - keytool -importkeystore -srckeystore key-pair.p12 -destkeystore /usr/src/main/kafka.client.keystore.jks -srcstoretype pkcs12 -srcstorepass password -storepass password -keypass password -alias shared
-      - cp /opt/openjdk-17/lib/security/cacerts /usr/src/main/kafka.client.truststore.jks
-    when:
-      event:
-        - push
-      branch:
-        - main
-
   - name: build
     image: maven:3.8.3-openjdk-17
     environment:
