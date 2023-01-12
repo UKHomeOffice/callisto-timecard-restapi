@@ -121,7 +121,7 @@ steps:
         -var 'aws_access_key'=$${AWS_ACCESS_KEY}
         -var 'aws_secret_key'=$${AWS_SECRET_KEY}
         -var 'certificate_authority_arn'=$${CERTIFICATE_AUTHORITY_ARN}
-      - terraform apply -input=false -auto-approve tfplan
+      - terraform apply tfplan
         -var 'aws_access_key'=$${AWS_ACCESS_KEY}
         -var 'aws_secret_key'=$${AWS_SECRET_KEY}
         -var 'certificate_authority_arn'=$${CERTIFICATE_AUTHORITY_ARN}
