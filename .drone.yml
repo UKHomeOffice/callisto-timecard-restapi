@@ -192,10 +192,7 @@ steps:
       repo: callisto/timecard-restapi
       registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
       tags:
-      - ${DRONE_BRANCH##*eahw-}
-      - ${DRONE_COMMIT_SHA}
-    commands:
-      - echo ${DRONE_BRANCH##*eahw-}
+      - ${DRONE_BRANCH%%/*}
     when:
       event:
         - push
