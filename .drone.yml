@@ -247,41 +247,41 @@ steps:
       branch:
         - main
 
-#---
-#kind: pipeline
-#type: kubernetes
-#name: callisto-timecard-restapi-branch-deploy
-#
-#platform:
-#  os: linux
-#  arch: amd64
-#
-#depends_on:
-#  - callisto-timecard-restapi-build
-#  - callisto-timecard-database-schema
-#
-#trigger:
-#  event:
-#    - push
+---
+kind: pipeline
+type: kubernetes
+name: callisto-timecard-restapi-branch-deploy
 
-#steps:
-#  - name: branch_deploy
-#    image: pelotech/drone-helm3
-#    settings:
-#      namespace: callisto-dev
-#      mode: upgrade
-#      chart: ./helm
-#      values:
-#        - image.tag=${DRONE_BRANCH%%/*}
-#      values_files:
-#        - ./helm/values/branch-values.yaml
-#      release: callisto-timecard-restapi
-#      kube_certificate:
-#        from_secret: notprod_kube_api_certificate
-#      kube_api_server:
-#        from_secret: not_prod_kube_api_url
-#      kube_token:
-#        from_secret: dev_kube_token
+platform:
+  os: linux
+  arch: amd64
+
+depends_on:
+  - callisto-timecard-restapi-build
+  - callisto-timecard-database-schema
+
+trigger:
+  event:
+    - push
+
+steps:
+  - name: branch_deploy
+    image: pelotech/drone-helm3
+    settings:
+      namespace: callisto-dev
+      mode: upgrade
+      chart: ./helm
+      values:
+        - image.tag=${DRONE_BRANCH%%/*}
+      values_files:
+        - ./helm/values/branch-values.yaml
+      release: callisto-timecard-restapi
+      kube_certificate:
+        from_secret: notprod_kube_api_certificate
+      kube_api_server:
+        from_secret: not_prod_kube_api_url
+      kube_token:
+        from_secret: dev_kube_token
 
 ---
 kind: pipeline
