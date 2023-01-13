@@ -141,6 +141,8 @@ steps:
   - name: build_tag_push_ecr_branch
     pull: if-not-exists
     image: plugins/ecr
+    depends_on:
+      - build
     environment:
       AWS_REGION: eu-west-2
     settings:
@@ -407,6 +409,7 @@ trigger:
 
 depends_on:
   - callisto-timecard-restapi-build
+  - callisto-timecard-restapi-branch-deploy
   - callisto-timecard-restapi-dev-deploy
   - callisto-timecard-restapi-test-deploy
   - callisto-timecard-restapi-prod-deploy
