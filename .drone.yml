@@ -301,6 +301,8 @@ steps:
       tags:
         - ${DRONE_COMMIT_SHA}
         - ${DRONE_BRANCH%%/*}
+    commands:
+      - echo ${DRONE_BRANCH%%/*}
 
   - name: branch_deploy
     image: pelotech/drone-helm3
