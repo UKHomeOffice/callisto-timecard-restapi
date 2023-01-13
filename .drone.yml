@@ -162,7 +162,7 @@ steps:
         - ${DRONE_SOURCE_BRANCH%%/*}
     when:
       event:
-        - pull_request
+        - push
 
   - name: build_tag_push_ecr
     pull: if-not-exists
