@@ -111,15 +111,15 @@ timecard_ecr_settings: &timecard_ecr_settings
     registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
 
 steps:
-#  - name: fetch
-#    image: alpine/git
-#    commands:
-#      - "git fetch origin +refs/heads/main:"
+  - name: fetch
+    image: alpine/git
+    commands:
+      - "git fetch origin +refs/heads/main:"
 
   - name: build
     image: maven:3.8.3-openjdk-17
-#    depends_on:
-#      - fetch
+    depends_on:
+      - fetch
     environment:
       ARTIFACTORY_TOKEN:
         from_secret: artifactory_token
@@ -263,8 +263,45 @@ depends_on:
 trigger:
   event:
     - push
+  branch:
+    exclude:
+      - main
 
 steps:
+  - name: build_tag_push_ecr_branch
+    pull: if-not-exists
+    image: plugins/ecr
+    environment:
+      AWS_REGION: eu-west-2
+    settings:
+      access_key:
+        from_secret: ecr_timecard_restapi_access_key_id
+      secret_key:
+        from_secret: ecr_timecard_restapi_secret_access_key
+      repo: callisto/timecard-restapi
+      registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
+      tags:
+        - ${DRONE_COMMIT_SHA}
+        - ${DRONE_BRANCH%%/*}
+
+  - name: build_tag_push_ecr_database
+    pull: if-not-exists
+    image: plugins/ecr
+    environment:
+      AWS_REGION: eu-west-2
+    settings:
+      access_key:
+        from_secret: ecr_timecard_database_access_key_id
+      secret_key:
+        from_secret: ecr_timecard_database_secret_access_key
+      repo: callisto/timecard-database
+      dockerfile: db/Dockerfile
+      context: db
+      registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
+      tags:
+        - ${DRONE_COMMIT_SHA}
+        - ${DRONE_BRANCH%%/*}
+
   - name: branch_deploy
     image: pelotech/drone-helm3
     settings:
