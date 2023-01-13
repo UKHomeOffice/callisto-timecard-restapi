@@ -237,7 +237,7 @@ depends_on:
 
 trigger:
   event:
-    - pull_request
+    - push
 
 steps:
   - name: build_tag_push_ecr_database
