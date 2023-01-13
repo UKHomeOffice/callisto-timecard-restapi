@@ -168,6 +168,12 @@ steps:
     depends_on:
       - sonar
     settings:
+      access_key:
+        from_secret: ecr_timecard_restapi_access_key_id
+      secret_key:
+        from_secret: ecr_timecard_restapi_secret_access_key
+      repo: callisto/timecard-restapi
+      registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
       tags:
 #      - latest
       - ${DRONE_COMMIT_SHA}
@@ -439,6 +445,7 @@ steps:
         from_secret: prod_kube_api_url
       kube_token:
         from_secret: prod_kube_token
+
 
 ---
 kind: pipeline
