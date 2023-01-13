@@ -142,7 +142,7 @@ steps:
     pull: if-not-exists
     image: plugins/ecr
     depends_on:
-      - sonar
+      - build
     environment:
       AWS_REGION: eu-west-2
     settings:
@@ -157,7 +157,7 @@ steps:
         - ${DRONE_BRANCH%%/*}
     when:
       event:
-        - push
+        - pull_request
 
   - name: build_tag_push_ecr
     pull: if-not-exists
