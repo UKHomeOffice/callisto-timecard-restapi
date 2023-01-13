@@ -102,6 +102,7 @@ steps:
     image: alpine/git
     commands:
       - "git fetch origin +refs/heads/main:"
+      - echo ${DRONE_SOURCE_BRANCH}
 
   - name: build
     image: maven:3.8.3-openjdk-17
@@ -256,8 +257,6 @@ steps:
       tags:
         - ${DRONE_COMMIT_SHA}
         - ${DRONE_BRANCH%%/*}
-    commands:
-      - echo ${DRONE_BRANCH%%/*}
 
   - name: branch_deploy
     image: pelotech/drone-helm3
