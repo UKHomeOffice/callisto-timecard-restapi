@@ -98,45 +98,45 @@ trigger:
       - promote
 
 steps:
-  - name: fetch
-    image: alpine/git
-    commands:
-      - "git fetch origin +refs/heads/main:"
+#  - name: fetch
+#    image: alpine/git
+#    commands:
+#      - "git fetch origin +refs/heads/main:"
 
   - name: build
     image: maven:3.8.3-openjdk-17
-    depends_on:
-      - fetch
+#    depends_on:
+#      - fetch
     environment:
       ARTIFACTORY_TOKEN:
         from_secret: artifactory_token
     commands:
       - mvn -s ./timecard_settings.xml clean verify
 
-  - name: sonar
-    image: maven:3.8.3-openjdk-17
-    depends_on:
-      - build
-    environment:
-      ARTIFACTORY_TOKEN:
-        from_secret: artifactory_token
-      SONAR_HOST:
-        from_secret: sonar_cloud_host
-      SONAR_TOKEN:
-        from_secret: sonar_cloud_token
-    commands:
-      - mvn -s ./timecard_settings.xml sonar:sonar
-        -Dsonar.host.url=$${SONAR_HOST}
-        -Dsonar.login=$${SONAR_TOKEN}
-        -Dsonar.organization=ukhomeoffice
-        -Dsonar.projectKey=callisto-timecard-restapi
-        -Dsonar.branch.name=$DRONE_BRANCH
-        -Dsonar.projectName=callisto-timecard-restapi
-        -Dsonar.qualitygate.wait=true
-    when:
-      event:
-        exclude:
-          - pull_request
+#  - name: sonar
+#    image: maven:3.8.3-openjdk-17
+#    depends_on:
+#      - build
+#    environment:
+#      ARTIFACTORY_TOKEN:
+#        from_secret: artifactory_token
+#      SONAR_HOST:
+#        from_secret: sonar_cloud_host
+#      SONAR_TOKEN:
+#        from_secret: sonar_cloud_token
+#    commands:
+#      - mvn -s ./timecard_settings.xml sonar:sonar
+#        -Dsonar.host.url=$${SONAR_HOST}
+#        -Dsonar.login=$${SONAR_TOKEN}
+#        -Dsonar.organization=ukhomeoffice
+#        -Dsonar.projectKey=callisto-timecard-restapi
+#        -Dsonar.branch.name=$DRONE_BRANCH
+#        -Dsonar.projectName=callisto-timecard-restapi
+#        -Dsonar.qualitygate.wait=true
+#    when:
+#      event:
+#        exclude:
+#          - pull_request
 
 
   - name: build_tag_push_ecr
