@@ -12,6 +12,6 @@ public class HelloController {
 
   @GetMapping
   public ResponseEntity<String> hello() {
-    return ResponseEntity.status(HttpStatus.OK).body("Hello World eahw 2492 pr");
+    return ResponseEntity.status(HttpStatus.OK).body("Hello World eahw 2492 pr test");
   }
 }
