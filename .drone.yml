@@ -142,8 +142,8 @@ steps:
   - name: build_tag_push_ecr
     pull: if-not-exists
     image: plugins/ecr
-    depends_on:
-      - sonar
+#    depends_on:
+#      - sonar
     environment:
       AWS_REGION: eu-west-2
     settings:
