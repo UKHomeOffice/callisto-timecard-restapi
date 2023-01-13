@@ -237,7 +237,7 @@ depends_on:
 
 trigger:
   event:
-    - push
+    - pull_request
 
 steps:
   - name: build_tag_push_ecr_database
@@ -296,7 +296,7 @@ trigger:
     exclude:
       - promote
   branch:
-    - main
+    - pull_request
 
 steps:
   - name: deploy_to_dev
