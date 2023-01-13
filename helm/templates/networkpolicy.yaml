@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: ingress-network-policy-callisto-timecard
+  name: ingress-network-policy-{{ .Values.name }}
 spec:
   podSelector:
     matchLabels:
