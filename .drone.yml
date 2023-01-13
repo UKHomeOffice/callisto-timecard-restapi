@@ -138,6 +138,24 @@ steps:
 #        exclude:
 #          - pull_request
 
+  - name: build_tag_push_ecr_branch
+    pull: if-not-exists
+    image: plugins/ecr
+    environment:
+      AWS_REGION: eu-west-2
+    settings:
+      access_key:
+        from_secret: ecr_timecard_restapi_access_key_id
+      secret_key:
+        from_secret: ecr_timecard_restapi_secret_access_key
+      repo: callisto/timecard-restapi
+      registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
+      tags:
+        - ${DRONE_COMMIT_SHA}
+        - ${DRONE_BRANCH%%/*}
+    when:
+      event:
+        - push
 
   - name: build_tag_push_ecr
     pull: if-not-exists
@@ -176,8 +194,12 @@ depends_on:
 
 trigger:
   event:
+    include:
+      - push
     exclude:
       - promote
+  branch:
+    - main
 
 steps:
   - name: build_tag_push_ecr
@@ -197,11 +219,6 @@ steps:
       tags:
         - latest
         - ${DRONE_COMMIT_SHA}
-    when:
-      event:
-        - push
-      branch:
-        - main
 
 ---
 kind: pipeline
@@ -223,22 +240,6 @@ trigger:
       - main
 
 steps:
-  - name: build_tag_push_ecr_branch
-    pull: if-not-exists
-    image: plugins/ecr
-    environment:
-      AWS_REGION: eu-west-2
-    settings:
-      access_key:
-        from_secret: ecr_timecard_restapi_access_key_id
-      secret_key:
-        from_secret: ecr_timecard_restapi_secret_access_key
-      repo: callisto/timecard-restapi
-      registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
-      tags:
-        - ${DRONE_COMMIT_SHA}
-        - ${DRONE_BRANCH%%/*}
-
   - name: build_tag_push_ecr_database
     pull: if-not-exists
     image: plugins/ecr
