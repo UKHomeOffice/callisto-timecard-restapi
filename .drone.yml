@@ -309,7 +309,6 @@ steps:
       mode: upgrade
       chart: ./helm
       values:
-#        - image.tag=${DRONE_BRANCH%%/*}
         - image.tag=${DRONE_COMMIT_SHA}
       values_files:
         - ./helm/values/branch-values.yaml
