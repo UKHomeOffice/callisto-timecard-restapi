@@ -115,7 +115,6 @@ steps:
     image: alpine/git
     commands:
       - "git fetch origin +refs/heads/main:"
-      - echo ${DRONE_SOURCE_BRANCH}
 
   - name: build
     image: maven:3.8.3-openjdk-17
@@ -301,7 +300,7 @@ steps:
       registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
       tags:
         - ${DRONE_COMMIT_SHA}
-        - ${DRONE_BRANCH%%/*}
+        - ${DRONE_SOURCE_BRANCH%%/*}
 
   - name: branch_deploy
     image: pelotech/drone-helm3
@@ -313,7 +312,7 @@ steps:
         - image.tag=${DRONE_COMMIT_SHA}
       values_files:
         - ./helm/values/branch-values.yaml
-      release: callisto-timecard-restapi-${DRONE_BRANCH%%/*}
+      release: callisto-timecard-restapi-${DRONE_SOURCE_BRANCH%%/*}
       kube_certificate:
         from_secret: notprod_kube_api_certificate
       kube_api_server:
