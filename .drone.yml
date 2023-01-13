@@ -164,9 +164,12 @@ steps:
         - pull_request
 
   - name: build_tag_push_ecr
-    <<: *timecard_ecr_settings
-    depends_on:
-      - sonar
+    pull: if-not-exists
+    image: plugins/ecr
+#    depends_on:
+#      - sonar
+    environment:
+      AWS_REGION: eu-west-2
     settings:
       access_key:
         from_secret: ecr_timecard_restapi_access_key_id
@@ -220,77 +223,29 @@ trigger:
     exclude:
       - promote
 
-database_ecr_settings: &database_ecr_settings
-  pull: if-not-exists
-  image: plugins/ecr
-  environment:
-    AWS_REGION: eu-west-2
-  settings:
-    access_key:
-      from_secret: ecr_timecard_database_access_key_id
-    secret_key:
-      from_secret: ecr_timecard_database_secret_access_key
-    repo: callisto/timecard-database
-    dockerfile: db/Dockerfile
-    context: db
-    registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
-
 steps:
-  - name: build_tag_push_ecr_branch
-    <<: *database_ecr_settings
-    settings:
-      tags:
-        - ${DRONE_COMMIT_SHA}
-        - ${DRONE_SOURCE_BRANCH%%/*}
-    when:
-      event: pull_request
-
   - name: build_tag_push_ecr
-    <<: *database_ecr_settings
+    pull: if-not-exists
+    image: plugins/ecr
+    environment:
+      AWS_REGION: eu-west-2
     settings:
+      access_key:
+        from_secret: ecr_timecard_database_access_key_id
+      secret_key:
+        from_secret: ecr_timecard_database_secret_access_key
+      repo: callisto/timecard-database
+      dockerfile: db/Dockerfile
+      context: db
+      registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
       tags:
         - latest
         - ${DRONE_COMMIT_SHA}
     when:
-      event: push
-      branch: main
-
----
-kind: pipeline
-type: kubernetes
-name: callisto-timecard-restapi-branch-deploy
-
-platform:
-  os: linux
-  arch: amd64
-
-depends_on:
-  - callisto-timecard-restapi-build
-  - callisto-timecard-database-schema
-
-trigger:
-  event:
-    - pull_request
-
-steps:
-  - name: branch_deploy
-    image: pelotech/drone-helm3
-    settings:
-      namespace: callisto-dev
-      mode: upgrade
-      chart: ./helm
-      values:
-        - image.tag=${DRONE_COMMIT_SHA}
-        - branch=${DRONE_SOURCE_BRANCH%%/*}
-      values_files:
-        - ./helm/values/dev-values.yaml
-      release: callisto-timecard-restapi-${DRONE_SOURCE_BRANCH%%/*}
-      kube_certificate:
-        from_secret: notprod_kube_api_certificate
-      kube_api_server:
-        from_secret: not_prod_kube_api_url
-      kube_token:
-        from_secret: dev_kube_token
+      event:
+        - push
+      branch:
+        - main
 
 #---
 #kind: pipeline
