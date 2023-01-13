@@ -113,30 +113,30 @@ steps:
     commands:
       - mvn -s ./timecard_settings.xml clean verify
 
-  - name: sonar
-    image: maven:3.8.3-openjdk-17
-    depends_on:
-      - build
-    environment:
-      ARTIFACTORY_TOKEN:
-        from_secret: artifactory_token
-      SONAR_HOST:
-        from_secret: sonar_cloud_host
-      SONAR_TOKEN:
-        from_secret: sonar_cloud_token
-    commands:
-      - mvn -s ./timecard_settings.xml sonar:sonar
-        -Dsonar.host.url=$${SONAR_HOST}
-        -Dsonar.login=$${SONAR_TOKEN}
-        -Dsonar.organization=ukhomeoffice
-        -Dsonar.projectKey=callisto-timecard-restapi
-        -Dsonar.branch.name=$DRONE_BRANCH
-        -Dsonar.projectName=callisto-timecard-restapi
-        -Dsonar.qualitygate.wait=true
-    when:
-      event:
-        exclude:
-          - pull_request
+#  - name: sonar
+#    image: maven:3.8.3-openjdk-17
+#    depends_on:
+#      - build
+#    environment:
+#      ARTIFACTORY_TOKEN:
+#        from_secret: artifactory_token
+#      SONAR_HOST:
+#        from_secret: sonar_cloud_host
+#      SONAR_TOKEN:
+#        from_secret: sonar_cloud_token
+#    commands:
+#      - mvn -s ./timecard_settings.xml sonar:sonar
+#        -Dsonar.host.url=$${SONAR_HOST}
+#        -Dsonar.login=$${SONAR_TOKEN}
+#        -Dsonar.organization=ukhomeoffice
+#        -Dsonar.projectKey=callisto-timecard-restapi
+#        -Dsonar.branch.name=$DRONE_BRANCH
+#        -Dsonar.projectName=callisto-timecard-restapi
+#        -Dsonar.qualitygate.wait=true
+#    when:
+#      event:
+#        exclude:
+#          - pull_request
 
 
   - name: build_tag_push_ecr
@@ -161,27 +161,6 @@ steps:
         - push
       branch:
         - main
-
-  - name: build_tag_push_ecr_branch
-    pull: if-not-exists
-    image: plugins/ecr
-    depends_on:
-      - sonar
-    environment:
-      AWS_REGION: eu-west-2
-    settings:
-      access_key:
-        from_secret: ecr_timecard_restapi_access_key_id
-      secret_key:
-        from_secret: ecr_timecard_restapi_secret_access_key
-      repo: callisto/timecard-restapi
-      registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
-      tags:
-        - ${DRONE_COMMIT_SHA}
-        - ${DRONE_BRANCH%%/*}
-    when:
-      event:
-        - push
 
 ---
 kind: pipeline
@@ -235,13 +214,49 @@ platform:
 
 depends_on:
   - callisto-timecard-restapi-build
-  - callisto-timecard-database-schema
 
 trigger:
   event:
     - push
+  branch:
+    exclude:
+      - main
 
 steps:
+  - name: build_tag_push_ecr_branch
+    pull: if-not-exists
+    image: plugins/ecr
+    environment:
+      AWS_REGION: eu-west-2
+    settings:
+      access_key:
+        from_secret: ecr_timecard_restapi_access_key_id
+      secret_key:
+        from_secret: ecr_timecard_restapi_secret_access_key
+      repo: callisto/timecard-restapi
+      registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
+      tags:
+        - ${DRONE_COMMIT_SHA}
+        - ${DRONE_BRANCH%%/*}
+
+  - name: build_tag_push_ecr_database
+    pull: if-not-exists
+    image: plugins/ecr
+    environment:
+      AWS_REGION: eu-west-2
+    settings:
+      access_key:
+        from_secret: ecr_timecard_database_access_key_id
+      secret_key:
+        from_secret: ecr_timecard_database_secret_access_key
+      repo: callisto/timecard-database
+      dockerfile: db/Dockerfile
+      context: db
+      registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
+      tags:
+        - ${DRONE_COMMIT_SHA}
+        - ${DRONE_BRANCH%%/*}
+
   - name: branch_deploy
     image: pelotech/drone-helm3
     settings:
