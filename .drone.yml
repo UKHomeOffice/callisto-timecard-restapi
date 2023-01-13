@@ -252,7 +252,7 @@ steps:
         - image.tag=${DRONE_BRANCH%%/*}
       values_files:
         - ./helm/values/branch-values.yaml
-      release: callisto-timecard-restapi
+      release: callisto-timecard-restapi-${DRONE_BRANCH%%/*}
       kube_certificate:
         from_secret: notprod_kube_api_certificate
       kube_api_server:
