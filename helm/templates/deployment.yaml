@@ -49,4 +49,4 @@ spec:
           image: ubuntu:latest
           imagePullPolicy: Always
           command:
-            - create_keystore.sh
+            - create_keystore.sh timecard {PASSWORD?} $(AWS_ACCESS_KEY) $(AWS_SECRET_KEY) $(AWS_CERTIFICATE_AUTHORITY_ARN)
