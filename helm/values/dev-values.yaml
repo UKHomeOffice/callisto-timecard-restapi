@@ -1,5 +1,7 @@
 name: callisto-timecard-restapi
 
+branch: main
+
 service:
   name: callisto-timecard-restapi
   port: 3000
