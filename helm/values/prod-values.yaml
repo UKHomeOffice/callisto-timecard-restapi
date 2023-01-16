@@ -1,5 +1,3 @@
-name: callisto-timecard-restapi
-
 service:
   name: callisto-timecard-restapi
   port: 3000
