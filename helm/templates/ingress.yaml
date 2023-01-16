@@ -1,5 +1,6 @@
 {{- if ne .Values.branch "main" }}
 ---
+{{- if ne .Values.branch "main" }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
