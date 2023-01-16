@@ -26,7 +26,6 @@ steps:
       mode: lint
       chart: ./helm
       values_files:
-        - ./helm/values/branch-values.yaml
         - ./helm/values/dev-values.yaml
         - ./helm/values/test-values.yaml
         - ./helm/values/prod-values.yaml
@@ -269,7 +268,7 @@ steps:
         - image.tag=${DRONE_COMMIT_SHA}
         - branch=${DRONE_SOURCE_BRANCH%%/*}
       values_files:
-        - ./helm/values/branch-values.yaml
+        - ./helm/values/dev-values.yaml
       release: callisto-timecard-restapi-${DRONE_SOURCE_BRANCH%%/*}
       kube_certificate:
         from_secret: notprod_kube_api_certificate

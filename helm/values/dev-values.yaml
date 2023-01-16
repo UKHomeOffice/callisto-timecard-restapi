@@ -1,7 +1,6 @@
-branch: main
+branch: main #overridden for branch deploys
 
 service:
-  name: callisto-timecard-restapi
   port: 3000
 
 replicaCount: 1
