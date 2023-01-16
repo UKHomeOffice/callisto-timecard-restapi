@@ -1,5 +1,7 @@
 name: callisto-timecard-restapi-eahw-2492
 
+branch: default #overridden for branch deploys
+
 service:
   name: callisto-timecard-restapi-eahw-2492
   port: 3000
