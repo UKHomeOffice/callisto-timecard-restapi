@@ -1,5 +1,7 @@
 branch: main #overridden for branch deploys
 
+branch: main
+
 service:
   port: 3000
 
