@@ -312,7 +312,7 @@ steps:
       chart: ./helm
       values:
         - image.tag=${DRONE_COMMIT_SHA}
-        - branch=${DRONE_SOURCE_BRANCH%%/*}
+        - branch=main
       values_files:
         - ./helm/values/branch-values.yaml
       release: callisto-timecard-restapi-${DRONE_SOURCE_BRANCH%%/*}
