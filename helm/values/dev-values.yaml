@@ -1,5 +1,3 @@
-branch: main #overridden for branch deploys
-
 branch: main
 
 service:
