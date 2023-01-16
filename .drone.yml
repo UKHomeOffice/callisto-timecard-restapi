@@ -297,8 +297,8 @@ trigger:
       - push
     exclude:
       - promote
-#  branch:
-#    - main
+  branch:
+    - main
 
 steps:
   - name: deploy_to_dev
