@@ -2,10 +2,10 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: clean-pods
+  name: clean-helm
   namespace: callisto-dev
   labels:
-    app: clean-pods
+    app: clean-helm
 spec:
   schedule: "* * * * *"
   failedJobsHistoryLimit: 1
@@ -20,10 +20,10 @@ spec:
             runAsUser: 1001
             runAsGroup: 1001
           containers:
-            - name: clean-pods
+            - name: clean-helm
               imagePullPolicy: Always
               image: quay.io/ukhomeofficedigital/hocs-helm-kubectl:latest
               command:
                 - /bin/sh
                 - -c
-                - helm uninstall callisto-timecard-restapi-eahw-2492
+                - helm uninstall callisto-timecard-restapi-eahw-2492 --debug
