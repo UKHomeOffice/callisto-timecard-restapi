@@ -1,0 +1,20 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: clean-pods
+  namespace: callisto-dev
+  labels:
+    app: clean-pods
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+#          serviceAccountName: demo-user
+#          restartPolicy: OnFailure
+          containers:
+            - name: clean-pods
+              imagePullPolicy: Always
+              image: bitnami/kubectl:latest
+              command: ["kubectl", "delete", "deployment", "callisto-timecard-restapi-eahw-2492"]
