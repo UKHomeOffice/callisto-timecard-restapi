@@ -17,4 +17,5 @@ spec:
             - name: clean-pods
               imagePullPolicy: Always
               image: quay.io/ukhomeofficedigital/kubectl:latest
-              command: ["kubectl", "delete", "deployment", "callisto-timecard-restapi-eahw-2492"]
+              command: ["echo", "kubectl", "version"]
+#              command: ["kubectl", "delete", "deployment", "callisto-timecard-restapi-eahw-2492"]
