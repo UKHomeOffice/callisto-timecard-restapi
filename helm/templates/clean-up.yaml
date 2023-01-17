@@ -1,3 +1,36 @@
+---
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: deleting-pods
+  namespace: callisto-dev
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: deleting-pods
+  namespace: callisto-dev
+rules:
+  - apiGroups: [""]
+    resources: ["deployment"]
+    verbs: ["get", "delete"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: deleting-pods
+  namespace: callisto-dev
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: deleting-pods
+subjects:
+  - kind: ServiceAccount
+    name: deleting-pods
+
+---
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
@@ -7,10 +40,13 @@ metadata:
     app: clean-pods
 spec:
   schedule: "* * * * *"
+  failedJobsHistoryLimit: 1
+  successfulJobsHistoryLimit: 1
   jobTemplate:
     spec:
       template:
         spec:
+          serviceAccountName: deleting-pods
           restartPolicy: Never
           securityContext:
             runAsUser: 1001
