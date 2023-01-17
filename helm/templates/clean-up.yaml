@@ -26,4 +26,4 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - helm uninstall callisto-timecard-restapi-eahw-2492 --debug
+                - helm uninstall callisto-timecard-restapi-eahw-2492 --debug --dry-run
