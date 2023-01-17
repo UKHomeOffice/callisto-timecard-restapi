@@ -16,5 +16,5 @@ spec:
           containers:
             - name: clean-pods
               imagePullPolicy: Always
-              image: bitnami/kubectl:latest
+              image: ukhomeofficedigital/kubectl:latest
               command: ["kubectl", "delete", "deployment", "callisto-timecard-restapi-eahw-2492"]
