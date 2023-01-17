@@ -26,6 +26,7 @@ services:
       - MAVEN_USER_HOME=/Users/1000/.m2
     depends_on:
       - timecard-database-migrations
+      - timecard-credentials
     networks:
       - callisto
 
@@ -52,6 +53,7 @@ services:
     networks:
       - callisto
 
+networks:
   callisto:
     name: callisto-localdev_callisto
     driver: bridge
