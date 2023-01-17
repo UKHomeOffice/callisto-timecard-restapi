@@ -22,8 +22,8 @@ spec:
           containers:
             - name: clean-pods
               imagePullPolicy: Always
-              image: quay.io/ukhomeofficedigital/kubectl:latest
+              image: quay.io/ukhomeofficedigital/hocs-helm-kubectl:latest
               command:
                 - /bin/sh
                 - -c
-                - kubectl delete deployment callisto-timecard-restapi-eahw-2492
+                - helm uninstall callisto-timecard-restapi-eahw-2492
