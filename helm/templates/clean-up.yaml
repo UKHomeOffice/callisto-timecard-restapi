@@ -12,7 +12,7 @@ spec:
       template:
         spec:
 #          serviceAccountName: demo-user
-#          restartPolicy: OnFailure
+          restartPolicy: OnFailure
           containers:
             - name: clean-pods
               imagePullPolicy: Always
