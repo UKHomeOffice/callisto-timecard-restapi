@@ -1,21 +1,25 @@
-#apiVersion: batch/v1beta1
-#kind: CronJob
-#metadata:
-#  name: clean-pods
-#  namespace: callisto-dev
-#  labels:
-#    app: clean-pods
-#spec:
-#  schedule: "* * * * *"
-#  jobTemplate:
-#    spec:
-#      template:
-#        spec:
-##          serviceAccountName: demo-user
-#          restartPolicy: Never
-#          containers:
-#            - name: clean-pods
-#              imagePullPolicy: Always
-#              image: quay.io/ukhomeofficedigital/kubectl:latest
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: clean-pods
+  namespace: callisto-dev
+  labels:
+    app: clean-pods
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+#          serviceAccountName: demo-user
+          restartPolicy: Never
+          containers:
+            - name: clean-pods
+              imagePullPolicy: Always
+              image: quay.io/ukhomeofficedigital/kubectl:latest
+              command:
+                - /bin/sh
+                - -c
+                - date; echo Hello from the Kubernetes cluster
 #              command: ["echo", "kubectl", "version"]
-##              command: ["kubectl", "delete", "deployment", "callisto-timecard-restapi-eahw-2492"]
+#              command: ["kubectl", "delete", "deployment", "callisto-timecard-restapi-eahw-2492"]
