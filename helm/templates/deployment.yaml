@@ -45,8 +45,9 @@ spec:
             - "--changeLogFile=changelog/db.changelog-main.yml"
             - "--liquibaseSchemaName=timecard"
             - "update"
-        - name: timecard-creds
-          image: ubuntu:latest
+        - name: timecard-credentials
+          image: amazon/aws-cli
           imagePullPolicy: Always
           command:
-            - create_keystore.sh timecard {PASSWORD?} $(AWS_ACCESS_KEY) $(AWS_SECRET_KEY) $(AWS_CERTIFICATE_AUTHORITY_ARN)
+            - create_keystore.sh timecard $(AWS_CERTIFICATE_AUTHORITY_ARN) $(AWS_ACCESS_KEY) $(AWS_SECRET_KEY)
+

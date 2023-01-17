@@ -5,28 +5,23 @@ dir=keystore
 alias=$1
 days=100
 password=$2
+ca_arn=$3
 
-aws configure set aws_access_key_id $3
-aws configure set aws_secret_access_key $4
+aws configure set aws_access_key_id $4
+aws configure set aws_secret_access_key $5
 aws configure set aws_region eu-west-2
-
-ca_arn=$5
-
-aws acm-pca get-certificate --certificate-authority-arn  \
-  --certificate-arn  \
-  | jq '.Certificate, .CertificateChain' | sed 's/\\n/\n/g' | tr -d \" > ${dir}/${alias}_certificate.pem
 
 if openssl x509 -checkend 86400 -noout -in ${dir}/${alias}_certificate.pem
 then
   echo "Certificate is valid"
-  keytool -keystore ${dir}/${alias}.keystore.jks -alias Callisto -import -noprompt -file ./"${dir}"/"${alias}"_certificate.pem -storepass "${password}" -keypass "${password}"
-  cp /opt/openjdk-17/lib/security/cacerts "${dir}"/"${alias}".truststore.jks
   exit
 fi
 
+#Check for keystore??
+
 echo "Certificate has expired"
 
-#rm -r ${dir}/${alias}_certificate.pem
+rm -r ${dir}/${alias}_certificate.pem
 
 echo "Creating new certificate"
 
@@ -55,6 +50,7 @@ fi
 # Create cert signed by CA
 if
   ARN=$(aws acm-pca issue-certificate --certificate-authority-arn $ca_arn --csr fileb://$dir/$alias.csr --signing-algorithm "SHA256WITHRSA" --validity Value=$days,Type="DAYS" --profile pca --output text)
+  kubectl create secret generic callisto-timecard-acmpca --from-literal=certificate_arn=$ARN
 then
   echo "Arn Stored"
 else echo "Arn not stored"
@@ -65,14 +61,14 @@ aws acm-pca wait certificate-issued --certificate-authority-arn $ca_arn --certif
 if [ $? -eq 255 ]
 then
   echo "Certificate not issue"
+  exit
 else
   echo "Certificate issued" >&2
 fi
 
 # Get Certificate from arn
 if
-  echo $ARN
-  aws acm-pca get-certificate --certificate-authority-arn $ca_arn --certificate-arn $ARN | jq '.Certificate, .CertificateChain' | sed 's/\\n/\n/g' | tr -d \" > $dir/$alias.pem
+  aws acm-pca get-certificate --certificate-authority-arn $ca_arn --certificate-arn $ARN | jq '.Certificate, .CertificateChain' | sed 's/\\n/\n/g' | tr -d \" > $dir/$alias-certificate.pem
 then
   echo "Certificate retrieved"
 else echo "Retrieving certificate failed"

@@ -29,7 +29,6 @@ services:
     networks:
       - callisto
 
-
   timecard-database-migrations:
     image: "340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/timecard-database:latest"
     volumes:
@@ -44,8 +43,15 @@ services:
       - "update"
     networks:
       - callisto
+  timecard-credentials:
+    image: "340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/timecard-credentials:latest"
+    volumes:
+      - ./keystore/timecard.keystore.jks:/keystore/timecard.keystore.jks
+      - ./keystore/timecard.truststore.jks:/keystore/timecard.truststore.jks
+      - ./keystore/timecard-certificate.pem:/keystore/timecard-certificate.pem
+    networks:
+      - callisto
 
-networks:
   callisto:
     name: callisto-localdev_callisto
     driver: bridge
