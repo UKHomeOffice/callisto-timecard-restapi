@@ -12,9 +12,9 @@ spec:
       template:
         spec:
 #          serviceAccountName: demo-user
-          restartPolicy: OnFailure
+          restartPolicy: Never
           containers:
             - name: clean-pods
               imagePullPolicy: Always
-              image: ukhomeofficedigital/kubectl:latest
+              image: quay.io/ukhomeofficedigital/kubectl:latest
               command: ["kubectl", "delete", "deployment", "callisto-timecard-restapi-eahw-2492"]
