@@ -45,3 +45,16 @@ spec:
             - "--changeLogFile=changelog/db.changelog-main.yml"
             - "--liquibaseSchemaName=timecard"
             - "update"
+        - name: timecard-keystore
+          image: quay.io/ukhomeofficedigital/alpine
+          imagePullPolicy: Always
+          command: ["/bin/sh"]
+          args: ["/scripts/keystore-setup.sh"]
+          volumeMounts:
+            - name: keystore-script-volume
+              mountPath: /scripts/keystore-setup.sh
+              subPath: keystore-setup.sh
+      volumes:
+      - name: keystore-script-volume
+        configMap:
+            name: {{ .Release.Name }}-keystore-script
