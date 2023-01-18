@@ -162,6 +162,28 @@ steps:
       branch:
         - main
 
+  - name: build_tag_push_quay
+    pull: if-not-exists
+    image: plugins/docker
+    depends_on:
+      - sonar
+    settings:
+      registry: quay.io
+      repo: quay.io/ukhomeofficedigital/callisto-timecard-restapi
+      username:
+        from_secret: quay_robot_name
+      password:
+        from_secret: quay_robot_token
+      file: Dockerfile
+      tags:
+          - latest
+          - ${DRONE_COMMIT_SHA}
+    when:
+      event:
+        - push
+      branch:
+        - eahw-2547/MovingImageToQuay
+
 ---
 kind: pipeline
 type: kubernetes
