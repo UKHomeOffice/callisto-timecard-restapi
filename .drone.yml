@@ -291,8 +291,6 @@ steps:
   - name: build_tag_push_quay
     pull: if-not-exists
     image: plugins/docker
-    depends_on:
-      - sonar
     settings:
       registry: quay.io
       repo: quay.io/ukhomeofficedigital/callisto-timecard-database
