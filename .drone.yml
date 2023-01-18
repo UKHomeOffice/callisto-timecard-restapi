@@ -404,7 +404,7 @@ steps:
 ---
 kind: pipeline
 type: kubernetes
-name: build notifications
+name: clean up
 
 trigger:
   event:
