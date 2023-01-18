@@ -259,7 +259,7 @@ steps:
       registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
       tags:
         - ${DRONE_COMMIT_SHA}
-        - $${JIRA_REF,,}
+        - ${JIRA_REF,,}
 
   - name: branch_deploy
     image: pelotech/drone-helm3
@@ -269,7 +269,7 @@ steps:
       chart: ./helm
       values:
         - image.tag=${DRONE_COMMIT_SHA}
-        - branch=$${JIRA_REF,,}
+        - branch=${JIRA_REF,,}
       values_files:
         - ./helm/values/dev-values.yaml
       release: callisto-timecard-restapi-${JIRA_REF,,}
