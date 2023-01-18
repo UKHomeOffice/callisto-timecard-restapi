@@ -409,6 +409,8 @@ name: clean up
 trigger:
   event:
     - cron
+  cron:
+    - test-cron
 
 steps:
   - name: test
