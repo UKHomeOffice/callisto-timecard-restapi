@@ -235,7 +235,7 @@ steps:
         from_secret: quay_robot_name
       password:
         from_secret: quay_robot_token
-      file: db/Dockerfile
+      dockerfile: db/Dockerfile
       context: db
       tags:
           - latest
