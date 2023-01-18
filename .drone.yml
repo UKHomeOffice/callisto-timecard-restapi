@@ -288,6 +288,29 @@ steps:
       kube_token:
         from_secret: dev_kube_token
 
+  - name: build_tag_push_quay
+      pull: if-not-exists
+      image: plugins/docker
+      depends_on:
+        - sonar
+      settings:
+        registry: quay.io
+        repo: quay.io/ukhomeofficedigital/callisto-timecard-database
+        username:
+          from_secret: quay_robot_name
+        password:
+          from_secret: quay_robot_token
+        file: db/Dockerfile
+        context: db
+        tags:
+          - latest
+          - ${DRONE_COMMIT_SHA}
+      when:
+        event:
+          - push
+        branch:
+          - eahw-2547/MovingImageToQuay
+
 ---
 kind: pipeline
 type: kubernetes
