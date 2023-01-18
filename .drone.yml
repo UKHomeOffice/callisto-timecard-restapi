@@ -408,10 +408,7 @@ name: clean up
 
 trigger:
   event:
-    - cron
     - pull_request
-  cron:
-    - test-cron
 
 steps:
   - name: test
