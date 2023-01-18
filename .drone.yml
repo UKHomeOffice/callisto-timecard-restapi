@@ -228,9 +228,6 @@ kind: pipeline
 type: kubernetes
 name: callisto-timecard-restapi-branch-deploy
 
-environment:
-  JIRA_REF: ${DRONE_SOURCE_BRANCH%%/*}
-
 platform:
   os: linux
   arch: amd64
@@ -259,7 +256,7 @@ steps:
       registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
       tags:
         - ${DRONE_COMMIT_SHA}
-        - ${JIRA_REF,,}
+        - ${DRONE_SOURCE_BRANCH%%/*}
 
   - name: branch_deploy
     image: pelotech/drone-helm3
@@ -269,10 +266,10 @@ steps:
       chart: ./helm
       values:
         - image.tag=${DRONE_COMMIT_SHA}
-        - branch=${JIRA_REF,,}
+        - branch=${DRONE_SOURCE_BRANCH%%/*}
       values_files:
         - ./helm/values/dev-values.yaml
-      release: callisto-timecard-restapi-${JIRA_REF,,}
+      release: callisto-timecard-restapi-${DRONE_SOURCE_BRANCH%%/*}
       kube_certificate:
         from_secret: notprod_kube_api_certificate
       kube_api_server:
