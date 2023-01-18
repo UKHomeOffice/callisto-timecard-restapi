@@ -11,6 +11,7 @@ trigger:
   event:
     exclude:
     - promote
+    - cron
 
 steps:
   - name: lint_dockerfiles
@@ -96,6 +97,7 @@ trigger:
   event:
     exclude:
       - promote
+      - cron
 
 steps:
   - name: fetch
@@ -201,6 +203,7 @@ trigger:
       - push
     exclude:
       - promote
+      - cron
   branch:
     - main
 
@@ -296,6 +299,7 @@ trigger:
       - push
     exclude:
       - promote
+      - cron
   branch:
     - main
 
@@ -335,6 +339,7 @@ trigger:
     - push
   exclude:
     - promote
+    - cron
   branch:
     - main
 
@@ -395,6 +400,22 @@ steps:
       kube_token:
         from_secret: prod_kube_token
 
+
+---
+kind: pipeline
+type: kubernetes
+name: build notifications
+
+trigger:
+  event:
+    - cron
+
+steps:
+  - name: test
+    pull: if-not-exists
+    image: alpine:latest
+    commands:
+      - echo Hello cron
 
 ---
 kind: pipeline
