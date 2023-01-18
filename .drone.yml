@@ -169,7 +169,7 @@ steps:
       - sonar
     settings:
       registry: quay.io
-      repo: ukhomeofficedigital/callisto-timecard-restapi
+      repo: quay.io/ukhomeofficedigital/callisto-timecard-restapi
       username:
         from_secret: quay_robot_name
       password:
@@ -230,7 +230,7 @@ steps:
     image: plugins/docker
     settings:
       registry: quay.io
-      repo: ukhomeofficedigital/callisto-timecard-database
+      repo: quay.io/ukhomeofficedigital/callisto-timecard-database
       username:
         from_secret: quay_robot_name
       password:
