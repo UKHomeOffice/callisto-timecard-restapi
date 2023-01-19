@@ -46,10 +46,10 @@ spec:
             - "--liquibaseSchemaName=timecard"
             - "update"
         - name: timecard-keystore
-          image: quay.io/ukhomeofficedigital/alpine
+          image: quay.io/ukhomeofficedigital/dind-awscli
           imagePullPolicy: Always
           command: ["/bin/sh"]
-          args: ["/scripts/keystore-setup.sh"]
+          args: ["/scripts/keystore-setup.sh $(AWS_CERTIFICATE_AUTHORITY_ARN) $(AWS_ACCESS_KEY) $(AWS_SECRET_KEY)"]
           volumeMounts:
             - name: keystore-script-volume
               mountPath: /scripts/keystore-setup.sh
