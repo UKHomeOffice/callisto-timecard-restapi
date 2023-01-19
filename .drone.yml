@@ -209,8 +209,12 @@ depends_on:
 
 trigger:
   event:
+    include:
+      - push
     exclude:
       - promote
+  branch:
+    - main
 
 steps:
   - name: build_tag_push_ecr
@@ -230,11 +234,6 @@ steps:
       tags:
         - latest
         - ${DRONE_COMMIT_SHA}
-    when:
-      event:
-        - push
-      branch:
-        - main
 
 ---
 kind: pipeline
@@ -247,32 +246,12 @@ platform:
 
 depends_on:
   - callisto-timecard-restapi-build
-  - callisto-timecard-database-schema
 
 trigger:
   event:
-    - push
-  branch:
-    exclude:
-      - main
+    - pull_request
 
 steps:
-  - name: build_tag_push_ecr_branch
-    pull: if-not-exists
-    image: plugins/ecr
-    environment:
-      AWS_REGION: eu-west-2
-    settings:
-      access_key:
-        from_secret: ecr_timecard_restapi_access_key_id
-      secret_key:
-        from_secret: ecr_timecard_restapi_secret_access_key
-      repo: callisto/timecard-restapi
-      registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
-      tags:
-        - ${DRONE_COMMIT_SHA}
-        - ${DRONE_BRANCH%%/*}
-
   - name: build_tag_push_ecr_database
     pull: if-not-exists
     image: plugins/ecr
@@ -299,7 +278,7 @@ steps:
       chart: ./helm
       values:
         - image.tag=${DRONE_COMMIT_SHA}
-        - branch=main
+        - branch=${DRONE_SOURCE_BRANCH%%/*}
       values_files:
         - ./helm/values/dev-values.yaml
       release: callisto-timecard-restapi-${DRONE_SOURCE_BRANCH%%/*}
@@ -438,12 +417,10 @@ trigger:
   status:
     - success
     - failure
-  exclude:
-    event:
-      - pull_request
 
 depends_on:
   - callisto-timecard-restapi-build
+  - callisto-timecard-restapi-branch-deploy
   - callisto-timecard-restapi-dev-deploy
   - callisto-timecard-restapi-test-deploy
   - callisto-timecard-restapi-prod-deploy
@@ -496,9 +473,6 @@ name: urgent notifications
 trigger:
   status:
     - failure
-  exclude:
-    event:
-      - pull_request
 
 depends_on:
   - callisto-timecard-restapi-build

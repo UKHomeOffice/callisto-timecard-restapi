@@ -1,5 +1,3 @@
-branch: main
-
 service:
   port: 3000
 
