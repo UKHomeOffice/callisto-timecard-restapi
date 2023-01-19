@@ -413,15 +413,7 @@ trigger:
 steps:
   - name: test
     pull: if-not-exists
-    image: pelotech/drone-helm3
-    settings:
-      namespace: callisto-dev
-      kube_certificate:
-        from_secret: notprod_kube_api_certificate
-      kube_api_server:
-        from_secret: not_prod_kube_api_url
-      kube_token:
-        from_secret: dev_kube_token
+    image: quay.io/ukhomeofficedigital/hocs-helm-kubectl:latest
     commands:
       - helm list
 
@@ -493,6 +485,7 @@ trigger:
   exclude:
     event:
       - cron
+      - pull_request
 
 depends_on:
   - callisto-timecard-restapi-build
