@@ -399,7 +399,6 @@ trigger:
 
 depends_on:
   - callisto-timecard-restapi-build
-  - callisto-timecard-restapi-branch-deploy
   - callisto-timecard-restapi-dev-deploy
   - callisto-timecard-restapi-test-deploy
   - callisto-timecard-restapi-prod-deploy

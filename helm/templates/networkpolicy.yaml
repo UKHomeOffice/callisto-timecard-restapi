@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: ingress-network-policy-{{ .Release.Name }}
+  name: {{ .Release.Name }}-network-policy
 spec:
   podSelector:
     matchLabels:
