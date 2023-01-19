@@ -33,8 +33,6 @@ fi
 
 echo "Certificate has expired"
 
-rm -r ${dir}/${alias}_certificate.pem
-
 echo "Creating new certificate"
 
 rm -rf $dir
