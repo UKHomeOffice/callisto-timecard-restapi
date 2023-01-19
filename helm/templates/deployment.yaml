@@ -5,8 +5,6 @@ metadata:
   name: {{ .Release.Name }}
   labels:
     app: {{ .Release.Name }}
-  annotations:
-    expiresIn: 3m
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:

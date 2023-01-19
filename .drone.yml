@@ -11,7 +11,6 @@ trigger:
   event:
     exclude:
     - promote
-    - cron
 
 steps:
   - name: lint_dockerfiles
@@ -97,14 +96,12 @@ trigger:
   event:
     exclude:
       - promote
-      - cron
 
 steps:
   - name: fetch
     image: alpine/git
     commands:
       - "git fetch origin +refs/heads/main:"
-      - echo ${DRONE_COMMIT_SHA}
 
   - name: build
     image: maven:3.8.3-openjdk-17
@@ -199,13 +196,8 @@ depends_on:
 
 trigger:
   event:
-    include:
-      - push
     exclude:
       - promote
-      - cron
-  branch:
-    - main
 
 steps:
   - name: build_tag_push_ecr
@@ -299,7 +291,6 @@ trigger:
       - push
     exclude:
       - promote
-      - cron
   branch:
     - main
 
@@ -339,7 +330,6 @@ trigger:
     - push
   exclude:
     - promote
-    - cron
   branch:
     - main
 
@@ -400,23 +390,6 @@ steps:
       kube_token:
         from_secret: prod_kube_token
 
-
----
-kind: pipeline
-type: kubernetes
-name: clean up
-
-trigger:
-  event:
-    - pull_request
-
-steps:
-  - name: test
-    pull: if-not-exists
-    image: quay.io/ukhomeofficedigital/hocs-helm-kubectl:latest
-    commands:
-      - helm list
-
 ---
 kind: pipeline
 type: kubernetes
@@ -426,6 +399,9 @@ trigger:
   status:
     - success
     - failure
+  exclude:
+    event:
+      - pull_request
 
 depends_on:
   - callisto-timecard-restapi-build
@@ -484,7 +460,6 @@ trigger:
     - failure
   exclude:
     event:
-      - cron
       - pull_request
 
 depends_on:
