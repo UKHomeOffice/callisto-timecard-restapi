@@ -182,7 +182,7 @@ steps:
       event:
         - push
       branch:
-        - eahw-2547/MovingImageToQuay
+        - main
 
 ---
 kind: pipeline
@@ -244,7 +244,7 @@ steps:
       event:
         - push
       branch:
-        - eahw-2547/MovingImageToQuay
+        - main
 
 ---
 kind: pipeline
