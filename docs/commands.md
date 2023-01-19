@@ -109,7 +109,7 @@ This command will ultimately retrieve a filtered list of FlexChangeType instance
  - business failure - see [standard command output](TODO) (**TODO**) for how to report technical failures
  - response payload - upon a successful call to get FlexChangeType a payload containing a list of all relevant FlexChangeType must be returned.
  
- ### FlexChangeType list
+### FlexChangeType list
 - extended
 - altered
 - curtailed
