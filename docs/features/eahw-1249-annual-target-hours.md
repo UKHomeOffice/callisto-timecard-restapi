@@ -22,7 +22,7 @@ Based on the guideance in the [topic creation](https://github.com/UKHomeOffice/c
 - partition key - `TimeEntry.tenantId`-`TimeEntry.ownerId`
 
 ### Event
-Based on the guideance in the [event publication (schema & trigger points)](https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/event-publishing-and-consuming.md) blueprint the following are suggested - 
+Based on the guidance in the [event publication (schema & trigger points)](https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/event-publishing-and-consuming.md) blueprint the following are suggested - 
 
 - events to capture - create, update & delete
 - use ResourceReference as `resource.content` for a delete event
