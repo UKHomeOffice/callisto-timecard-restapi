@@ -57,3 +57,8 @@ env:
         secretKeyRef:
           name: callisto-dev-msk
           key: certificate_authority_arn
+    - name: TIMECARD_KEYSTORE_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: callisto-dev-keystore-password
+          key: password
