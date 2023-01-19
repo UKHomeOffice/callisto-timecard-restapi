@@ -48,7 +48,7 @@ spec:
         - name: timecard-keystore
           image: quay.io/ukhomeofficedigital/java11-mvn-aws
           imagePullPolicy: Always
-          env: { { toYaml .Values.env.kafka | nindent 12 } }
+          env: {{ toYaml .Values.env.kafka | nindent 12 }}
           command: [ "/bin/sh" ]
           args: [ "/scripts/keystore-setup.sh", "timecard", "$(TIMECARD_KEYSTORE_PASSWORD)", "$(AWS_CERTIFICATE_AUTHORITY_ARN)", "$(AWS_ACCESS_KEY)", "$(AWS_SECRET_KEY)" ]
           volumeMounts:
@@ -58,4 +58,4 @@ spec:
       volumes:
       - name: keystore-script-volume
         configMap:
-            name: { { .Release.Name } }-keystore-script
+            name: {{ .Release.Name }}-keystore-script
