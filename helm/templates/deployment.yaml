@@ -2,18 +2,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.name }}
+  name: {{ .Release.Name }}
   labels:
-    app: {{ .Values.name }}
+    app: {{ .Release.Name }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Values.name }}
+      app: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ .Values.name }}
+        app: {{ .Release.Name }}
     spec:
       securityContext:
         runAsUser: 1001
@@ -44,10 +44,17 @@ spec:
             - "--password=$(DATABASE_PASSWORD)"
             - "--changeLogFile=changelog/db.changelog-main.yml"
             - "--liquibaseSchemaName=timecard"
-            - "update"
-        - name: timecard-credentials
-          image: amazon/aws-cli
+            - "update
+        - name: timecard-keystore
+          image: quay.io/ukhomeofficedigital/dind-awscli
           imagePullPolicy: Always
-          command:
-            - create_keystore.sh timecard $(AWS_CERTIFICATE_AUTHORITY_ARN) $(AWS_ACCESS_KEY) $(AWS_SECRET_KEY)
-
+          command: ["/bin/sh"]
+          args: ["/scripts/create_keystore.sh"]
+          volumeMounts:
+            - name: keystore-script-volume
+              mountPath: /scripts/create_keystore.sh
+              subPath: create_keystore.sh
+      volumes:
+      - name: keystore-script-volume
+        configMap:
+            name: {{ .Release.Name }}-keystore-script
