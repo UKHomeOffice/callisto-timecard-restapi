@@ -46,7 +46,7 @@ spec:
             - "--liquibaseSchemaName=timecard"
             - "update"
         - name: timecard-keystore
-          image: quay.io/ukhomeofficedigital/dind-awscli
+          image: quay.io/ukhomeofficedigital/aws-cli
           imagePullPolicy: Always
           env: {{ toYaml .Values.env.kafka | nindent 12 }}
           command: ["/bin/sh"]
