@@ -48,6 +48,7 @@ spec:
         - name: timecard-keystore
           image: quay.io/ukhomeofficedigital/alpine
           imagePullPolicy: Always
+          env: {{ toYaml .Values.env.kafka | nindent 12 }}
           command: ["/bin/sh"]
           args: ["/scripts/keystore-setup.sh $(AWS_CERTIFICATE_AUTHORITY_ARN) $(AWS_ACCESS_KEY) $(AWS_SECRET_KEY)"]
           volumeMounts:
