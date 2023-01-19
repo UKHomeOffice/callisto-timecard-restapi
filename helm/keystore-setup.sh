@@ -5,18 +5,19 @@ alias=$1
 days=100
 password=$2
 ca_arn=$3
-aws_access_key_id=$4
-aws_secret_access_key=$5
-aws_region=eu-west-2
 
-chmod 777 .aws
-cd .aws
-which aws
-ls -ltr
+#chmod 777 .aws
+#cd .aws
+#which aws
+#ls -ltr
 
-aws configure set aws_access_key_id $4
-aws configure set aws_secret_access_key $5
-aws configure set aws_region eu-west-2
+#aws configure set aws_access_key_id $4
+#aws configure set aws_secret_access_key $5
+#aws configure set aws_region eu-west-2
+
+export AWS_ACCESS_KEY_ID=$4
+export AWS_SECRET_ACCESS_KEY=$5
+export AWS_DEFAULT_REGION=us-west-2
 
 if test -f "$dir/${alias}_certificate.pem";
 then
