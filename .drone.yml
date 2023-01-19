@@ -246,16 +246,10 @@ platform:
 
 depends_on:
   - callisto-timecard-restapi-build
-  - callisto-timecard-database-schema
 
 trigger:
   event:
-    include:
-      - push
-    exclude:
-      - promote
-  branch:
-    - main
+    - pull_request
 
 steps:
   - name: build_tag_push_ecr_database
