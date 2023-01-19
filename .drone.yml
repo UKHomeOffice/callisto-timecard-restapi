@@ -97,6 +97,19 @@ trigger:
     exclude:
       - promote
 
+timecard_ecr_settings: &timecard_ecr_settings
+  pull: if-not-exists
+  image: plugins/ecr
+  environment:
+    AWS_REGION: eu-west-2
+  settings:
+    access_key:
+      from_secret: ecr_timecard_restapi_access_key_id
+    secret_key:
+      from_secret: ecr_timecard_restapi_secret_access_key
+    repo: callisto/timecard-restapi
+    registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
+
 steps:
   - name: fetch
     image: alpine/git
@@ -139,19 +152,10 @@ steps:
           - pull_request
 
   - name: build_tag_push_ecr_branch
-    pull: if-not-exists
-    image: plugins/ecr
+    <<: *timecard_ecr_settings
     depends_on:
       - build
-    environment:
-      AWS_REGION: eu-west-2
     settings:
-      access_key:
-        from_secret: ecr_timecard_restapi_access_key_id
-      secret_key:
-        from_secret: ecr_timecard_restapi_secret_access_key
-      repo: callisto/timecard-restapi
-      registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
       tags:
         - ${DRONE_COMMIT_SHA}
         - ${DRONE_SOURCE_BRANCH%%/*}
@@ -160,19 +164,10 @@ steps:
         - pull_request
 
   - name: build_tag_push_ecr
-    pull: if-not-exists
-    image: plugins/ecr
+    <<: *timecard_ecr_settings
     depends_on:
       - sonar
-    environment:
-      AWS_REGION: eu-west-2
     settings:
-      access_key:
-        from_secret: ecr_timecard_restapi_access_key_id
-      secret_key:
-        from_secret: ecr_timecard_restapi_secret_access_key
-      repo: callisto/timecard-restapi
-      registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
       tags:
       - latest
       - ${DRONE_COMMIT_SHA}
@@ -199,21 +194,25 @@ trigger:
     exclude:
       - promote
 
+database_ecr_settings: &database_ecr_settings
+  pull: if-not-exists
+  image: plugins/ecr
+  environment:
+    AWS_REGION: eu-west-2
+  settings:
+    access_key:
+      from_secret: ecr_timecard_database_access_key_id
+    secret_key:
+      from_secret: ecr_timecard_database_secret_access_key
+    repo: callisto/timecard-database
+    dockerfile: db/Dockerfile
+    context: db
+    registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
+
 steps:
   - name: build_tag_push_ecr_branch
-    pull: if-not-exists
-    image: plugins/ecr
-    environment:
-      AWS_REGION: eu-west-2
+    <<: *database_ecr_settings
     settings:
-      access_key:
-        from_secret: ecr_timecard_database_access_key_id
-      secret_key:
-        from_secret: ecr_timecard_database_secret_access_key
-      repo: callisto/timecard-database
-      dockerfile: db/Dockerfile
-      context: db
-      registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
       tags:
         - ${DRONE_COMMIT_SHA}
         - ${DRONE_SOURCE_BRANCH%%/*}
@@ -221,19 +220,8 @@ steps:
       event: pull_request
 
   - name: build_tag_push_ecr
-    pull: if-not-exists
-    image: plugins/ecr
-    environment:
-      AWS_REGION: eu-west-2
+    <<: *database_ecr_settings
     settings:
-      access_key:
-        from_secret: ecr_timecard_database_access_key_id
-      secret_key:
-        from_secret: ecr_timecard_database_secret_access_key
-      repo: callisto/timecard-database
-      dockerfile: db/Dockerfile
-      context: db
-      registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
       tags:
         - latest
         - ${DRONE_COMMIT_SHA}
