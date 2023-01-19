@@ -6,6 +6,8 @@
 
 In order to retrieve private Maven packages, you’ll need to [configure authentication for Artifactory](https://collaboration.homeoffice.gov.uk/display/EAHW/Artifactory).
 
+Running it on **minikube** ? This is problematic, as it doesn't support VPN connections out of the box. 
+
 ### Create database
 
 If you need to create your own postgres database you can use docker. This works well if you create a container and name it, then you can stop and start it as you please
@@ -52,3 +54,30 @@ You will need to replace the value [YOUR IP ADDRESS] with the IP address for you
 ```sh
 docker run -it --rm -v $(pwd)/db/changelog:/liquibase/changelog -v $(pwd)/db/sql:/liquibase/sql liquibase/liquibase  --url="jdbc:postgresql://[YOUR IP ADDRESS]:5432/callisto" --changeLogFile=changelog/db.changelog-main.yml --username=postgres --password=Welcome update
 ```
+
+
+## Considerations
+A `DRONE_TOKEN` is used in the drone yaml file to get access to execute drone cli commands. This token is tied to a specific user and stored in the drone secrets for this repo. If the user is removed from drone the `DRONE_TOKEN` must be replaced with someone else.
+
+
+## Running Timecard-restapi locally as part of LocalDev environment.
+
+1. Download LocalDev repository from https://github.com/UKHomeOffice/callisto-localdev and run it locally as described in Scenario 1.
+
+2. From the LocalDev project root, stop Timecard-restapi service by running `docker compose stop timecard-restapi` command.
+
+3. Pull Timecard-restapi repository and from its root directory, run command `docker compose up -d` 
+
+After successful start, you should be able to work with Timecard-restapi code and all changes will be reflected within LocalDev environment.
+
+
+### Devtools Hot Deployment in local environment
+
+Devtools allows you to reload the application after making any changes to the project files. 
+However, it may need stage of building project manually (InteliJ IDEA: Build/Build Project)
+or  IntelliJ IDEA has 2 properties that will allow you to execute `Build Project` automatically. To enable that :
+   1) Go to `Preferences/Build,Execution,Deployment/Compiler` and select option
+      `Build project automatically`
+   2) [Optional] Go to `Preferences/Advanced Settings` and select `Allow auto-make to start even if developed application is currently running`
+
+

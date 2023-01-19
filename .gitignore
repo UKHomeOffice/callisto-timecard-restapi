@@ -2,7 +2,7 @@
 .env*
 .idea
 target
-
+custom_checkstyle.xml
 liquibase.properties
-
 docs/payload-model.puml
+

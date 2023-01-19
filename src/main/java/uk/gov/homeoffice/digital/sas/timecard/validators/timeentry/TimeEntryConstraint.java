@@ -14,7 +14,7 @@ import javax.validation.Payload;
 @Documented
 @Constraint(validatedBy = TimeEntryValidator.class)
 public @interface TimeEntryConstraint {
-  String message() default "Time periods must not overlap with another time period";
+  String message() default "Time entry validation error";
 
   Class<?>[] groups() default {};
 
