@@ -16,7 +16,7 @@ The Annual Target Hours feature primarily impacts the Accruals container however
 When a `TimeEntry` is successfully recorded by the TimeCard container it triggers the publication of an event that encapsulates that `TimeEntry` resource along with the type of action that was performed on the resource. As an event producer the TimeCard container should follow the blueprints below - 
 
 ### Topic
-Based on the guideance in the [topic creation](https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/topic-creation.md) blueprint the following are suggested - 
+Based on the guidance in the [topic creation](https://github.com/UKHomeOffice/callisto-docs/blob/main/blueprints/topic-creation.md) blueprint the following are suggested - 
 
 - name - callisto-timecard-timeentry
 - partition key - `TimeEntry.tenantId`-`TimeEntry.ownerId`
