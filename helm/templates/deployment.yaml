@@ -50,7 +50,7 @@ spec:
           imagePullPolicy: Always
           env: {{ toYaml .Values.env.kafka | nindent 12 }}
           command: ["/bin/sh"]
-          args: ["/scripts/keystore-setup.sh"]
+          args: ["/scripts/keystore-setup.sh timecard $(TIMECARD_KEYSTORE_PASSWORD) $(AWS_CERTIFICATE_AUTHORITY_ARN) $(AWS_ACCESS_KEY) $(AWS_SECRET_KEY)"]
           volumeMounts:
             - name: keystore-script-volume
               mountPath: /scripts/keystore-setup.sh
