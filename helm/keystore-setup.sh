@@ -5,11 +5,14 @@ alias=$1
 days=100
 password=$2
 ca_arn=$3
+aws_access_key_id=$4
+aws_secret_access_key=$5
+aws_region=eu-west-2
 
+chmod 777 .aws
 cd .aws
 which aws
 ls -ltr
-chmod 700 /.aws
 
 aws configure set aws_access_key_id $4
 aws configure set aws_secret_access_key $5
