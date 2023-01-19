@@ -19,10 +19,10 @@ export AWS_ACCESS_KEY_ID=$4
 export AWS_SECRET_ACCESS_KEY=$5
 export AWS_DEFAULT_REGION=us-west-2
 
-if test -f "$dir/${alias}_certificate.pem";
+if test -f "${alias}_certificate.pem";
 then
     echo Certififcarte created, checking validity...
-  if openssl x509 -checkend 86400 -noout -in ${dir}/${alias}_certificate.pem
+  if openssl x509 -checkend 86400 -noout -in ${alias}_certificate.pem
     then
       echo "Certificate is valid, exiting"
       exit
@@ -35,11 +35,9 @@ echo "Certificate has expired"
 
 echo "Creating new certificate"
 
-mkdir -p $dir
-
 # Create a private key
 if
-  keytool -genkey -validity $days -alias $alias -dname "C=GB, O=UK Home Office, CN=Callisto $alias" -keystore $dir/$alias.keystore.jks -keyalg RSA -storepass $password -keypass $password
+  keytool -genkey -validity $days -alias $alias -dname "C=GB, O=UK Home Office, CN=Callisto $alias" -keystore $alias.keystore.jks -keyalg RSA -storepass $password -keypass $password
 then
   echo "Created private key"
 else echo "Creating private key failed"
@@ -48,8 +46,8 @@ fi
 
 # Create CSR
 if
-  keytool -keystore $dir/$alias.keystore.jks -alias $alias -certreq -file $dir/$alias.csr -storepass $password -keypass $password
-  sed -e 's/\ NEW//g' $dir/$alias.csr > $dir/$alias_temp.csr && mv $dir/$alias_temp.csr $dir/$alias.csr
+  keytool -keystore /$alias.keystore.jks -alias $alias -certreq -file $alias.csr -storepass $password -keypass $password
+  sed -e 's/\ NEW//g' $alias.csr > $alias_temp.csr && mv $alias_temp.csr $alias.csr
 then
   echo "Created CSR"
 else echo "Creating CSR failed"
@@ -58,7 +56,7 @@ fi
 
 # Create cert signed by CA
 if
-  ARN=$(aws acm-pca issue-certificate --certificate-authority-arn $ca_arn --csr fileb://$dir/$alias.csr --signing-algorithm "SHA256WITHRSA" --validity Value=$days,Type="DAYS" --profile pca --output text)
+  ARN=$(aws acm-pca issue-certificate --certificate-authority-arn $ca_arn --csr fileb://$alias.csr --signing-algorithm "SHA256WITHRSA" --validity Value=$days,Type="DAYS" --profile pca --output text)
   kubectl create secret generic callisto-timecard-acmpca --from-literal=certificate_arn=$ARN
 then
   echo "Arn Stored"
@@ -77,7 +75,7 @@ fi
 
 # Get Certificate from arn
 if
-  aws acm-pca get-certificate --certificate-authority-arn $ca_arn --certificate-arn $ARN | jq '.Certificate, .CertificateChain' | sed 's/\\n/\n/g' | tr -d \" > $dir/$alias-certificate.pem
+  aws acm-pca get-certificate --certificate-authority-arn $ca_arn --certificate-arn $ARN | jq '.Certificate, .CertificateChain' | sed 's/\\n/\n/g' | tr -d \" > $alias-certificate.pem
 then
   echo "Certificate retrieved"
 else echo "Retrieving certificate failed"
@@ -86,7 +84,7 @@ fi
 
 # Import cert into keystore
 if
-  keytool -keystore $dir/$alias.keystore.jks -alias Callisto -import -noprompt -file $dir/$alias.pem -storepass $password -keypass $password
+  keytool -keystore $alias.keystore.jks -alias Callisto -import -noprompt -file $alias.pem -storepass $password -keypass $password
 then
   echo "stored certificate in keystore"
 else echo "Failed to store certificate in keystore"
@@ -95,7 +93,7 @@ fi
 
 # cp truststore into desired location
 if
-  cp /opt/openjdk-17/lib/security/cacerts $dir/$alias.truststore.jks
+  cp /opt/openjdk-17/lib/security/cacerts $alias.truststore.jks
 then
   echo "Truststore copied"
 fi
