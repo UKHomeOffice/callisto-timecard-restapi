@@ -6,9 +6,8 @@ days=100
 password=$2
 ca_arn=$3
 
-cd ~/.aws/config
+cd .aws
 which aws
-cd /usr/bin/
 ls -ltr
 chmod 700 /.aws
 
