@@ -1,6 +1,6 @@
 # EAHW-1249 Annual Target Hours
 
-This high-level design is intended to cover the elements of the Annual Target Hours feature that effect TimeCard. It seeks to:
+This high-level design is intended to cover the elements of the Annual Target Hours feature that affect TimeCard. It seeks to:
 
 1.  Guide the reader through the relevant parts of the container definitions which will be used to satisfy this feature.
 2.  Where required illustrate the high-level container orchestration.
