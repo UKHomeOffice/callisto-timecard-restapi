@@ -35,7 +35,6 @@ echo "Certificate has expired"
 
 echo "Creating new certificate"
 
-rm -rf $dir
 mkdir -p $dir
 
 # Create a private key
