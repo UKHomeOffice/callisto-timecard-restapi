@@ -369,7 +369,6 @@ steps:
       kube_token:
         from_secret: test_kube_token
 
-
 ---
 kind: pipeline
 type: kubernetes
