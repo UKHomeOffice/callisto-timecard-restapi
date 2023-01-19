@@ -451,8 +451,8 @@ name: urgent notifications
 trigger:
   status:
     - failure
-  exclude:
-    event:
+  event:
+    exclude:
       - pull_request
 
 depends_on:
