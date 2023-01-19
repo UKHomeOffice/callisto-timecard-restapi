@@ -49,10 +49,8 @@ spec:
           image: quay.io/ukhomeofficedigital/aws-cli
           imagePullPolicy: Always
           env: {{ toYaml .Values.env.kafka | nindent 12 }}
-          command: [ "/bin/bash", "-c", "--" ]
-          args: [ "while true; do sleep 30; done;" ]
-#          command: ["/bin/sh"]
-#          args: ["/scripts/keystore-setup.sh", "timecard", "$(TIMECARD_KEYSTORE_PASSWORD)", "$(AWS_CERTIFICATE_AUTHORITY_ARN)", "$(AWS_ACCESS_KEY)", "$(AWS_SECRET_KEY)"]
+          command: ["/bin/sh"]
+          args: ["/scripts/keystore-setup.sh", "timecard", "$(TIMECARD_KEYSTORE_PASSWORD)", "$(AWS_CERTIFICATE_AUTHORITY_ARN)", "$(AWS_ACCESS_KEY)", "$(AWS_SECRET_KEY)"]
           volumeMounts:
             - name: keystore-script-volume
               mountPath: /scripts/keystore-setup.sh
