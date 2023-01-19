@@ -196,14 +196,30 @@ depends_on:
 
 trigger:
   event:
-    include:
-      - push
     exclude:
       - promote
-  branch:
-    - main
 
 steps:
+  - name: build_tag_push_ecr_branch
+    pull: if-not-exists
+    image: plugins/ecr
+    environment:
+      AWS_REGION: eu-west-2
+    settings:
+      access_key:
+        from_secret: ecr_timecard_database_access_key_id
+      secret_key:
+        from_secret: ecr_timecard_database_secret_access_key
+      repo: callisto/timecard-database
+      dockerfile: db/Dockerfile
+      context: db
+      registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
+      tags:
+        - ${DRONE_COMMIT_SHA}
+        - ${DRONE_SOURCE_BRANCH%%/*}
+    when:
+      event: pull_request
+
   - name: build_tag_push_ecr
     pull: if-not-exists
     image: plugins/ecr
@@ -221,6 +237,9 @@ steps:
       tags:
         - latest
         - ${DRONE_COMMIT_SHA}
+    when:
+      event: push
+      branch: main
 
 ---
 kind: pipeline
@@ -233,30 +252,13 @@ platform:
 
 depends_on:
   - callisto-timecard-restapi-build
+  - callisto-timecard-database-schema
 
 trigger:
   event:
     - pull_request
 
 steps:
-  - name: build_tag_push_ecr_database
-    pull: if-not-exists
-    image: plugins/ecr
-    environment:
-      AWS_REGION: eu-west-2
-    settings:
-      access_key:
-        from_secret: ecr_timecard_database_access_key_id
-      secret_key:
-        from_secret: ecr_timecard_database_secret_access_key
-      repo: callisto/timecard-database
-      dockerfile: db/Dockerfile
-      context: db
-      registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
-      tags:
-        - ${DRONE_COMMIT_SHA}
-        - ${DRONE_SOURCE_BRANCH%%/*}
-
   - name: branch_deploy
     image: pelotech/drone-helm3
     settings:
