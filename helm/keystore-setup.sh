@@ -23,8 +23,6 @@ then
     fi
 fi
 
-echo "Certificate has expired"
-
 echo "Creating new certificate"
 
 # Create a private key
