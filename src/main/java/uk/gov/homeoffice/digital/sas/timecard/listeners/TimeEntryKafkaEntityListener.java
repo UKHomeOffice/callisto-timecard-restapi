@@ -24,12 +24,12 @@ public class TimeEntryKafkaEntityListener extends KafkaEntityListener<TimeEntry>
 
   @PostPersist
   private void sendMessageOnCreate(TimeEntry resource) {
-      super.sendKafkaMessageOnCreate(resource);
+    super.sendKafkaMessageOnCreate(resource);
   }
 
   @PostUpdate
   private void sendMessageOnUpdate(TimeEntry resource) {
-      super.sendKafkaMessageOnUpdate(resource);
+    super.sendKafkaMessageOnUpdate(resource);
   }
 
 }
