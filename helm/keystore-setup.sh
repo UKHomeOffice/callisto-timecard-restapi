@@ -81,5 +81,3 @@ then
 else echo "Failed to store certificate in keystore"
 exit
 fi
-
-cp $dir/$alias.keystore.jks tmp/tomcat-docbase.*
