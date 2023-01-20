@@ -35,7 +35,7 @@ spec:
           volumeMounts:
             - mountPath: /timecard-restapi-keystore
               name: keystore-volume
-          env: {{ toYaml .Values.env.database | nindent 12 }}
+          env: {{ toYaml .Values.env | nindent 12 }}
       initContainers:
         - name: timecard-database
           image: {{ .Values.image.repo }}timecard-database:{{ .Values.image.tag }}
