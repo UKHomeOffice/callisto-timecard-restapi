@@ -7,10 +7,6 @@ password=$2
 ca_arn=$3
 root_dir=$(pwd)
 
-#aws configure set aws_access_key_id $4
-#aws configure set aws_secret_access_key $5
-#aws configure set aws_region eu-west-2
-
 cd $dir
 ls -ltr
 
@@ -94,8 +90,8 @@ exit
 fi
 
 # cp truststore into desired location
-if
-  cp /opt/openjdk-17/lib/security/cacerts $alias.truststore.jks
-then
-  echo "Truststore copied"
-fi
+#if
+#  cp /opt/openjdk-17/lib/security/cacerts $alias.truststore.jks
+#then
+#  echo "Truststore copied"
+#fi

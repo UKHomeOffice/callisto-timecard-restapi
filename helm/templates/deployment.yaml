@@ -32,6 +32,11 @@ spec:
           ports:
             - name: http
               containerPort: 9090
+          command: [ "/bin/sh"]
+          args: [ "cp /opt/openjdk-17/lib/security/cacerts timecard.truststore.jks"]
+          volumeMounts:
+            - mountPath: /timecard-restapi-keystore
+              name: keystore-volume
           env: {{ toYaml .Values.env.database | nindent 12 }}
       initContainers:
         - name: timecard-database
