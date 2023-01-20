@@ -97,6 +97,7 @@ trigger:
     exclude:
       - promote
 
+# remove in final ver.
 timecard_ecr_settings: &timecard_ecr_settings
   pull: if-not-exists
   image: plugins/ecr
@@ -109,6 +110,20 @@ timecard_ecr_settings: &timecard_ecr_settings
       from_secret: ecr_timecard_restapi_secret_access_key
     repo: callisto/timecard-restapi
     registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
+
+
+timecard_quay_settings: &timecard_quay_settings
+  pull: if-not-exists
+  image: plugins/docker
+  settings:
+    registry: quay.io
+    repo: quay.io/ukhomeofficedigital/callisto-timecard-restapi
+    username:
+      from_secret: quay_robot_name
+    password:
+      from_secret: quay_robot_token
+    file: Dockerfile
+
 
 steps:
   - name: fetch
@@ -151,6 +166,7 @@ steps:
         exclude:
           - pull_request
 
+# remove in final ver
   - name: build_tag_push_ecr_branch
     <<: *timecard_ecr_settings
     depends_on:
@@ -163,6 +179,7 @@ steps:
       event:
         - pull_request
 
+# remove in final ver.
   - name: build_tag_push_ecr
     <<: *timecard_ecr_settings
     depends_on:
@@ -177,27 +194,31 @@ steps:
       branch:
         - main
 
+  - name: build_tag_push_quay_branch
+    <<: *timecard_quay_settings
+    depends_on:
+      - build
+    settings:
+      tags:
+        - ${DRONE_COMMIT_SHA}
+        - ${DRONE_SOURCE_BRANCH%%/*}
+    when:
+      event:
+        - pull_request
+
   - name: build_tag_push_quay
-    pull: if-not-exists
-    image: plugins/docker
+    <<: *timecard_quay_settings
     depends_on:
       - sonar
     settings:
-      registry: quay.io
-      repo: quay.io/ukhomeofficedigital/callisto-timecard-restapi
-      username:
-        from_secret: quay_robot_name
-      password:
-        from_secret: quay_robot_token
-      file: Dockerfile
       tags:
-          - latest
-          - ${DRONE_COMMIT_SHA}
+        - latest
+        - ${DRONE_COMMIT_SHA}
     when:
       event:
         - push
       branch:
-        - main
+        - eahw-2547/MovingImageToQuay
 
 ---
 kind: pipeline
