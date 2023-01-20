@@ -10,13 +10,9 @@ root_dir=$(pwd)
 #aws configure set aws_access_key_id $4
 #aws configure set aws_secret_access_key $5
 #aws configure set aws_region eu-west-2
-pwd
-cd /bin/sh
-mkdir keystore
-cd keystore
+ls -ltr
 pwd
 
-cd ~
 cd /scripts
 ls -ltr
 mkdir keystore
