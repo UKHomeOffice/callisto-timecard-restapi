@@ -55,7 +55,11 @@ spec:
             - name: keystore-script-volume
               mountPath: /scripts/keystore-setup.sh
               subPath: keystore-setup.sh
+            - name: keystore-volume
+              mountPath: /timecard-restapi-keystore
       volumes:
       - name: keystore-script-volume
         configMap:
             name: {{ .Release.Name }}-keystore-script
+      - name: keystore-volume
+        emptyDir: { }

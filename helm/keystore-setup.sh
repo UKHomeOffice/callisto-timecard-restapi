@@ -1,6 +1,6 @@
 set -e
 
-dir=keystore
+dir=/timecard-restapi-keystore
 alias=$1
 days=100
 password=$2
@@ -10,14 +10,9 @@ root_dir=$(pwd)
 #aws configure set aws_access_key_id $4
 #aws configure set aws_secret_access_key $5
 #aws configure set aws_region eu-west-2
-ls -ltr
-pwd
 
-cd /scripts
+cd $dir
 ls -ltr
-mkdir keystore
-cd keystore
-pwd
 
 export AWS_ACCESS_KEY_ID=$4
 export AWS_SECRET_ACCESS_KEY=$5
@@ -32,10 +27,9 @@ then
       exit
     fi
 fi
-
+#Check for keystore?? //truststore?
 mkdir -p keystore
 
-#Check for keystore??
 
 echo "Certificate has expired"
 
