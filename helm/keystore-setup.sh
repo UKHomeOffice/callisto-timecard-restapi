@@ -68,7 +68,7 @@ fi
 aws acm-pca wait certificate-issued --certificate-authority-arn $ca_arn --certificate-arn $ARN
 if [ $? -eq 255 ]
 then
-  echo "Certificate not issue"
+  echo "Certificate not issued"
   exit
 else
   echo "Certificate issued" >&2
@@ -76,7 +76,8 @@ fi
 
 # Get Certificate from arn
 if
-  aws acm-pca get-certificate --certificate-authority-arn $ca_arn --certificate-arn $ARN | jq '.Certificate, .CertificateChain' | sed 's/\\n/\n/g' | tr -d \" > $alias-certificate.pem
+  aws acm-pca get-certificate --certificate-authority-arn $ca_arn --certificate-arn $ARN | tr -d \" > $alias-certificate.pem
+  sed '1d;s/\    Certificate: //g;s/\    CertificateChain: //g;s/,//g;$d;s/\\n/\n/g' $alias-certificate.pem > $alias-certificate-temp.pem && mv $alias-certificate-temp.pem $alias-certificate.pem
 then
   echo "Certificate retrieved"
 else echo "Retrieving certificate failed"
@@ -85,7 +86,7 @@ fi
 
 # Import cert into keystore
 if
-  keytool -keystore $alias.keystore.jks -alias Callisto -import -noprompt -file $alias.pem -storepass $password -keypass $password
+  keytool -keystore $alias.keystore.jks -alias Callisto -import -noprompt -file $alias-certificate.pem -storepass $password -keypass $password
 then
   echo "stored certificate in keystore"
 else echo "Failed to store certificate in keystore"
@@ -98,4 +99,3 @@ if
 then
   echo "Truststore copied"
 fi
-
