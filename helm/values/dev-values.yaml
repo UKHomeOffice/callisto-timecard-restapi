@@ -10,55 +10,56 @@ image:
   tag: latest # this value will be overridden by drone.yml
 
 env:
-  database:
-    - name: DATABASE_NAME
-      valueFrom:
-        secretKeyRef:
-          name: callistodev-rds
-          key: db_name
-    - name: DATABASE_USERNAME
-      valueFrom:
-        secretKeyRef:
-          name: callistodev-rds
-          key: username
-    - name: DATABASE_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: callistodev-rds
-          key: password
-    - name: DATABASE_ENDPOINT
-      valueFrom:
-        secretKeyRef:
-          name: callistodev-rds
-          key: endpoint
-    - name: DATABASE_PORT
-      valueFrom:
-        secretKeyRef:
-          name: callistodev-rds
-          key: port
-  kafka:
-    - name: BOOTSTRAP_SERVER
-      valueFrom:
-        secretKeyRef:
-          name: callisto-dev-bootstrap
-          key: bootstrap_server1
-    - name: AWS_ACCESS_KEY
-      valueFrom:
-        secretKeyRef:
-          name: callisto-dev-msk
-          key: certificate_authority_access_keys
-    - name: AWS_SECRET_KEY
-      valueFrom:
-        secretKeyRef:
-          name: callisto-dev-msk
-          key: certificate_authority_secret_keys
-    - name: AWS_CERTIFICATE_AUTHORITY_ARN
-      valueFrom:
-        secretKeyRef:
-          name: callisto-dev-msk
-          key: certificate_authority_arn
-    - name: TIMECARD_KEYSTORE_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: callisto-dev-keystore-password
-          key: password
+  variables:
+    database:
+      - name: DATABASE_NAME
+        valueFrom:
+          secretKeyRef:
+            name: callistodev-rds
+            key: db_name
+      - name: DATABASE_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: callistodev-rds
+            key: username
+      - name: DATABASE_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: callistodev-rds
+            key: password
+      - name: DATABASE_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: callistodev-rds
+            key: endpoint
+      - name: DATABASE_PORT
+        valueFrom:
+          secretKeyRef:
+            name: callistodev-rds
+            key: port
+    kafka:
+      - name: BOOTSTRAP_SERVER
+        valueFrom:
+          secretKeyRef:
+            name: callisto-dev-bootstrap
+            key: bootstrap_server1
+      - name: AWS_ACCESS_KEY
+        valueFrom:
+          secretKeyRef:
+            name: callisto-dev-msk
+            key: certificate_authority_access_keys
+      - name: AWS_SECRET_KEY
+        valueFrom:
+          secretKeyRef:
+            name: callisto-dev-msk
+            key: certificate_authority_secret_keys
+      - name: AWS_CERTIFICATE_AUTHORITY_ARN
+        valueFrom:
+          secretKeyRef:
+            name: callisto-dev-msk
+            key: certificate_authority_arn
+      - name: TIMECARD_KEYSTORE_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: callisto-dev-keystore-password
+            key: password
