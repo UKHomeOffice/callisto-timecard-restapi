@@ -5,7 +5,7 @@ metadata:
   name: {{ .Release.Name }}
   labels:
     app: {{ .Release.Name }}
-  {{- if eq .Values.branch "eahw-2494" }}
+  {{- if eq .Values.branch "eahw-2492" }}
 #  annotations:
 #    downscaler/uptime: Mon-Fri 08:00-20:00 Europe/London
   annotations:
