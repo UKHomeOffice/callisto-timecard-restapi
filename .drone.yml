@@ -10,7 +10,7 @@ platform:
 trigger:
   event:
     exclude:
-    - promote
+      - promote
 
 steps:
   - name: lint_dockerfiles
@@ -97,18 +97,18 @@ trigger:
     exclude:
       - promote
 
-timecard_ecr_settings: &timecard_ecr_settings
+timecard_quay_settings: &timecard_quay_settings
   pull: if-not-exists
-  image: plugins/ecr
-  environment:
-    AWS_REGION: eu-west-2
+  image: plugins/docker
   settings:
-    access_key:
-      from_secret: ecr_timecard_restapi_access_key_id
-    secret_key:
-      from_secret: ecr_timecard_restapi_secret_access_key
-    repo: callisto/timecard-restapi
-    registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
+    registry: quay.io
+    repo: quay.io/ukhomeofficedigital/callisto-timecard-restapi
+    username:
+      from_secret: quay_robot_name
+    password:
+      from_secret: quay_robot_token
+    file: Dockerfile
+
 
 steps:
   - name: fetch
@@ -151,8 +151,8 @@ steps:
         exclude:
           - pull_request
 
-  - name: build_tag_push_ecr_branch
-    <<: *timecard_ecr_settings
+  - name: build_tag_push_quay_branch
+    <<: *timecard_quay_settings
     depends_on:
       - build
     settings:
@@ -163,14 +163,14 @@ steps:
       event:
         - pull_request
 
-  - name: build_tag_push_ecr
-    <<: *timecard_ecr_settings
+  - name: build_tag_push_quay
+    <<: *timecard_quay_settings
     depends_on:
       - sonar
     settings:
       tags:
-      - latest
-      - ${DRONE_COMMIT_SHA}
+        - latest
+        - ${DRONE_COMMIT_SHA}
     when:
       event:
         - push
@@ -194,24 +194,22 @@ trigger:
     exclude:
       - promote
 
-database_ecr_settings: &database_ecr_settings
+database_quay_settings: &database_quay_settings
   pull: if-not-exists
-  image: plugins/ecr
-  environment:
-    AWS_REGION: eu-west-2
+  image: plugins/docker
   settings:
-    access_key:
-      from_secret: ecr_timecard_database_access_key_id
-    secret_key:
-      from_secret: ecr_timecard_database_secret_access_key
-    repo: callisto/timecard-database
+    registry: quay.io
+    repo: quay.io/ukhomeofficedigital/callisto-timecard-database
+    username:
+      from_secret: quay_robot_name
+    password:
+      from_secret: quay_robot_token
     dockerfile: db/Dockerfile
     context: db
-    registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
 
 steps:
-  - name: build_tag_push_ecr_branch
-    <<: *database_ecr_settings
+  - name: build_tag_push_quay_branch
+    <<: *database_quay_settings
     settings:
       tags:
         - ${DRONE_COMMIT_SHA}
@@ -219,15 +217,17 @@ steps:
     when:
       event: pull_request
 
-  - name: build_tag_push_ecr
-    <<: *database_ecr_settings
+  - name: build_tag_push_quay
+    <<: *database_quay_settings
     settings:
       tags:
         - latest
         - ${DRONE_COMMIT_SHA}
     when:
-      event: push
-      branch: main
+      event:
+        - push
+      branch:
+        - main
 
 ---
 kind: pipeline
@@ -404,12 +404,12 @@ depends_on:
   - callisto-timecard-restapi-prod-deploy
 
 slack: &slack
-    image: plugins/slack
-    settings:
-      webhook:
-        from_secret: slack_webhook_url
-      channel: callisto-tech-notifications
-      username: Drone
+  image: plugins/slack
+  settings:
+    webhook:
+      from_secret: slack_webhook_url
+    channel: callisto-tech-notifications
+    username: Drone
 
 steps:
   - name: slack
@@ -435,7 +435,7 @@ steps:
     settings:
       template: >
         {{#success build.status}}
-          :rocket: Successful *{{uppercasefirst build.deployTo}}* deployment for *{{repo.name}}* <${DRONE_BUILD_LINK}| build #{{build.number}}>.          
+          :rocket: Successful *{{uppercasefirst build.deployTo}}* deployment for *{{repo.name}}* <${DRONE_BUILD_LINK}| build #{{build.number}}>.
         {{else}}
           :zombie: Problem *{{uppercasefirst build.deployTo}}* deployment failed for *{{repo.name}}* <${DRONE_BUILD_LINK}| build #{{build.number}}>.
         {{/success}}
