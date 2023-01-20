@@ -16,7 +16,7 @@ ls -ltr
 
 export AWS_ACCESS_KEY_ID=$4
 export AWS_SECRET_ACCESS_KEY=$5
-export AWS_DEFAULT_REGION=us-west-2
+export AWS_DEFAULT_REGION=eu-west-2
 
 if test -f "${alias}_certificate.pem";
 then
@@ -58,6 +58,7 @@ ls -la
 # Create cert signed by CA
 if
   ARN=$(aws acm-pca issue-certificate --certificate-authority-arn $ca_arn --csr fileb://$alias.csr --signing-algorithm "SHA256WITHRSA" --validity Value=$days,Type="DAYS" --output text)
+  echo $ARN
 then
   echo "Arn Stored as env variable"
 else echo "Arn not stored"
