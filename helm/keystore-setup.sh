@@ -28,7 +28,6 @@ then
     fi
 fi
 #Check for keystore?? //truststore?
-mkdir -p keystore
 
 
 echo "Certificate has expired"
@@ -44,9 +43,10 @@ else echo "Creating private key failed"
 exit
 fi
 
+ls -la
 # Create CSR
 if
-  keytool -keystore /$alias.keystore.jks -alias $alias -certreq -file $alias.csr -storepass $password -keypass $password
+  keytool -keystore $alias.keystore.jks -alias $alias -certreq -file $alias.csr -storepass $password -keypass $password
   sed -e 's/\ NEW//g' $alias.csr > $alias_temp.csr && mv $alias_temp.csr $alias.csr
 then
   echo "Created CSR"
@@ -54,6 +54,7 @@ else echo "Creating CSR failed"
 exit
 fi
 
+ls -la
 # Create cert signed by CA
 if
   ARN=$(aws acm-pca issue-certificate --certificate-authority-arn $ca_arn --csr fileb://$alias.csr --signing-algorithm "SHA256WITHRSA" --validity Value=$days,Type="DAYS" --profile pca --output text)
