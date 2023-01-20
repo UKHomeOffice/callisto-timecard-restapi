@@ -8,23 +8,20 @@ ca_arn=$3
 root_dir=$(pwd)
 
 cd $dir
-ls -ltr
 
 export AWS_ACCESS_KEY_ID=$4
 export AWS_SECRET_ACCESS_KEY=$5
 export AWS_DEFAULT_REGION=eu-west-2
 
-if test -f "${alias}_certificate.pem";
+if test -f "$dir/$alias.keystore.jks";
 then
-    echo Certififcarte created, checking validity...
+    echo "Certififcarte already created, checking validity..."
   if openssl x509 -checkend 86400 -noout -in ${alias}_certificate.pem
     then
       echo "Certificate is valid, exiting"
       exit
     fi
 fi
-#Check for keystore?? //truststore?
-
 
 echo "Certificate has expired"
 
@@ -39,7 +36,6 @@ else echo "Creating private key failed"
 exit
 fi
 
-ls -la
 # Create CSR
 if
   keytool -keystore $alias.keystore.jks -alias $alias -certreq -file $alias.csr -storepass $password -keypass $password
@@ -50,7 +46,6 @@ else echo "Creating CSR failed"
 exit
 fi
 
-ls -la
 # Create cert signed by CA
 if
   ARN=$(aws acm-pca issue-certificate --certificate-authority-arn $ca_arn --csr fileb://$alias.csr --signing-algorithm "SHA256WITHRSA" --validity Value=$days,Type="DAYS" --output text)
@@ -88,10 +83,3 @@ then
 else echo "Failed to store certificate in keystore"
 exit
 fi
-
-# cp truststore into desired location
-#if
-#  cp /opt/openjdk-17/lib/security/cacerts $alias.truststore.jks
-#then
-#  echo "Truststore copied"
-#fi
