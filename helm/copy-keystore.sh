@@ -1,1 +1,0 @@
-cp -r /tmp/timecard-restapi-keystore /tmp/tomcat-docbase.*

@@ -8,5 +8,3 @@ metadata:
 data:
   keystore-setup.sh: |-
 {{ .Files.Get "keystore-setup.sh" | indent 4 }}
-  copy-keystore.sh: |-
-{{ .Files.Get "copy-keystore.sh" | indent 4 }}

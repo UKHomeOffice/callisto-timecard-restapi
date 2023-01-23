@@ -36,11 +36,8 @@ spec:
           ports:
             - name: http
               containerPort: 9090
-          command: [ "/bin/sh", "/tmp/copy-keystore.sh" ]
+          command: [ "/bin/sh", "cp -r /tmp/timecard-restapi-keystore /tmp/tomcat-docbase.*" ]
           volumeMounts:
-            - name: keystore-script-volume
-              mountPath: /tmp/copy-keystore.sh
-              subPath: copy-keystore.sh
             - mountPath: /tmp/timecard-restapi-keystore
               name: keystore-volume
           env: {{ toYaml .Values.env.database | nindent 12 }}
