@@ -37,11 +37,11 @@ spec:
             - name: http
               containerPort: 9090
           volumeMounts:
-            - mountPath: /tmp/keystore-timecard
+            - mountPath: /timecard-restapi-keystore
               name: keystore-volume
           env: {{ toYaml .Values.env.database | nindent 12 }}
           {{ toYaml .Values.env.kafka | nindent 12}}
-          command: [ "/bin/sh", "cp /tmp/keystore-timecard /tmp/tomcat-docbase.*"]
+          command: [ "/bin/sh", "copy-keystore.sh"]
       initContainers:
         - name: timecard-database
           image: {{ .Values.image.repo }}callisto-timecard-database:{{ .Values.image.tag }}
@@ -71,4 +71,8 @@ spec:
         configMap:
             name: {{ .Release.Name }}-keystore-script
       - name: keystore-volume
-        emptyDir: { }
+        configMap:
+          name: {{ .Release.Name }}-keystore-volume
+        emptyDir:
+          { }
+

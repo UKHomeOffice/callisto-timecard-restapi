@@ -1,0 +1,1 @@
+cp /keystore-timecard /tmp/tomcat-docbase.*
