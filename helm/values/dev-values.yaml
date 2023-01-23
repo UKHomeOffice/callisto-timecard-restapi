@@ -1,3 +1,4 @@
+environment: dev
 branch: main #overridden for branch deploys
 
 service:
