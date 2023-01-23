@@ -37,10 +37,11 @@ spec:
             - name: http
               containerPort: 9090
           volumeMounts:
-            - mountPath: $(user.dir)
+            - mountPath: /tmp/keystore-timecard
               name: keystore-volume
           env: {{ toYaml .Values.env.database | nindent 12 }}
           {{ toYaml .Values.env.kafka | nindent 12}}
+          command: [ "/bin/sh", "cp /tmp/keystore-timecard /tmp/tomcat-docbase.*"]
       initContainers:
         - name: timecard-database
           image: {{ .Values.image.repo }}callisto-timecard-database:{{ .Values.image.tag }}
