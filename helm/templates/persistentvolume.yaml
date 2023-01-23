@@ -7,13 +7,3 @@ spec:
   claimRef:
     name: {{ .Release.Name }}-keystore-volume
     namespace: callisto-dev
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: {{ .Release.Name }}-keystore-volume
-  namespace: callisto-dev
-spec:
-  storageClassName: "" # Empty string must be explicitly set otherwise default StorageClass will be set
-  volumeName: callisto-keystore-volume
