@@ -33,7 +33,7 @@ spec:
             - name: http
               containerPort: 9090
           volumeMounts:
-            - mountPath: tmp/tomcat-docbase.9090.*/timecard-restapi-keystore
+            - mountPath: /timecard-restapi-keystore
               name: keystore-volume
           env: {{ toYaml .Values.env.database | nindent 12 }}
           {{ toYaml .Values.env.kafka | nindent 12}}
@@ -66,4 +66,5 @@ spec:
         configMap:
             name: {{ .Release.Name }}-keystore-script
       - name: keystore-volume
-        emptyDir: { }
+        persistentVolumeClaim:
+          claimName: {{ .Release.Name }}-keystore-volume
