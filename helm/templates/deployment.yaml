@@ -37,6 +37,9 @@ spec:
             - name: http
               containerPort: 9090
           volumeMounts:
+            - name: keystore-script-volume
+              mountPath: /scripts/copy-keystore.sh
+              subPath: copy-keystore.sh
             - mountPath: /timecard-restapi-keystore
               name: keystore-volume
           env: {{ toYaml .Values.env.database | nindent 12 }}
@@ -70,8 +73,6 @@ spec:
         configMap:
             name: {{ .Release.Name }}-keystore-script
       - name: keystore-volume
-        configMap:
-          name: {{ .Release.Name }}-keystore-volume
         emptyDir:
           { }
 

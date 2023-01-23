@@ -7,15 +7,6 @@ metadata:
     app: {{ .Release.Name }}
 data:
   keystore-setup.sh: |-
-  {{ .Files.Get "keystore-setup.sh" | indent 4}}
-
----
-apiVersion: v1
-kind: configMap
-metadata:
-  name: {{ .Release.Name }}-keystore-volume
-  labels:
-    app: {{ .Release.Name }}
-data:
+{{ .Files.Get "keystore-setup.sh" | indent 4 }}
   copy-keystore.sh: |-
-  {{ .Files.Get "copy-keystore.sh" | indent 4}}
+{{ .Files.Get "copy-keystore.sh" | indent 4 }}
