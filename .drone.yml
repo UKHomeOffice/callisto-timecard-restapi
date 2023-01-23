@@ -104,9 +104,9 @@ timecard_quay_settings: &timecard_quay_settings
     registry: quay.io
     repo: quay.io/ukhomeofficedigital/callisto-timecard-restapi
     username:
-      from_secret: quay_robot_name
+      from_secret: ""
     password:
-      from_secret: quay_robot_token
+      from_secret: ""
     file: Dockerfile
 
 
@@ -202,9 +202,9 @@ database_quay_settings: &database_quay_settings
     registry: quay.io
     repo: quay.io/ukhomeofficedigital/callisto-timecard-database
     username:
-      from_secret: quay_robot_name
+      from_secret: ""
     password:
-      from_secret: quay_robot_token
+      from_secret: ""
     dockerfile: db/Dockerfile
     context: db
 
@@ -263,11 +263,11 @@ steps:
         - ./helm/values/dev-values.yaml
       release: callisto-timecard-restapi-${DRONE_SOURCE_BRANCH%%/*}
       kube_certificate:
-        from_secret: notprod_kube_api_certificate
+        from_secret: ""
       kube_api_server:
-        from_secret: not_prod_kube_api_url
+        from_secret: ""
       kube_token:
-        from_secret: dev_kube_token
+        from_secret: ""
 
 ---
 kind: pipeline
