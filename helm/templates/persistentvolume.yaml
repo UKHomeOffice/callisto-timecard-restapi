@@ -4,6 +4,12 @@ metadata:
   name: callisto-keystore-volume
 spec:
   storageClassName: slow
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/data"
   claimRef:
     name: {{ .Release.Name }}-keystore-volume
     namespace: callisto-dev

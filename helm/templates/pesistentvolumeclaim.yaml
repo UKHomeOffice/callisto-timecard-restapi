@@ -4,5 +4,10 @@ metadata:
   name: {{ .Release.Name }}-keystore-volume
   namespace: callisto-dev
 spec:
-  storageClassName: "" # Empty string must be explicitly set otherwise default StorageClass will be set
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 3Gi
   volumeName: callisto-keystore-volume
