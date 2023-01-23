@@ -41,7 +41,6 @@ spec:
               name: keystore-volume
           env: {{ toYaml .Values.env.database | nindent 12 }}
           {{ toYaml .Values.env.kafka | nindent 12}}
-          command: [ "/bin/sh", "copy-keystore.sh"]
       initContainers:
         - name: timecard-database
           image: {{ .Values.image.repo }}callisto-timecard-database:{{ .Values.image.tag }}
