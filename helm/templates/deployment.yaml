@@ -5,6 +5,10 @@ metadata:
   name: {{ .Release.Name }}
   labels:
     app: {{ .Release.Name }}
+  {{- if ne .Values.branch "main" }}
+  annotations:
+    downscaler/uptime: Mon-Fri 08:00-20:00 Europe/London
+  {{ end }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -20,7 +24,7 @@ spec:
         runAsGroup: 1001
       containers:
         - name: timecard-restapi
-          image: {{ .Values.image.repo }}timecard-restapi:{{ .Values.image.tag }}
+          image: {{ .Values.image.repo }}callisto-timecard-restapi:{{ .Values.image.tag }}
           imagePullPolicy: Always
           resources:
             requests:
@@ -39,7 +43,7 @@ spec:
           {{ toYaml .Values.env.kafka | nindent 12}}
       initContainers:
         - name: timecard-database
-          image: {{ .Values.image.repo }}timecard-database:{{ .Values.image.tag }}
+          image: {{ .Values.image.repo }}callisto-timecard-database:{{ .Values.image.tag }}
           imagePullPolicy: Always
           env: {{ toYaml .Values.env.database | nindent 12 }}
           args:
