@@ -1,3 +1,4 @@
+environment: prod
 branch: main
 
 service:
