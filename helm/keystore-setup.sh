@@ -47,7 +47,6 @@ fi
 # Create cert signed by CA
 if
   ARN=$(aws acm-pca issue-certificate --certificate-authority-arn $ca_arn --csr fileb://$alias.csr --signing-algorithm "SHA256WITHRSA" --validity Value=$days,Type="DAYS" --output text)
-  echo $ARN
 then
   echo "Arn Stored as env variable"
 else echo "Arn not stored"
