@@ -6,5 +6,9 @@ metadata:
   labels:
     app: {{ .Release.Name }}
 data:
-  keystore-setup.sh: |-
-{{ .Files.Get "keystore-setup.sh" | indent 4 }}
+  create-private-key.sh: |-
+{{ .Files.Get "create-private-key.sh" | indent 4 }}
+  aws-issue-certificate.sh: |-
+{{ .Files.Get "aws-issue-certificate.sh" | indent 4 }}
+  create-keystore.sh: |-
+{{ .Files.Get "create-keystore.sh" | indent 4 }}
