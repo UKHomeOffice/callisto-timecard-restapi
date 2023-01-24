@@ -37,7 +37,7 @@ spec:
             - name: http
               containerPort: 9090
           volumeMounts:
-            - mountPath: /tmp/timecard-restapi-keystore
+            - mountPath: /timecard-restapi-keystore
               name: keystore-volume
           env: {{ toYaml .Values.env.database | nindent 12 }}
           {{ toYaml .Values.env.kafka | nindent 12 }}
