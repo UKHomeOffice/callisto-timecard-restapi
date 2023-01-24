@@ -35,7 +35,7 @@ fi
 
 # Import cert into keystore
 if
-  keytool -importkeystore -srckeystore $alias-key-pair.p12 -destkeystore $alias.keystore.jks -srcstoretype pkcs12 -alias shared -storepass $password -keypass $password
+  keytool -importkeystore -srckeystore $alias-key-pair.p12 -srcstorepass $password -destkeystore $alias.keystore.jks -srcstoretype pkcs12 -alias shared -storepass $password -keypass $password
 then
   echo "stored certificate in keystore"
   echo "Ready for kafka operations"
