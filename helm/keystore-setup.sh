@@ -61,6 +61,16 @@ then
 else echo "Retrieving certificate failed"
 exit
 fi
+
+#Test connection
+if
+  openssl s_client -connect $(BOOTSTRAP_SERVER) -key $alias-key.pem -cert $alias-certificate.pem -brief
+then
+  echo "Connection to topic succesful"
+else echo "Connection to topic failed"
+exit
+fi
+
 # Import cert into keystore
 #if
 #  keytool -keystore $alias.keystore.jks -alias Callisto -import -noprompt -file $alias-certificate.pem -storepass $password -keypass $password

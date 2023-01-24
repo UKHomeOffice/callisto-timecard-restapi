@@ -54,7 +54,7 @@ spec:
             - "--liquibaseSchemaName=timecard"
             - "update"
         - name: timecard-keystore
-          image: quay.io/ukhomeofficedigital/java11-mvn-aws
+          image: quay.io/ukhomeofficedigital/aws-cli
           imagePullPolicy: Always
           env: {{ toYaml .Values.env.kafka | nindent 12 }}
           command: [ "/bin/sh" ]
@@ -65,14 +65,6 @@ spec:
               subPath: keystore-setup.sh
             - name: keystore-volume
               mountPath: /timecard-restapi-keystore
-        - name: timecard-kafka-test
-          image: ubuntu:latest
-          imagePullPolicy: Always
-          env: {{ toYaml .Values.env.kafka | nindent 12 }}
-          command: [" /bin/sh", "openssl s_client -connect $(BOOTSTRAP_SERVER) -key /timecard-restapi-keystore/$alias-key.pem -cert /timecard-restapi-keystore/$alias-certificate.pem -brief"]
-          volumeMounts:
-            - mountPath: /timecard-restapi-keystore
-              name: keystore-volume
       volumes:
       - name: keystore-script-volume
         configMap:
