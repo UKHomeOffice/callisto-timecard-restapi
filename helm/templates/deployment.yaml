@@ -36,7 +36,6 @@ spec:
           ports:
             - name: http
               containerPort: 9090
-          command: [ "/bin/sh", "cp -r /tmp/timecard-restapi-keystore /tmp/tomcat-docbase.*" ]
           volumeMounts:
             - mountPath: /tmp/timecard-restapi-keystore
               name: keystore-volume
