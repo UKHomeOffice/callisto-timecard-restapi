@@ -37,6 +37,9 @@ spec:
             - name: http
               containerPort: 9090
           volumeMounts:
+            - name: keystore-script-volume
+              mountPath: /scripts/create-private-key.sh
+              subPath: create-private-key.sh
             - mountPath: /timecard-restapi-keystore
               name: keystore-volume
           env: {{ toYaml .Values.env.database | nindent 12 }}
