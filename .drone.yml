@@ -291,6 +291,7 @@ platform:
 depends_on:
   - callisto-timecard-restapi-build
   - callisto-timecard-database-schema
+  - callisto-timecard-kafka-operations
 
 trigger:
   event:
