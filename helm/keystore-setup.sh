@@ -27,20 +27,10 @@ echo "Creating new certificate"
 
 # Create a private key
 if
-  keytool -genkey -validity $days -alias $alias -dname "C=GB, O=UK Home Office, CN=Callisto $alias" -keystore $alias.keystore.jks -keyalg RSA -storepass $password -keypass $password
+  openssl req -newkey rsa:2048 -nodes -keyout $alias-key.pem -subj "/CN=Accruals-Key" -out $alias.csr
 then
   echo "Created private key"
 else echo "Creating private key failed"
-exit
-fi
-
-# Create CSR
-if
-  keytool -keystore $alias.keystore.jks -alias $alias -certreq -file $alias.csr -storepass $password -keypass $password
-  sed -e 's/\ NEW//g' $alias.csr > $alias_temp.csr && mv $alias_temp.csr $alias.csr
-then
-  echo "Created CSR"
-else echo "Creating CSR failed"
 exit
 fi
 
@@ -72,11 +62,20 @@ else echo "Retrieving certificate failed"
 exit
 fi
 
-# Import cert into keystore
+#Test connection
 if
-  keytool -keystore $alias.keystore.jks -alias Callisto -import -noprompt -file $alias-certificate.pem -storepass $password -keypass $password
+  openssl s_client -connect $(BOOTSTRAP_SERVER) -key $alias-key.pem -cert $alias-certificate.pem -brief
 then
-  echo "stored certificate in keystore"
-else echo "Failed to store certificate in keystore"
+  echo "Connection to topic succesful"
+else echo "Connection to topic failed"
 exit
 fi
+
+# Import cert into keystore
+#if
+#  keytool -keystore $alias.keystore.jks -alias Callisto -import -noprompt -file $alias-certificate.pem -storepass $password -keypass $password
+#then
+#  echo "stored certificate in keystore"
+#else echo "Failed to store certificate in keystore"
+#exit
+#fi
