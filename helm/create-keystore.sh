@@ -26,7 +26,7 @@ fi
 
 #Create p12 file
 if
-  openssl pkcs12 -export -in $alias-certificate.pem -inkey $alias-key.pem -name shared > $alias-key-pair.p12
+  openssl pkcs12 -export -in $alias-certificate.pem -inkey $alias-key.pem  -passout pass:$password -name shared > $alias-key-pair.p12
 then
   echo "P12 file created succesfully"
 else echo "P12 file creation failed"
