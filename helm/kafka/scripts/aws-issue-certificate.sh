@@ -11,18 +11,13 @@ export AWS_ACCESS_KEY_ID=$3
 export AWS_SECRET_ACCESS_KEY=$4
 export AWS_DEFAULT_REGION=eu-west-2
 
-if test -f "$dir/${alias}_certificate.pem";
+if test -f "$dir/$alias-certificate.pem";
 then
-    echo "Certificate already created, checking validity..."
-  if openssl x509 -checkend 86400 -noout -in ${alias}_certificate.pem
-    then
-      echo "Certificate is valid, exiting"
-      exit
-    fi
+    echo "Certificate already created exiting"
+    exit
 fi
 
 echo "Creating new certificate"
-
 
 # Create cert signed by CA
 if

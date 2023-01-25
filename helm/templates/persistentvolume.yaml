@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: callisto-timecard-volume-claim
+  name: {{ .Release.Name }}-volume-claim
   namespace: callisto-{{ .Values.environment }}
 spec:
-  storageClassName: gp2
+  storageClassName: gp2-encrypted
   accessModes:
     - ReadWriteOnce
   volumeMode: Filesystem
