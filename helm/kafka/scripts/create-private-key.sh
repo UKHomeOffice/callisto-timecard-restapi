@@ -15,10 +15,29 @@ then
     fi
 fi
 
-rm $alias-key.pem
-rm $alias.csr
-rm $alias-certificate.pem
-rm $alias.keystore.jks
+if test -f "$dir/$alias-key.pem";
+then
+  echo "removing private key"
+  rm $alias-key.pem
+fi
+
+if test -f "$dir/$alias.csr";
+then
+  echo "removing csr"
+  rm $alias.csr
+fi
+
+if test -f "$dir/$alias-certificate.pem";
+then
+  echo "removing certificate"
+  rm $alias-certificate.pem
+fi
+
+if test -f "$dir/$alias.keystore.jks";
+then
+  echo "removing keystore"
+  rm $alias.keystore.jks
+fi
 
 echo "Creating private key & csr"
 if
