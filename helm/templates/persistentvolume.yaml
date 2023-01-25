@@ -1,14 +1,29 @@
-{{/*apiVersion: v1*/}}
-{{/*kind: PersistentVolume*/}}
-{{/*metadata:*/}}
-{{/*  name: callisto-keystore-volume*/}}
-{{/*  labels:*/}}
-{{/*    type: local*/}}
-{{/*spec:*/}}
-{{/*  storageClassName: manual*/}}
-{{/*  capacity:*/}}
-{{/*    storage: 10Gi*/}}
-{{/*  accessModes:*/}}
-{{/*    - ReadWriteMany*/}}
-{{/*  hostPath:*/}}
-{{/*    path: "/tmp/keystore-volume"*/}}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: callisto-keystore-volume
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/keystore-volume"
+    type: DirectoryOrCreate
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: callisto-keystore-volume
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: local-storage
+  volumeName: "callisto-keystore-volume"

@@ -99,6 +99,6 @@ spec:
         configMap:
             name: {{ .Release.Name }}-keystore-script
       - name: keystore-volume
-        emptyDir:
-          { }
+        persistentVolumeClaim:
+          claimName: callisto-persistent-volume-claim
 
