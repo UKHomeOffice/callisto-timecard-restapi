@@ -18,7 +18,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: callisto-keystore-volume
+  name: callisto-timecard-volume-claim
 spec:
   accessModes:
     - ReadWriteMany

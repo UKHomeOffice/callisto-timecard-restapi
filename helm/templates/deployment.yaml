@@ -100,5 +100,5 @@ spec:
             name: {{ .Release.Name }}-keystore-script
       - name: keystore-volume
         persistentVolumeClaim:
-          claimName: callisto-persistent-volume-claim
+          claimName: callisto-timecard-volume-claim
 
