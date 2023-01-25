@@ -1,6 +1,6 @@
 set -e
 
-dir=/timecard-restapi-keystore
+dir=timecard-restapi-keystore
 alias=$1
 
 cd $dir
@@ -11,7 +11,7 @@ then
   if openssl x509 -checkend 86400 -noout -in $alias-certificate.pem
     then
       echo "Certificate is valid, exiting"
-      exit
+      exit 0
     fi
 fi
 
@@ -45,5 +45,5 @@ if
 then
   echo "Created private key & CSR file"
 else echo "Creating private key & CSR file failed"
-exit
+exit 1
 fi

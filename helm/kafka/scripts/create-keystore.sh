@@ -12,7 +12,7 @@ cd $dir
 if test -f "$alias.keystore.jks";
 then
     echo "Keystore already created, exiting ..."
-    exit
+    exit 0
 fi
 
 # Test Connection
@@ -21,7 +21,7 @@ if
 then
   echo "Connection to msk succesful"
 else echo "Connection to msk failed"
-exit
+exit 1
 fi
 
 #Create p12 file
@@ -30,7 +30,7 @@ if
 then
   echo "P12 file created succesfully"
 else echo "P12 file creation failed"
-exit
+exit 1
 fi
 
 # Import cert into keystore

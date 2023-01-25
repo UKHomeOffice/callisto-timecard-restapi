@@ -14,7 +14,7 @@ export AWS_DEFAULT_REGION=eu-west-2
 if test -f "$alias-certificate.pem";
 then
     echo "Certificate already created exiting"
-    exit
+    exit 0
 fi
 
 echo "Creating new certificate"
@@ -25,14 +25,14 @@ if
 then
   echo "Arn Stored as env variable"
 else echo "Arn not stored"
-exit
+exit 1
 fi
 
 aws acm-pca wait certificate-issued --certificate-authority-arn $ca_arn --certificate-arn $ARN
 if [ $? -eq 255 ]
 then
   echo "Certificate not issued"
-  exit
+  exit 1
 else
   echo "Certificate issued" >&2
 fi
@@ -44,5 +44,5 @@ if
 then
   echo "Certificate retrieved"
 else echo "Retrieving certificate failed"
-exit
+exit 1
 fi
