@@ -9,7 +9,7 @@ bootstrap=$3
 
 cd $dir
 
-if test -f "$dir/$alias.keystore.jks";
+if test -f "$alias.keystore.jks";
 then
     echo "Keystore already created, exiting ..."
     exit

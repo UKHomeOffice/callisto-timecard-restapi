@@ -5,35 +5,35 @@ alias=$1
 
 cd $dir
 
-if test -f "$dir/${alias}-certificate.pem";
+if test -f "$alias-certificate.pem";
 then
     echo "Certificate already created, checking validity..."
-  if openssl x509 -checkend 86400 -noout -in ${alias}_certificate.pem
+  if openssl x509 -checkend 86400 -noout -in $alias_certificate.pem
     then
       echo "Certificate is valid, exiting"
       exit
     fi
 fi
 
-if test -f "$dir/$alias-key.pem";
+if test -f "$alias-key.pem";
 then
   echo "removing private key"
   rm $alias-key.pem
 fi
 
-if test -f "$dir/$alias.csr";
+if test -f "$alias.csr";
 then
   echo "removing csr"
   rm $alias.csr
 fi
 
-if test -f "$dir/$alias-certificate.pem";
+if test -f "$alias-certificate.pem";
 then
   echo "removing certificate"
   rm $alias-certificate.pem
 fi
 
-if test -f "$dir/$alias.keystore.jks";
+if test -f "$alias.keystore.jks";
 then
   echo "removing keystore"
   rm $alias.keystore.jks
