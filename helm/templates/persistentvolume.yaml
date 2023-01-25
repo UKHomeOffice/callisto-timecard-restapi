@@ -8,3 +8,6 @@ spec:
   accessModes:
     - ReadWriteMany
   volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 30Gi
