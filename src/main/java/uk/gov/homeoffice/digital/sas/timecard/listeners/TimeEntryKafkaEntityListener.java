@@ -1,5 +1,6 @@
 package uk.gov.homeoffice.digital.sas.timecard.listeners;
 
+import java.util.Arrays;
 import javax.persistence.PostPersist;
 import javax.persistence.PostUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 @Component
 public class TimeEntryKafkaEntityListener extends KafkaEntityListener<TimeEntry> {
 
+  private Environment environment;
+
   @Override
   public String resolveMessageKey(TimeEntry timeEntry) {
     return timeEntry.getOwnerId().toString();
@@ -20,16 +23,27 @@ public class TimeEntryKafkaEntityListener extends KafkaEntityListener<TimeEntry>
   public void setProducerService(KafkaProducerService<TimeEntry> kafkaProducerService,
                                  Environment environment) {
     super.createProducerService(kafkaProducerService);
+    this.environment = environment;
   }
 
   @PostPersist
   private void sendMessageOnCreate(TimeEntry resource) {
-    super.sendKafkaMessageOnCreate(resource);
+    if (isLocalHost()) {
+      super.sendKafkaMessageOnCreate(resource);
+    }
   }
 
   @PostUpdate
   private void sendMessageOnUpdate(TimeEntry resource) {
-    super.sendKafkaMessageOnUpdate(resource);
+    if (isLocalHost()) {
+      super.sendKafkaMessageOnUpdate(resource);
+    }
   }
 
+
+  // temporary check to prevent Kafka in dev environment
+  private boolean isLocalHost() {
+    return Arrays.stream(this.environment.getActiveProfiles()).toList()
+        .contains("localhost");
+  }
 }
