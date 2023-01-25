@@ -8,7 +8,7 @@ cd $dir
 if test -f "$alias-certificate.pem";
 then
     echo "Certificate already created, checking validity..."
-  if openssl x509 -checkend 86400 -noout -in $alias_certificate.pem
+  if openssl x509 -checkend 86400 -noout -in $alias-certificate.pem
     then
       echo "Certificate is valid, exiting"
       exit
