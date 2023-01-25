@@ -228,6 +228,7 @@ steps:
         - push
       branch:
         - main
+
 ---
 kind: pipeline
 type: kubernetes
