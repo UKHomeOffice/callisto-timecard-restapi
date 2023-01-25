@@ -4,10 +4,10 @@ metadata:
   name: callisto-timecard-volume-claim
   namespace: callisto-{{ .Values.environment }}
 spec:
-  storageClassName: io1-encrypted-eu-west-2
+  storageClassName: gp2-encrypted
   accessModes:
     - ReadWriteOnce
   volumeMode: Filesystem
   resources:
     requests:
-      storage: 30Gi
+      storage: 1Gi
