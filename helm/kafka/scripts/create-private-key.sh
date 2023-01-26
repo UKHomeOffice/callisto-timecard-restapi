@@ -2,6 +2,12 @@ set -e
 
 dir=timecard-restapi-keystore
 alias=$1
+environment=$2
+
+if $environment != dev
+then
+  exit 0
+fi
 
 cd $dir
 
