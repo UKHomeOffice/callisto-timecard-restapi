@@ -57,7 +57,7 @@ spec:
             - "--changeLogFile=changelog/db.changelog-main.yml"
             - "--liquibaseSchemaName=timecard"
             - "update"
-        {{- if .Values.environment "dev" }}
+        {{- if eq .Values.environment "dev" }}
         - name: timecard-private-key
           image: quay.io/ukhomeofficedigital/openjdk8-openssl
           imagePullPolicy: Always
