@@ -1,55 +1,55 @@
 set -e
 
-dir=timecard-restapi-keystore
-alias=$1
+service_alias=$1
+keystore_dir=/timecard-restapi-keystore
 days=100
 ca_arn=$2
-bootstrap=$3
+bootstrap_server_url=$3
 password=$4
 
 export AWS_ACCESS_KEY_ID=$5
 export AWS_SECRET_ACCESS_KEY=$6
 export AWS_DEFAULT_REGION=eu-west-2
 
-cd $dir
+cd $keystore_dir
 
-if test -f "$alias-certificate.pem";
+if test -f "$service_alias-certificate.pem";
 then
     echo "Certificate already created, checking validity..."
-  if openssl x509 -checkend 86400 -noout -in $alias-certificate.pem
+  if openssl x509 -checkend 86400 -noout -in $service_alias-certificate.pem
     then
       echo "Certificate is valid, exiting"
       exit 0
     fi
 fi
 
-if test -f "$alias-key.pem";
+if test -f "$service_alias-key.pem";
 then
   echo "removing private key"
-  rm $alias-key.pem
+  rm $service_alias-key.pem
 fi
 
-if test -f "$alias.csr";
+if test -f "$service_alias.csr";
 then
   echo "removing csr"
-  rm $alias.csr
+  rm $service_alias.csr
 fi
 
-if test -f "$alias-certificate.pem";
+if test -f "$service_alias-certificate.pem";
 then
   echo "removing certificate"
-  rm $alias-certificate.pem
+  rm $service_alias-certificate.pem
 fi
 
-if test -f "$alias.keystore.jks";
+if test -f "$service_alias.keystore.jks";
 then
   echo "removing keystore"
-  rm $alias.keystore.jks
+  rm $service_alias.keystore.jks
 fi
 #Create private key & csr
 echo "Creating private key & csr"
 if
-  openssl req -newkey rsa:2048 -nodes -keyout $alias-key.pem -subj "/CN=timecard-Key" -out $alias.csr
+  openssl req -newkey rsa:2048 -nodes -keyout $service_alias-key.pem -subj "/CN=timecard-Key" -out $service_alias.csr
 then
   echo "Created private key & CSR file"
 else
@@ -59,7 +59,7 @@ fi
 
 # issue certificate
 if
-  ARN=$(aws acm-pca issue-certificate --certificate-authority-arn $ca_arn --csr fileb://$alias.csr --signing-algorithm "SHA256WITHRSA" --validity Value=$days,Type="DAYS" --output text)
+  ARN=$(aws acm-pca issue-certificate --certificate-authority-arn $ca_arn --csr fileb://$service_alias.csr --signing-algorithm "SHA256WITHRSA" --validity Value=$days,Type="DAYS" --output text)
 then
   echo "Arn Stored as env variable"
 else
@@ -79,8 +79,8 @@ fi
 
 # Get Certificate from arn
 if
-  aws acm-pca get-certificate --certificate-authority-arn $ca_arn --certificate-arn $ARN | tr -d \" > $alias-certificate.pem
-  sed '1d;s/\    Certificate: //g;s/\    CertificateChain: //g;s/,//g;$d;s/\\n/\n/g' $alias-certificate.pem > $alias-certificate-temp.pem && mv $alias-certificate-temp.pem $alias-certificate.pem
+  aws acm-pca get-certificate --certificate-authority-arn $ca_arn --certificate-arn $ARN | tr -d \" > $service_alias-certificate.pem
+  sed '1d;s/\    Certificate: //g;s/\    CertificateChain: //g;s/,//g;$d;s/\\n/\n/g' $service_alias-certificate.pem > $service_alias-certificate-temp.pem && mv $service_alias-certificate-temp.pem $service_alias-certificate.pem
 then
   echo "Certificate retrieved"
 else
@@ -90,7 +90,7 @@ fi
 
 # Test Connection
 if
-  openssl s_client -connect $bootstrap -key $alias-key.pem -cert $alias-certificate.pem -brief
+  openssl s_client -connect $bootstrap_server_url -key $service_alias-key.pem -cert $service_alias-certificate.pem -brief
 then
   echo "Connection to msk succesful"
 else echo "Connection to msk failed"
@@ -98,7 +98,7 @@ exit 1
 fi
 
 #Create p12 file
-if openssl pkcs12 -export -in $alias-certificate.pem -inkey $alias-key.pem  -passout pass:$password -name shared > $alias-key-pair.p12
+if openssl pkcs12 -export -in $service_alias-certificate.pem -inkey $service_alias-key.pem  -passout pass:$password -name shared > $service_alias-key-pair.p12
 then
 echo "P12 file created succesfully"
 else
@@ -108,7 +108,7 @@ fi
 
 # Import cert into keystore
 if
-  keytool -importkeystore -srckeystore $alias-key-pair.p12 -srcstorepass $password -destkeystore $alias.keystore.jks -srcstoretype pkcs12 -alias shared -storepass $password -keypass $password
+  keytool -importkeystore -srckeystore $service_alias-key-pair.p12 -srcstorepass $password -destkeystore $service_alias.keystore.jks -srcstoretype pkcs12 -service_alias shared -storepass $password -keypass $password
 then
   echo "stored certificate in keystore"
   echo "Ready for kafka operations"
