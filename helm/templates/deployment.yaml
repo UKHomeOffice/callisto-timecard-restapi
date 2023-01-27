@@ -57,7 +57,7 @@ spec:
             - "--changeLogFile=changelog/db.changelog-main.yml"
             - "--liquibaseSchemaName=timecard"
             - "update"
-        {{- if eq .Values.environment "test" }}
+        {{- if eq .Values.environment "dev" }}
         - name: timecard-create-keystore
           image: {{ .Values.image.ecr_repo }}awscli-java-openssl:{{ .Values.image.tag }}
           imagePullPolicy: Always
