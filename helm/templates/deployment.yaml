@@ -59,7 +59,7 @@ spec:
             - "update"
         {{- if eq .Values.environment "dev" }}
         - name: timecard-create-keystore
-          image: {{ .Values.image.ecr_repo }}awscli-java-openssl:0.0.1
+          image: {{ .Values.image.ecr_repo }}awscli-java-openssl:latest
           imagePullPolicy: Always
           env: {{ toYaml .Values.env.kafka | nindent 12 }}
           command: [ "/bin/sh" ]
