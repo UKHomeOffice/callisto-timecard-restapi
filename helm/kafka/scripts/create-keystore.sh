@@ -84,7 +84,8 @@ fi
 if
   aws acm-pca get-certificate --certificate-authority-arn $ca_arn --certificate-arn $CERTIFICATE_ARN | tr -d \" > $service_alias-certificate.pem
   sed '1d;s/\    Certificate: //g;s/\    CertificateChain: //g;s/,//g;$d;s/\\n/\n/g' $service_alias-certificate.pem > $service_alias-certificate-temp.pem && mv $service_alias-certificate-temp.pem $service_alias-certificate.pem
-  openssl x509 -checkend 86400 -in $service_alias-certificate.pem ; then
+  openssl x509 -checkend 86400 -noout -in $service_alias-certificate.pem
+then
   echo "Certificate retrieved"
 else
   echo "Retrieving certificate failed"
@@ -112,7 +113,7 @@ fi
 
 # Import cert into keystore
 if
-  keytool -importkeystore -srckeystore $service_alias-key-pair.p12 -srcstorepass $password -destkeystore $service_alias.keystore.jks -srcstoretype pkcs12 -service_alias shared -storepass $password -keypass $password
+  keytool -importkeystore -srckeystore $service_alias-key-pair.p12 -srcstorepass $password -destkeystore $service_alias.keystore.jks -srcstoretype pkcs12 -alias shared -storepass $password -keypass $password
 then
   echo "stored certificate in keystore"
   echo "Ready for kafka operations"
