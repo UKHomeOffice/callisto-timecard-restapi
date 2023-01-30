@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Release.Name }}-volume-claim
+  name: {{ .Values.environment }}-volume-claim
   namespace: callisto-{{ .Values.environment }}
 spec:
-  storageClassName: io1-encrypted-eu-west-2
+  storageClassName: io2-encrypted-eu-west-2
   accessModes:
     - ReadWriteOnce
   volumeMode: Filesystem

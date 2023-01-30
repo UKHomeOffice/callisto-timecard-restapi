@@ -77,5 +77,5 @@ spec:
             name: {{ .Release.Name }}-keystore-script
       - name: keystore-volume
         persistentVolumeClaim:
-          claimName: {{ .Release.Name }}-volume-claim
+          claimName: {{ .Values.environment }}-volume-claim
 
