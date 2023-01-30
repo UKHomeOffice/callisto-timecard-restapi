@@ -51,7 +51,7 @@ fi
 
 #Create private key & csr
 echo "Creating private key & csr"
-if openssl req -newkey rsa:2048 -nodes -keyout $service_alias-key.pem -subj "/CN=timecard-Key" -out $service_alias.csr
+if openssl req -newkey rsa:2048 -nodes -keyout $service_alias-key.pem -subj "/CN=timecard-Key"  -days $days -out $service_alias.csr
  then
   echo "Created private key & CSR file"
    else
@@ -61,7 +61,7 @@ fi
 
 # issue certificate
 if
-  CERTIFICATE_ARN=$(aws acm-pca issue-certificate --certificate-authority-arn $ca_arn --csr fileb://$service_alias.csr --signing-algorithm "SHA256WITHRSA" --validity Value=100,Type="DAYS" --output text)
+  CERTIFICATE_ARN=$(aws acm-pca issue-certificate --certificate-authority-arn $ca_arn --csr fileb://$service_alias.csr --signing-algorithm "SHA256WITHRSA" --validity Value=$days,Type="DAYS" --output text)
   echo $CERTIFICATE_ARN
 then
   echo "Arn Stored as env variable"
