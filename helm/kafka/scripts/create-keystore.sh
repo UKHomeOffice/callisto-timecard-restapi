@@ -13,6 +13,8 @@ export AWS_DEFAULT_REGION=eu-west-2
 
 cd $keystore_dir
 
+rm $service_alias-certificate.pem
+
 if test -f "$service_alias-certificate.pem";
 then
   echo "Certificate already created, checking validity..."
