@@ -13,8 +13,6 @@ export AWS_DEFAULT_REGION=eu-west-2
 
 cd $keystore_dir
 
-rm $service_alias-certificate.pem
-
 if test -f "$service_alias-certificate.pem";
 then
   echo "Certificate already created, checking validity..."
@@ -51,7 +49,7 @@ fi
 
 #Create private key & csr
 echo "Creating private key & csr"
-if openssl req -newkey rsa:2048 -nodes -keyout $service_alias-key.pem -subj "/CN=timecard-Key"  -days $days -out $service_alias.csr
+if openssl req -newkey rsa:2048 -nodes -keyout $service_alias-key.pem -subj "/CN=timecard-Key" -out $service_alias.csr -days $days
  then
   echo "Created private key & CSR file"
    else
@@ -62,7 +60,6 @@ fi
 # issue certificate
 if
   CERTIFICATE_ARN=$(aws acm-pca issue-certificate --certificate-authority-arn $ca_arn --csr fileb://$service_alias.csr --signing-algorithm "SHA256WITHRSA" --validity Value=$days,Type="DAYS" --output text)
-  echo $CERTIFICATE_ARN
 then
   echo "Arn Stored as env variable"
 else
@@ -82,9 +79,7 @@ fi
 
 # Get Certificate from arn
 if
-  aws acm-pca get-certificate --certificate-authority-arn $ca_arn --certificate-arn $CERTIFICATE_ARN | tr -d \" > $service_alias-certificate.pem
-  sed '1d;s/\    Certificate: //g;s/\    CertificateChain: //g;s/,//g;$d;s/\\n/\n/g' $service_alias-certificate.pem > $service_alias-certificate-temp.pem && mv $service_alias-certificate-temp.pem $service_alias-certificate.pem
-  openssl x509 -checkend 86400 -noout -in $service_alias-certificate.pem
+  aws acm-pca get-certificate --certificate-authority-arn $ca_arn --certificate-arn $CERTIFICATE_ARN | jq '.Certificate, .CertificateChain' | sed 's/\\n/\n/g' | tr -d \" > $service_alias-certificate.pem
 then
   echo "Certificate retrieved"
 else
