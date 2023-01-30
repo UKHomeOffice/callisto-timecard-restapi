@@ -16,7 +16,8 @@ cd $keystore_dir
 if test -f "$service_alias-certificate.pem";
 then
   echo "Certificate already created, checking validity..."
-    if openssl x509 -checkend 86400 -noout -in $service_alias-certificate.pem
+    if openssl x509 -checkend 86400 -noout -in $service_alias-certificate.pem &&
+      openssl s_client -connect $bootstrap_server_url -key $service_alias-key.pem -cert $service_alias-certificate.pem -brief
     then
       echo "Certificate is valid, exiting"; exit 0;
     fi
