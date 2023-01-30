@@ -1,7 +1,7 @@
 set -e
 
 service_alias=$1
-keystore_dir=/timecard-restapi-keystore
+keystore_dir=/$1-keystore
 days=100
 ca_arn=$2
 bootstrap_server_url=$3
