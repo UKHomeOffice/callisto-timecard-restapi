@@ -1,14 +1,14 @@
 set -e
 
 service_alias=$1
-keystore_dir=/$1-keystore
+keystore_dir=$2
 days=100
-ca_arn=$2
-bootstrap_server_url=$3
-password=$4
+ca_arn=$3
+bootstrap_server_url=$4
+password=$5
 
-export AWS_ACCESS_KEY_ID=$5
-export AWS_SECRET_ACCESS_KEY=$6
+export AWS_ACCESS_KEY_ID=$6
+export AWS_SECRET_ACCESS_KEY=$7
 export AWS_DEFAULT_REGION=eu-west-2
 
 cd $keystore_dir

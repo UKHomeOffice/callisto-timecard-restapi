@@ -59,8 +59,10 @@ spec:
           image: {{ .Values.image.ecr_repo }}awscli-java-openssl:latest
           imagePullPolicy: Always
           env: {{ toYaml .Values.env.kafka | nindent 12 }}
+            - name: MOUNT_PATH
+              value: {{ .Values.keystore.volume_mountpath }}
           command: [ "/bin/sh" ]
-          args: [ "/scripts/create-keystore.sh", "timecard", "$(AWS_CERTIFICATE_AUTHORITY_ARN)", "$(BOOTSTRAP_SERVER)", "$(TIMECARD_KEYSTORE_PASSWORD)", "$(AWS_ACCESS_KEY)", "$(AWS_SECRET_KEY)"]
+          args: [ "/scripts/create-keystore.sh", "timecard", "$(MOUNT_PATH)" ,"$(AWS_CERTIFICATE_AUTHORITY_ARN)", "$(BOOTSTRAP_SERVER)", "$(TIMECARD_KEYSTORE_PASSWORD)", "$(AWS_ACCESS_KEY)", "$(AWS_SECRET_KEY)"]
           volumeMounts:
             - name: keystore-script-volume
               mountPath: {{ .Values.keystore.script_mountpath }}{{ .Values.keystore.script_subpath}}
