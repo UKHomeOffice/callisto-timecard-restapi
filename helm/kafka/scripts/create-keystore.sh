@@ -49,7 +49,7 @@ fi
 
 #Create private key & csr
 echo "Creating private key & csr"
-if openssl req -newkey rsa:2048 -nodes -keyout $service_alias-key.pem -subj "/CN=timecard-producer" -out $service_alias.csr -days $days
+if openssl req -newkey rsa:2048 -nodes -keyout $service_alias-key.pem -subj "/CN=$alias-producer" -out $service_alias.csr -days $days
  then
   echo "Created private key & CSR file"
    else

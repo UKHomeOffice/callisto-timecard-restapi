@@ -68,7 +68,7 @@ spec:
               mountPath: {{ .Values.keystore.script_mountpath }}{{ .Values.keystore.script_subpath}}
               subPath: {{ .Values.keystore.script_subpath }}
             - name: keystore-volume
-              mountPath: {{ .Values.keystore.mountpath }}
+              mountPath: {{ .Values.keystore.volume_mountpath }}
         {{ end }}
       volumes:
       - name: keystore-script-volume
