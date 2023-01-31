@@ -1,0 +1,4 @@
+# Timecard prefix permissions
+--topic timecard --resource-pattern-type prefixed
+User:kafka-producer     Write       Allow
+User:kafka-producer     Describe    Allow

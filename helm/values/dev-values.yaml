@@ -69,3 +69,5 @@ env:
         secretKeyRef:
           name: callisto-dev-keystore-password
           key: password
+    - name: KAFKA_TOPIC
+      value: callisto-timecard
