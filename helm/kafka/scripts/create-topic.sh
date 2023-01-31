@@ -5,19 +5,12 @@ topic=$2
 timecard_dir=/timecard-topic
 bootstrap_server=$3
 
-# Read contents of topics.txt and ensure each topic exists
-function create_topics(){
-  ensure_topic_exists
-}
-
 # Ensures a topic exists
-ensure_topic_exists() {
-    kafka-topics.sh --bootstrap-server $bootstrap_server --command-config ./$service_alias-topic/$service_alias-properties  \
-        --create --topic $topic --if-not-exists \
-        > /dev/null
+kafka-topics.sh --bootstrap-server $bootstrap_server --command-config ./$service_alias-topic/$service_alias-properties  \
+  --create --topic $topic --if-not-exists \
+    > /dev/null
 
-    echo Topic available: $topic
-}
+  echo Topic available: $topic
 
 function apply_permissions() {
     local acl_config line
