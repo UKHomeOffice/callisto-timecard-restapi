@@ -73,7 +73,7 @@ spec:
           image: quay.io/ukhomeofficedigital/kafka
           imagePullPolicy: Always
           command: [ "/bin/sh" ]
-          args: [ "scripts/create-topic.sh", "timecard",  "$(KAFKA_TOPIC)", "$(BOOTSTRAP_SERVER)" ]
+          args: [ "kafka/scripts/create-topic.sh", "timecard",  "$(KAFKA_TOPIC)", "$(BOOTSTRAP_SERVER)" ]
           volumeMounts:
             - name: script-volume
               mountPath: /scripts/topic
