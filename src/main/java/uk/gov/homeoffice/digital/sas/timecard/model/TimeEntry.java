@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PostRemove;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Getter;
@@ -71,5 +72,10 @@ public class TimeEntry extends BaseEntity {
   @UpdateTimestamp
   @JsonIgnore
   private LocalDateTime updatedAt;
+
+  @PostRemove
+  public void remove() {
+    System.out.println("removed");
+  }
 
 }
