@@ -80,4 +80,11 @@ or  IntelliJ IDEA has 2 properties that will allow you to execute `Build Project
       `Build project automatically`
    2) [Optional] Go to `Preferences/Advanced Settings` and select `Allow auto-make to start even if developed application is currently running`
 
+## Naming Convention for keystore mountpath
+
+We are currently using a persistent volume to create and store certificates in a keystore. The naming convention for the volume mounts is - 
+```
+<service_name>-keystore
+```
+
 
