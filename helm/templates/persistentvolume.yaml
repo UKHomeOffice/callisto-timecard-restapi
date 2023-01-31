@@ -4,7 +4,7 @@ metadata:
   name: {{ .Release.Name }}-volume-claim
   namespace: callisto-{{ .Values.environment }}
 spec:
-  storageClassName: io2-encrypted-eu-west-2
+  storageClassName: gp2-encrypted
   accessModes:
     - ReadWriteOnce
   volumeMode: Filesystem
