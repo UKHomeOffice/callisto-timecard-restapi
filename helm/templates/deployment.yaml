@@ -42,7 +42,6 @@ spec:
               name: keystore-volume
             - name: script-volume
               mountPath: /scripts/topic
-              subPath: topic-folder
           env: {{ toYaml .Values.env.database | nindent 12 }}
           {{ toYaml .Values.env.kafka | nindent 12 }}
       initContainers:
@@ -72,16 +71,16 @@ spec:
               subPath: {{ .Values.keystore.script_subpath }}
             - name: keystore-volume
               mountPath: {{ .Values.keystore.volume_mountpath }}
-        - name: timecard-create-topic
-          image: quay.io/ukhomeofficedigital/kafka
-          imagePullPolicy: Always
+{{/*        - name: timecard-create-topic*/}}
+{{/*          image: quay.io/ukhomeofficedigital/kafka*/}}
+{{/*          imagePullPolicy: Always*/}}
 {{/*          command: [ "/bin/sh" ]*/}}
 {{/*          args: [ "kafka/scripts/create-topic.sh", "timecard",  "$(KAFKA_TOPIC)", "$(BOOTSTRAP_SERVER)" ]*/}}
-          volumeMounts:
-            - name: script-volume
-              mountPath: /scripts
-            - name: keystore-volume
-              mountPath: {{ .Values.keystore.volume_mountpath }}
+{{/*          volumeMounts:*/}}
+{{/*            - name: script-volume*/}}
+{{/*              mountPath: /scripts*/}}
+{{/*            - name: keystore-volume*/}}
+{{/*              mountPath: {{ .Values.keystore.volume_mountpath }}*/}}
         {{ end }}
       volumes:
       - name: script-volume
