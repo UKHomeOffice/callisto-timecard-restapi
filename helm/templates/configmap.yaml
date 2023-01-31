@@ -2,9 +2,11 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-keystore-script
+  name: {{ .Release.Name }}-script
   labels:
     app: {{ .Release.Name }}
 data:
   create-keystore.sh: |-
 {{ .Files.Get "kafka/scripts/create-keystore.sh" | indent 4 }}
+  topic-folder: |-
+{{ .Files.Get "kafka/scripts/topic" | indent 4 }}
