@@ -1,0 +1,5 @@
+security.protocol=SSL
+ssl.truststore.location=/tmp/msk-connectivity/kafka_2.12-2.2.1/kafka.client.truststore.jks
+ssl.keystore.location=/tmp/msk-connectivity/kafka_2.12-2.2.1/kafka.client.keystore.jks
+ssl.keystore.password=password
+ssl.key.password=password

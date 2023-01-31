@@ -69,6 +69,17 @@ spec:
               subPath: {{ .Values.keystore.script_subpath }}
             - name: keystore-volume
               mountPath: {{ .Values.keystore.volume_mountpath }}
+        - name: timecard-create-topic
+          image:
+          imagePullPolicy: Always
+          command: [ "/bin/sh" ]
+          args: [ "scripts/create-topic.sh", "timecard",  "$(KAFKA_TOPIC)", "$(BOOTSTRAP_SERVER)" ]
+          volumeMounts:
+            - name: topic-script-volume
+              mountPath: /scripts/create-topic.sh
+              subPath: create-topic.sh
+            - name: keystore-volume
+              mountPath: {{ .Values.keystore.volume_mountpath }}
         {{ end }}
       volumes:
       - name: keystore-script-volume

@@ -1,21 +1,23 @@
 set -e
 
+service_alias=$1
+topic=$2
+timecard_dir=/timecard-topic
+bootstrap_server=$3
+
 # Read contents of topics.txt and ensure each topic exists
 function create_topics(){
-    local topics
-    local topic
-
-    # This could be improved by reading a list of all topics
-    # once and skipping any in the list as
-    # calling the kafka broker is slow
-    IFS=$'\n' topics=( $(cat $root_path/topics.txt) )
-    unset IFS
-    for topic in "${topics[@]}"
-    do
-        ensure_topic_exists $topic
-    done
+  ensure_topic_exists
 }
 
+# Ensures a topic exists
+ensure_topic_exists() {
+    kafka-topics.sh --bootstrap-server $bootstrap_server --command-config ./$service_alias-topic/$service_alias-properties  \
+        --create --topic $topic --if-not-exists \
+        > /dev/null
+
+    echo Topic available: $topic
+}
 
 #if no create topic
 
