@@ -6,7 +6,7 @@ metadata:
 spec:
   storageClassName: io2-encrypted-eu-west-2
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   volumeMode: Filesystem
   resources:
     requests:
