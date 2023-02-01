@@ -13,7 +13,7 @@ metadata:
     kubernetes.io/ingress.class: "nginx-internal"
     kubernetes.io/backend-protocol: "HTTPS"
     ingress.kubernetes.io/enable-cors: "true"
-    ingress.kubernetes.io/cors-allow-origin: "https://web.dev.callisto-notprod.homeoffice.gov.uk"
+    ingress.kubernetes.io/cors-allow-origin: "https://*.dev.callisto-notprod.homeoffice.gov.uk"
 spec:
   tls:
     - hosts:
