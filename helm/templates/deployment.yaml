@@ -58,7 +58,7 @@ spec:
         - name: timecard-create-keystore
           image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/awscli-java-openssl:latest
           imagePullPolicy: Always
-          env: {{ toYaml .Values.env.database | nindent 12 }}
+          env: {{ toYaml .Values.env.kafka | nindent 12 }}
           command: [ "/bin/sh" ]
           args: [ "/scripts/create-keystore.sh", "timecard-restapi", "/timecard-restapi-keystore" ,"$(AWS_CERTIFICATE_AUTHORITY_ARN)", "$(BOOTSTRAP_SERVER)", "$(TIMECARD_KEYSTORE_PASSWORD)", "$(AWS_ACCESS_KEY)", "$(AWS_SECRET_KEY)"]
           volumeMounts:
