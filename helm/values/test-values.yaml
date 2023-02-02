@@ -37,3 +37,4 @@ env:
         secretKeyRef:
           name: callisto-test-aurora
           key: port
+  kafka:
