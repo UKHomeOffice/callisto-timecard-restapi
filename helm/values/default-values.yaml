@@ -1,7 +1,0 @@
-image:
-  ecr_repo: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/
-
-keystore:
-  volume_mountpath: /timecard-keystore
-  script_mountpath: /scripts/
-  script_subpath: create-keystore.sh
