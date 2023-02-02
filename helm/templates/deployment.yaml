@@ -41,7 +41,9 @@ spec:
             - mountPath: /timecard-restapi-keystore
               name: keystore-volume
           env: {{ toYaml .Values.env.database | nindent 12 }}
+          {{- if eq .Values.environment "dev"}}
           {{ toYaml .Values.env.kafka | nindent 12 }}
+          {{ end }}
       initContainers:
         - name: timecard-database
           image: {{ .Values.image.repo }}callisto-timecard-database:{{ .Values.image.tag }}
