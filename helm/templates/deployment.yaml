@@ -22,6 +22,7 @@ spec:
       securityContext:
         runAsUser: 1001
         runAsGroup: 1001
+        fsGroup: 2000
       containers:
         - name: timecard-restapi
           image: {{ .Values.image.repo }}callisto-timecard-restapi:{{ .Values.image.tag }}
@@ -36,7 +37,11 @@ spec:
           ports:
             - name: http
               containerPort: 9090
+          volumeMounts:
+            - mountPath: /timecard-restapi-keystore
+              name: keystore-volume
           env: {{ toYaml .Values.env.database | nindent 12 }}
+          {{ toYaml .Values.env.kafka | nindent 12 }}
       initContainers:
         - name: timecard-database
           image: {{ .Values.image.repo }}callisto-timecard-database:{{ .Values.image.tag }}
@@ -49,3 +54,25 @@ spec:
             - "--changeLogFile=changelog/db.changelog-main.yml"
             - "--liquibaseSchemaName=timecard"
             - "update"
+        {{- if eq .Values.environment "dev" }}
+        - name: timecard-create-keystore
+          image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/awscli-java-openssl:latest
+          imagePullPolicy: Always
+          env: {{ toYaml .Values.env.kafka | nindent 12 }}
+          command: [ "/bin/sh" ]
+          args: [ "/scripts/create-keystore.sh", "timecard-restapi", "/timecard-restapi-keystore" ,"$(AWS_CERTIFICATE_AUTHORITY_ARN)", "$(BOOTSTRAP_SERVER)", "$(TIMECARD_KEYSTORE_PASSWORD)", "$(AWS_ACCESS_KEY)", "$(AWS_SECRET_KEY)"]
+          volumeMounts:
+            - name: keystore-script-volume
+              mountPath: /scripts/create-keystore.sh
+              subPath: create-keystore.sh
+            - name: keystore-volume
+              mountPath: /timecard-restapi-keystore
+        {{ end }}
+      volumes:
+      - name: keystore-script-volume
+        configMap:
+            name: {{ .Release.Name }}-keystore-script
+      - name: keystore-volume
+        persistentVolumeClaim:
+          claimName: {{ .Release.Name }}-volume-claim
+
