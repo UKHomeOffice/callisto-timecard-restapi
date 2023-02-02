@@ -42,7 +42,7 @@ spec:
               name: keystore-volume
           env: {{ toYaml .Values.env.database | nindent 12 }}
           {{- if .Values.env.kafka }}
-          {{ toYaml .Values.env.kafka | nindent 12 }}
+            {{ toYaml .Values.env.kafka | nindent 12 }}
           {{ end }}
       initContainers:
         - name: timecard-database

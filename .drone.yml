@@ -298,7 +298,7 @@ steps:
       values:
         - image.tag=${DRONE_COMMIT_SHA}
       values_files:
-        - ./helm/values/test-values.yaml
+        - ./helm/values/dev-values.yaml
       release: callisto-timecard-restapi
       kube_certificate:
         from_secret: notprod_kube_api_certificate
