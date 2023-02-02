@@ -38,3 +38,9 @@ env:
           name: callisto-test-aurora
           key: port
   kafka:
+    - name: BOOTSTRAP_SERVER
+      value: null
+    - name: AWS_ACCESS_KEY
+      value: null
+    - name: AWS_SECRET_KEY
+      value: null
