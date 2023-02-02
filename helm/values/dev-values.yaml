@@ -9,12 +9,6 @@ replicaCount: 1
 image:
   repo: quay.io/ukhomeofficedigital/
   tag: latest # this value will be overridden by drone.yml
-  ecr_repo: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/
-
-keystore:
-  volume_mountpath: /timecard-keystore
-  script_mountpath: /scripts/
-  script_subpath: create-keystore.sh
 
 env:
   database:
