@@ -10,6 +10,8 @@ password=$5
 export AWS_ACCESS_KEY_ID=$6
 export AWS_SECRET_ACCESS_KEY=$7
 export AWS_DEFAULT_REGION=eu-west-2
+echo "$6"
+echo "$7"
 
 cd $keystore_dir
 
@@ -49,7 +51,7 @@ fi
 
 #Create private key & csr
 echo "Creating private key & csr"
-if openssl req -newkey rsa:2048 -nodes -keyout $service_alias-key.pem -subj "/CN=$service_alias-producer" -out $service_alias.csr -days $days
+if openssl req -newkey rsa:2048 -nodes -keyout $service_alias-key.pem -subj "/CN=$service_alias-producer" -out $service_alias.csr
  then
   echo "Created private key & CSR file"
    else
@@ -59,6 +61,7 @@ fi
 
 # issue certificate
 if
+  echo "$ca_arn"
   CERTIFICATE_ARN=$(aws acm-pca issue-certificate --certificate-authority-arn $ca_arn --csr fileb://$service_alias.csr --signing-algorithm "SHA256WITHRSA" --validity Value=$days,Type="DAYS" --output text)
 then
   echo "Arn Stored as env variable"
