@@ -9,6 +9,7 @@ properties_file=$topic_dir/timecard-properties
 
 # Ensures a topic exists
 create_topic() {
+    echo "Checking if topic is available"
     cd $topic_dir
     local topic=$5
 
