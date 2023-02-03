@@ -43,7 +43,7 @@ set_permissions() {
     local topic=$1
     local type=$2
     local desired_permissions=$3
-    local existing_permissions=()
+    local existing_permissions=
     local set details principal operation permission
 
     echo Applying desired permissions for $topic $type
@@ -134,7 +134,7 @@ function apply_permissions() {
             # Reset the variables
             topic=${details[1]}
             pattern_type=${details[3]}
-            permissions=()
+            permissions=
         else
 
             # Add the desired permisions to the current permission
