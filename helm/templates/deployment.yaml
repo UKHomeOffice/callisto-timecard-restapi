@@ -71,17 +71,17 @@ spec:
               subPath: create-keystore.sh
             - name: keystore-volume
               mountPath: /timecard-restapi-keystore
-{{/*        - name: timecard-create-topic*/}}
-{{/*          image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/kafka*/}}
-{{/*          imagePullPolicy: Always*/}}
-{{/*          env: {{ toYaml .Values.env.kafka | nindent 12 }}*/}}
-{{/*          command: [ "/bin/sh" ]*/}}
-{{/*          args: [ "/scripts/kafka.sh", "$(BOOTSTRAP_SERVER)", "$(TIMECARD_KEYSTORE_PASSWORD)"]*/}}
-{{/*          volumeMounts:*/}}
-{{/*            - name: timecard-restapi-script-volume*/}}
-{{/*              mountPath: /scripts*/}}
-{{/*            - name: keystore-volume*/}}
-{{/*              mountPath: /timecard-restapi-keystore*/}}
+        - name: timecard-create-topic
+          image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/kafka
+          imagePullPolicy: Always
+          env: {{ toYaml .Values.env.kafka | nindent 12 }}
+          command: [ "/bin/sh" ]
+          args: [ "/scripts/kafka.sh", "$(BOOTSTRAP_SERVER)", "$(TIMECARD_KEYSTORE_PASSWORD)"]
+          volumeMounts:
+            - name: timecard-restapi-script-volume
+              mountPath: /scripts
+            - name: keystore-volume
+              mountPath: /timecard-restapi-keystore
         {{ end }}
       volumes:
       - name: timecard-restapi-script-volume

@@ -56,7 +56,7 @@ set_permissions() {
     IFS=' ' # set the input field separator
     for set in "${current_acl[@]}"
     do
-        details=($set)
+        details=$set
         principal=${details[0]}
         operation=${details[1]}
         permission=${details[2]}
@@ -75,7 +75,7 @@ set_permissions() {
             # Permission already exists so store for later so that we can
             # skip it to save time as it already exists
             echo Skipping: $principal $operation $permission
-            existing_permissions+=("$principal $operation $permission")
+            existing_permissions+="$principal $operation $permission"
         fi
     done
     unset IFS
@@ -143,7 +143,7 @@ function apply_permissions() {
             operation=${details[1]}
             permission=${details[2]}
 
-            permissions+=("$principal $operation $permission")
+            permissions+="$principal $operation $permission"
         fi
 
     done
