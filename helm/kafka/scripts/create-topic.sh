@@ -20,7 +20,6 @@ else
   exit 1
 fi
 
-cd /bin/sh
 echo "Checking if topic is available"
 echo $bootstrap_server
 if kafka-topics.sh --bootstrap-server $bootstrap_server --command-config $properties_file \
