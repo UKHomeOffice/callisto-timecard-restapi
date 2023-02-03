@@ -1,3 +1,5 @@
+#!/bin/bash
+
 set -e
 bootstrap_server=$1
 keystore_password=$2
