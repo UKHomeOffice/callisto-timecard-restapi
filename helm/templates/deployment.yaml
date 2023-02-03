@@ -76,8 +76,8 @@ spec:
           image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/kafka
           imagePullPolicy: Always
           env: {{ toYaml .Values.env.kafka | nindent 12 }}
-          command: [ "/bin/sh" ]
-          args: [ "/scripts/kafka.sh", "timecard-restapi", "$(BOOTSTRAP_SERVER)", "/timecard-restapi-keystore", "$(TIMECARD_KEYSTORE_PASSWORD)", "callisto-timecard"]
+{{/*          command: [ "/bin/sh" ]*/}}
+{{/*          args: [ "/scripts/kafka.sh", "timecard-restapi", "$(BOOTSTRAP_SERVER)", "/timecard-restapi-keystore", "$(TIMECARD_KEYSTORE_PASSWORD)", "callisto-timecard"]*/}}
           volumeMounts:
             - name: timecard-restapi-script-volume
               mountPath: /scripts
