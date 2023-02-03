@@ -12,6 +12,6 @@ echo "Starting kafka.sh"
 sed 's/#/'$keystore_password'/g' timecard-properties > timecard-properties-temp && mv timecard-properties-temp timecard-properties
 
 cd /scripts
-source ./create-topic.sh
+. ./create-topic.sh
 create_topic $bootstrap_server
 apply_permissions
