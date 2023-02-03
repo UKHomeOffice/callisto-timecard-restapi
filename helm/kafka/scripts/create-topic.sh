@@ -42,14 +42,14 @@ set_permissions() {
 
     local topic=$1
     local type=$2
-    local desired_permissions=($3)
+    local desired_permissions=$3
     local existing_permissions=()
     local set details principal operation permission
 
     echo Applying desired permissions for $topic $type
 
     # get the current ACL for given topic and pattern type
-    local current_acl=($(get_current_acl $topic $type))
+    local current_acl=$(get_current_acl $topic $type)
 
     # Iterate the current ACL to see if each existing permission
     # is still required. Remove any that are not desired
@@ -84,7 +84,7 @@ set_permissions() {
     # if they don't already exist
     for set in "${desired_permissions[@]}"
     do
-        details=($set)
+        details=$set
         principal=${details[0]}
         operation=${details[1]}
         permission=${details[2]}
@@ -112,13 +112,13 @@ function apply_permissions() {
 
     # read through the contents of the permissions file and
     # create the permissions. Ignore empty lines and comments
-    IFS=$'\n' acl_config=( $(grep --color=never "^[^#].*" $topic_dir/permissions.txt) )
+    IFS=$'\n' acl_config=$(grep --color=never "^[^#].*" $topic_dir/permissions.txt)
     unset IFS
     for line in "${acl_config[@]}"
     do
         # skip empty lines
         if [ -z "$line" ]; then continue; fi
-        details=($line)
+        details=$line
 
         # if first argument is --topic assume a new list of permissions are being specified
         if [ "${details[0]}" = "--topic" ]
