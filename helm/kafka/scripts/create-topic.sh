@@ -30,7 +30,7 @@ get_current_acl() {
     # form the output with the principals. Then use sed to strip out everything
     # but the required values leaving us with a space delimited list of existing
     # permissions
-    IFS=$'\n' acls=( $(kafka-acls.sh --bootstrap-server $kafka_host --command-config $properties_file --list --topic $topic --resource-pattern-type $type | grep -o -e '(principal.*)' | sed -E 's/.*principal=(.*), host=\*, operation=(.*), permissionType=(.*)\)/\1 \2 \3/') )
+    IFS=$'\n' acls=$(kafka-acls.sh --bootstrap-server $kafka_host --command-config $properties_file --list --topic $topic --resource-pattern-type $type | grep -o -e '(principal.*)' | sed -E 's/.*principal=(.*), host=\*, operation=(.*), permissionType=(.*)\)/\1 \2 \3/')
 
     echo "${acls[*]/%/$'\n'}"
 
