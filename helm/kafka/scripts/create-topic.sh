@@ -3,9 +3,7 @@ set -e
 # Ensures a topic exists
 function create_topic() {
     echo "Checking if topic is available"
-    cd $topic_dir
-    pwd
-    local topic=$1
+    local topic=callisto-timecard
 
     kafka-topics.sh --bootstrap-server $bootstrap_url--command-config $properties_file \
         --create --topic $topic --if-not-exists \

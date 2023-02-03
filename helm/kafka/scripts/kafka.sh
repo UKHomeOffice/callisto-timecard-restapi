@@ -1,22 +1,13 @@
 set -e
-service_alias=$1
-bootstrap_url=$2
-keystore_dir=$3
-properties_file=$topic_dir/timecard-properties
 keystore_password=$1
 
-cd $keystore_dir
-cp /scripts/timecard-properties $keystore_dir
+cd scripts
 ls -ltr
 
 echo "Starting kafka.sh"
 #put password in timecard-properties
 sed 's/#/'$keystore_password'/g' timecard-properties > timecard-properties-temp && mv timecard-properties-temp timecard-properties
 
-cd /
-pwd
-ls -ltr
-cd $keystore_dir
-source /scripts/create-topic.sh
-create_topic callisto-timecard
+source create-topic.sh
+create_topic
 apply_permissions
