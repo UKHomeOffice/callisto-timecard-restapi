@@ -13,6 +13,6 @@ echo "Starting kafka.sh"
 #put password in timecard-properties
 sed 's/#/'$keystore_password'/g' timecard-properties > timecard-properties-temp && mv timecard-properties-temp timecard-properties
 
-source ./create-topic.sh
+source ./scripts/create-topic.sh
 create_topic callisto-timecard
 apply_permissions
