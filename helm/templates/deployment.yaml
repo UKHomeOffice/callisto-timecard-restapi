@@ -21,7 +21,7 @@ spec:
     spec:
       securityContext:
         runAsUser: 1001
-        runAsGroup: 1001
+        runAsGroup: 100
         fsGroup: 2000
       containers:
         - name: timecard-restapi
@@ -75,8 +75,8 @@ spec:
           image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/kafka
           imagePullPolicy: Always
           env: {{ toYaml .Values.env.kafka | nindent 12 }}
-          command: [ "/bin/sh" ]
-          args: [ "/scripts/create-topic.sh", "$(BOOTSTRAP_SERVER)", "$(TIMECARD_KEYSTORE_PASSWORD)"]
+          command: [ "/bin/bash" ]
+          args: [ "/scripts/create-acls.sh", "$(BOOTSTRAP_SERVER)", "$(TIMECARD_KEYSTORE_PASSWORD)"]
           volumeMounts:
             - name: timecard-restapi-script-volume
               mountPath: /scripts
