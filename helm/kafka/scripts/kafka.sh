@@ -17,6 +17,6 @@ cd /
 pwd
 ls -ltr
 cd $keystore_dir
-source ./scripts/create-topic.sh
+source /scripts/create-topic.sh
 create_topic callisto-timecard
 apply_permissions
