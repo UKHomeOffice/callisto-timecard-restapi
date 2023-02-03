@@ -6,6 +6,7 @@ root_path=${BASH_SOURCE[0]%/*}
 
 bootstrap_server=$1
 keystore_password=$2
+properties_file=/tmp/timecard-properties
 
 cp scripts/timecard-properties tmp/
 cd /tmp
@@ -19,5 +20,5 @@ else
   exit 1
 fi
 
-ensure_topic_exists $bootstrap_server
+ensure_topic_exists callisto-timecard
 apply_permissions
