@@ -1,3 +1,5 @@
+#!/bin/bash
+
 set -e
 
 properties_file=/tmp/timecard-properties
