@@ -1,13 +1,15 @@
 set -e
-keystore_password=$1
+bootstrap_server=$1
+keystore_password=$2
 
-cd scripts
-ls -ltr
+cd /tmp
+cp /scripts/timecard-properties /tmp
 
 echo "Starting kafka.sh"
 #put password in timecard-properties
 sed 's/#/'$keystore_password'/g' timecard-properties > timecard-properties-temp && mv timecard-properties-temp timecard-properties
 
+cd /scripts
 source create-topic.sh
-create_topic
+create_topic $bootstrap_server
 apply_permissions

@@ -1,5 +1,8 @@
 set -e
 
+properties_file=/tmp/timecard-properties
+bootstrap_server=$1
+
 # Ensures a topic exists
 function create_topic() {
     echo "Checking if topic is available"

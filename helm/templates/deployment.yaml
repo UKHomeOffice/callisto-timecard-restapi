@@ -1,6 +1,6 @@
 ---
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: {{ .Release.Name }}
   labels:
@@ -11,7 +11,6 @@ metadata:
   {{ end }}
 spec:
   replicas: {{ .Values.replicaCount }}
-  serviceName: {{ .Release.Name }}
   selector:
     matchLabels:
       app: {{ .Release.Name }}
@@ -38,11 +37,6 @@ spec:
           ports:
             - name: http
               containerPort: 9090
-          volumeMounts:
-            - mountPath: /timecard-restapi-keystore
-              name: keystore-volume
-            - name: timecard-restapi-script-volume
-              mountPath: /scripts
           env: {{ toYaml .Values.env.database | nindent 12 }}
           {{- if .Values.env.kafka }}
             {{ toYaml .Values.env.kafka | nindent 12 }}
@@ -72,17 +66,17 @@ spec:
               subPath: create-keystore.sh
             - name: keystore-volume
               mountPath: /timecard-restapi-keystore
-{{/*        - name: timecard-create-topic*/}}
-{{/*          image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/kafka*/}}
-{{/*          imagePullPolicy: Always*/}}
-{{/*          env: {{ toYaml .Values.env.kafka | nindent 12 }}*/}}
-{{/*          command: [ "/bin/sh" ]*/}}
-{{/*          args: [ "/scripts/kafka.sh", "timecard-restapi", "$(BOOTSTRAP_SERVER)", "/timecard-restapi-keystore", "$(TIMECARD_KEYSTORE_PASSWORD)", "callisto-timecard"]*/}}
-{{/*          volumeMounts:*/}}
-{{/*            - name: timecard-restapi-script-volume*/}}
-{{/*              mountPath: /scripts*/}}
-{{/*            - name: keystore-volume*/}}
-{{/*              mountPath: /timecard-restapi-keystore*/}}
+        - name: timecard-create-topic
+          image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/kafka
+          imagePullPolicy: Always
+          env: {{ toYaml .Values.env.kafka | nindent 12 }}
+          command: [ "/bin/sh" ]
+          args: [ "/scripts/kafka.sh", "$(BOOTSTRAP_SERVER)", "$(TIMECARD_KEYSTORE_PASSWORD)"]
+          volumeMounts:
+            - name: timecard-restapi-script-volume
+              mountPath: /scripts
+            - name: keystore-volume
+              mountPath: /timecard-restapi-keystore
         {{ end }}
       volumes:
       - name: timecard-restapi-script-volume
