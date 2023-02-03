@@ -76,7 +76,7 @@ spec:
           imagePullPolicy: Always
           env: {{ toYaml .Values.env.kafka | nindent 12 }}
           command: [ "/bin/sh" ]
-          args: [ "/scripts/kafka.sh", "$(BOOTSTRAP_SERVER)", "$(TIMECARD_KEYSTORE_PASSWORD)"]
+          args: [ "/scripts/create-topic.sh", "$(BOOTSTRAP_SERVER)", "$(TIMECARD_KEYSTORE_PASSWORD)"]
           volumeMounts:
             - name: timecard-restapi-script-volume
               mountPath: /scripts
