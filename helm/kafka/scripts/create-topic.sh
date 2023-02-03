@@ -1,17 +1,11 @@
-#!/bin/bashsxz78
 set -e
 
-service_alias=$1
-bootstrap_url=$2
-topic_dir=$3
-properties_file=$topic_dir/timecard-properties
-
-
 # Ensures a topic exists
-create_topic() {
+function create_topic() {
     echo "Checking if topic is available"
     cd $topic_dir
-    local topic=$5
+    pwd
+    local topic=$1
 
     kafka-topics.sh --bootstrap-server $bootstrap_url--command-config $properties_file \
         --create --topic $topic --if-not-exists \
@@ -117,7 +111,7 @@ function apply_permissions() {
 
     # read through the contents of the permissions file and
     # create the permissions. Ignore empty lines and comments
-    IFS=$'\n' acl_config=( $(grep --color=never "^[^#].*" $root_path/permissions.txt) )
+    IFS=$'\n' acl_config=( $(grep --color=never "^[^#].*" $topic_dir/permissions.txt) )
     unset IFS
     for line in "${acl_config[@]}"
     do
