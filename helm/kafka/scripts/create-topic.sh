@@ -80,7 +80,6 @@ set_permissions() {
         # If the desired permission doesn't exist, add it
         if [[ ! " ${existing_permissions[*],,} " =~ " ${principal,,} ${operation,,} ${permission,,} " ]]
         then
-          TODO: "WORK OUT WHY THIS DOES NOT WORK"
             echo Adding: ${principal} ${operation} ${permission}
             kafka-acls.sh --bootstrap-server $bootstrap_server\
                 --command-config $properties_file \
