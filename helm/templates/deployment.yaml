@@ -1,6 +1,6 @@
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ .Release.Name }}
   labels:
@@ -11,6 +11,9 @@ metadata:
   {{ end }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  serviceName: {{.Release.Name }}
+  updateStrategy:
+    type: RollingUpdate
   selector:
     matchLabels:
       app: {{ .Release.Name }}
