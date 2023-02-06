@@ -1,10 +1,32 @@
 apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{.Release.Name }}-efs-volume
+spec:
+  capacity:
+    storage: 100Gi # Doesn't really matter, as EFS does not enforce it anyway
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  mountOptions:
+    - hard
+    - nfsvers=4.1
+    - rsize=1048576
+    - wsize=1048576
+    - timeo=600
+    - retrans=2
+  nfs:
+    path: /
+    server: fs-340268328991.efs.eu-west-2.amazonaws.com
+
+---
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ .Release.Name }}-volume-claim
   namespace: callisto-{{ .Values.environment }}
 spec:
-  storageClassName: gp2-encrypted
+  storageClassName: {{.Release.Name }}-efs-volume
   accessModes:
     - ReadWriteOnce
   volumeMode: Filesystem
