@@ -116,5 +116,5 @@ else
   echo "Failed to store certificate in keystore"
   exit 1
 fi
-cp -r $keystore_dir /tmp
+
 echo "Success!!"
