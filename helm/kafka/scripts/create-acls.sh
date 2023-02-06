@@ -14,9 +14,9 @@ cd /tmp
 #put password in timecard-properties
 if sed 's/#/'$keystore_password'/g' timecard-properties > timecard-properties-temp && mv timecard-properties-temp timecard-properties
 then
-  echo "properties file updated"
+  echo "Properties file updated"
 else
-  echo "properties file failed to update"
+  echo "Properties file failed to update"
   exit 1
 fi
 

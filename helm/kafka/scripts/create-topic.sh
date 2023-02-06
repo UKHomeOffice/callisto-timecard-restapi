@@ -88,6 +88,7 @@ set_permissions() {
                 --${permission,,}-principal $principal --operation $operation \
                 > /dev/null
         fi
+        echo "Success!!"
     done
 }
 
