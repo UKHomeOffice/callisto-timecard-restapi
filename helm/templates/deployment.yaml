@@ -21,7 +21,7 @@ spec:
     spec:
       securityContext:
         runAsUser: 1001
-        runAsGroup: 100
+        runAsGroup: 1001
         fsGroup: 2000
       containers:
         - name: timecard-restapi
