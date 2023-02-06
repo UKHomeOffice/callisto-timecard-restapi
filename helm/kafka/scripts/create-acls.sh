@@ -20,5 +20,5 @@ else
   exit 1
 fi
 
-ensure_topic_exists callisto-timecard
+ensure_topic_exists $3
 apply_permissions

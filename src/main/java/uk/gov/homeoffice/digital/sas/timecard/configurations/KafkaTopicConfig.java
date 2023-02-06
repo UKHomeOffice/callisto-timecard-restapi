@@ -13,7 +13,7 @@ public class KafkaTopicConfig {
 
   private final String topicName;
 
-  public KafkaTopicConfig(@Value("${kafka.topic}") String topicName) {
+  public KafkaTopicConfig(@Value("${spring.kafka.template.default-topic}") String topicName) {
     this.topicName = topicName;
   }
 
