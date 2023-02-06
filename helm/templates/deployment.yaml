@@ -88,6 +88,5 @@ spec:
         configMap:
             name: {{ .Release.Name }}-scripts
       - name: keystore-volume
-        persistentVolumeClaim:
-          claimName: {{ .Release.Name }}-volume-claim
+        emptyDir: { }
 
