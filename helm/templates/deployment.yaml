@@ -58,7 +58,7 @@ spec:
             - "--changeLogFile=changelog/db.changelog-main.yml"
             - "--liquibaseSchemaName=timecard"
             - "update"
-        {{- if eq .Values.environment "dev" }}
+        {{- if .Values.env.kafka }}
         - name: timecard-create-keystore
           image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/awscli-java-openssl:latest
           imagePullPolicy: Always
