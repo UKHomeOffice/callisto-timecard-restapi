@@ -1,13 +1,13 @@
-name: callisto-timecard-restapi
+environment: dev
+branch: main #overridden for branch deploys
 
 service:
-  name: callisto-timecard-restapi
   port: 3000
 
 replicaCount: 1
 
 image:
-  repo: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/
+  repo: quay.io/ukhomeofficedigital/
   tag: latest # this value will be overridden by drone.yml
 
 env:
@@ -43,3 +43,23 @@ env:
         secretKeyRef:
           name: callisto-dev-bootstrap
           key: bootstrap_server1
+    - name: AWS_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: callisto-dev-msk
+          key: certificate_authority_access_keys
+    - name: AWS_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: callisto-dev-msk
+          key: certificate_authority_secret_keys
+    - name: AWS_CERTIFICATE_AUTHORITY_ARN
+      valueFrom:
+        secretKeyRef:
+          name: callisto-dev-msk
+          key: certificate_authority_arn
+    - name: TIMECARD_KEYSTORE_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: callisto-dev-keystore-password
+          key: password

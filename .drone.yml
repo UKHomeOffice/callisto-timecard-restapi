@@ -10,7 +10,7 @@ platform:
 trigger:
   event:
     exclude:
-    - promote
+      - promote
 
 steps:
   - name: lint_dockerfiles
@@ -97,6 +97,19 @@ trigger:
     exclude:
       - promote
 
+timecard_quay_settings: &timecard_quay_settings
+  pull: if-not-exists
+  image: plugins/docker
+  settings:
+    registry: quay.io
+    repo: quay.io/ukhomeofficedigital/callisto-timecard-restapi
+    username:
+      from_secret: quay_robot_name
+    password:
+      from_secret: quay_robot_token
+    file: Dockerfile
+
+
 steps:
   - name: fetch
     image: alpine/git
@@ -138,24 +151,26 @@ steps:
         exclude:
           - pull_request
 
+  - name: build_tag_push_quay_branch
+    <<: *timecard_quay_settings
+    depends_on:
+      - build
+    settings:
+      tags:
+        - ${DRONE_COMMIT_SHA}
+        - ${DRONE_SOURCE_BRANCH%%/*}
+    when:
+      event:
+        - pull_request
 
-  - name: build_tag_push_ecr
-    pull: if-not-exists
-    image: plugins/ecr
+  - name: build_tag_push_quay
+    <<: *timecard_quay_settings
     depends_on:
       - sonar
-    environment:
-      AWS_REGION: eu-west-2
     settings:
-      access_key:
-        from_secret: ecr_timecard_restapi_access_key_id
-      secret_key:
-        from_secret: ecr_timecard_restapi_secret_access_key
-      repo: callisto/timecard-restapi
-      registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
       tags:
-      - latest
-      - ${DRONE_COMMIT_SHA}
+        - latest
+        - ${DRONE_COMMIT_SHA}
     when:
       event:
         - push
@@ -179,21 +194,32 @@ trigger:
     exclude:
       - promote
 
+database_quay_settings: &database_quay_settings
+  pull: if-not-exists
+  image: plugins/docker
+  settings:
+    registry: quay.io
+    repo: quay.io/ukhomeofficedigital/callisto-timecard-database
+    username:
+      from_secret: quay_robot_name
+    password:
+      from_secret: quay_robot_token
+    dockerfile: db/Dockerfile
+    context: db
+
 steps:
-  - name: build_tag_push_ecr
-    pull: if-not-exists
-    image: plugins/ecr
-    environment:
-      AWS_REGION: eu-west-2
+  - name: build_tag_push_quay_branch
+    <<: *database_quay_settings
     settings:
-      access_key:
-        from_secret: ecr_timecard_database_access_key_id
-      secret_key:
-        from_secret: ecr_timecard_database_secret_access_key
-      repo: callisto/timecard-database
-      dockerfile: db/Dockerfile
-      context: db
-      registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
+      tags:
+        - ${DRONE_COMMIT_SHA}
+        - ${DRONE_SOURCE_BRANCH%%/*}
+    when:
+      event: pull_request
+
+  - name: build_tag_push_quay
+    <<: *database_quay_settings
+    settings:
       tags:
         - latest
         - ${DRONE_COMMIT_SHA}
@@ -202,6 +228,43 @@ steps:
         - push
       branch:
         - main
+
+---
+kind: pipeline
+type: kubernetes
+name: callisto-timecard-restapi-branch-deploy
+
+platform:
+  os: linux
+  arch: amd64
+
+depends_on:
+  - callisto-timecard-restapi-build
+  - callisto-timecard-database-schema
+
+trigger:
+  event:
+    - pull_request
+
+steps:
+  - name: branch_deploy
+    image: pelotech/drone-helm3
+    settings:
+      namespace: callisto-dev
+      mode: upgrade
+      chart: ./helm
+      values:
+        - image.tag=${DRONE_COMMIT_SHA}
+        - branch=${DRONE_SOURCE_BRANCH%%/*}
+      values_files:
+        - ./helm/values/dev-values.yaml
+      release: callisto-timecard-restapi-${DRONE_SOURCE_BRANCH%%/*}
+      kube_certificate:
+        from_secret: notprod_kube_api_certificate
+      kube_api_server:
+        from_secret: not_prod_kube_api_url
+      kube_token:
+        from_secret: dev_kube_token
 
 ---
 kind: pipeline
@@ -321,7 +384,6 @@ steps:
       kube_token:
         from_secret: prod_kube_token
 
-
 ---
 kind: pipeline
 type: kubernetes
@@ -331,6 +393,9 @@ trigger:
   status:
     - success
     - failure
+  exclude:
+    event:
+      - pull_request
 
 depends_on:
   - callisto-timecard-restapi-build
@@ -339,12 +404,12 @@ depends_on:
   - callisto-timecard-restapi-prod-deploy
 
 slack: &slack
-    image: plugins/slack
-    settings:
-      webhook:
-        from_secret: slack_webhook_url
-      channel: callisto-tech-notifications
-      username: Drone
+  image: plugins/slack
+  settings:
+    webhook:
+      from_secret: slack_webhook_url
+    channel: callisto-tech-notifications
+    username: Drone
 
 steps:
   - name: slack
@@ -370,7 +435,7 @@ steps:
     settings:
       template: >
         {{#success build.status}}
-          :rocket: Successful *{{uppercasefirst build.deployTo}}* deployment for *{{repo.name}}* <${DRONE_BUILD_LINK}| build #{{build.number}}>.          
+          :rocket: Successful *{{uppercasefirst build.deployTo}}* deployment for *{{repo.name}}* <${DRONE_BUILD_LINK}| build #{{build.number}}>.
         {{else}}
           :zombie: Problem *{{uppercasefirst build.deployTo}}* deployment failed for *{{repo.name}}* <${DRONE_BUILD_LINK}| build #{{build.number}}>.
         {{/success}}
@@ -386,6 +451,9 @@ name: urgent notifications
 trigger:
   status:
     - failure
+  event:
+    exclude:
+      - pull_request
 
 depends_on:
   - callisto-timecard-restapi-build

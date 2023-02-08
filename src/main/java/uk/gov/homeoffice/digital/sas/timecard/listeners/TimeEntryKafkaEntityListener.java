@@ -40,7 +40,8 @@ public class TimeEntryKafkaEntityListener extends KafkaEntityListener<TimeEntry>
     }
   }
 
-  // temporary check to prevent running Kafka in dev environment
+
+  // temporary check to prevent Kafka in dev environment
   private boolean isLocalHost() {
     return Arrays.stream(this.environment.getActiveProfiles()).toList()
         .contains("localhost");
