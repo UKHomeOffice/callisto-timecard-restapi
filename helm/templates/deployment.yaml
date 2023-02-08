@@ -40,6 +40,8 @@ spec:
           volumeMounts:
             - mountPath: /timecard-restapi-keystore
               name: keystore-volume
+            - name: timecard-restapi-script-volume
+              mountPath: /scripts
           env: {{ toYaml .Values.env.database | nindent 12 }}
           {{- if .Values.env.kafka }}
             {{ toYaml .Values.env.kafka | nindent 12 }}
@@ -64,16 +66,27 @@ spec:
           command: [ "/bin/sh" ]
           args: [ "/scripts/create-keystore.sh", "timecard-restapi", "/timecard-restapi-keystore" ,"$(AWS_CERTIFICATE_AUTHORITY_ARN)", "$(BOOTSTRAP_SERVER)", "$(TIMECARD_KEYSTORE_PASSWORD)", "$(AWS_ACCESS_KEY)", "$(AWS_SECRET_KEY)"]
           volumeMounts:
-            - name: keystore-script-volume
+            - name: timecard-restapi-script-volume
               mountPath: /scripts/create-keystore.sh
               subPath: create-keystore.sh
             - name: keystore-volume
               mountPath: /timecard-restapi-keystore
+        - name: timecard-create-topic
+          image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/kafka
+          imagePullPolicy: Always
+          env: {{ toYaml .Values.env.kafka | nindent 12 }}
+          command: [ "/bin/bash" ]
+          args: [ "/scripts/create-acls.sh", "$(BOOTSTRAP_SERVER)", "$(TIMECARD_KEYSTORE_PASSWORD)", "$(TIMECARD_TOPIC)"]
+          volumeMounts:
+            - name: timecard-restapi-script-volume
+              mountPath: /scripts
+            - name: keystore-volume
+              mountPath: /timecard-restapi-keystore
         {{ end }}
       volumes:
-      - name: keystore-script-volume
+      - name: timecard-restapi-script-volume
         configMap:
-            name: {{ .Release.Name }}-keystore-script
+            name: {{ .Release.Name }}-scripts
       - name: keystore-volume
         emptyDir: { }
 
