@@ -63,3 +63,5 @@ env:
         secretKeyRef:
           name: callisto-dev-keystore-password
           key: password
+    - name: TIMECARD_TOPIC
+      value: callisto-timecard-timeentries
