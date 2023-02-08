@@ -64,4 +64,4 @@ env:
           name: callisto-dev-keystore-password
           key: password
     - name: TIMECARD_TOPIC
-      value: callisto-timecard-accruals
+      value: callisto-timecard-timeentries
