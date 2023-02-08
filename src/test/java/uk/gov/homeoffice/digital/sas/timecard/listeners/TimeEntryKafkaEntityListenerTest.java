@@ -17,7 +17,7 @@ import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerServi
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 
 @ExtendWith(MockitoExtension.class)
-class TimeEntryKafkaEntityListenerTest {
+class TimeEntryKafkaEntityListenerTest { //TODO: rename this to just KafkaEntityListenerTest then create a new integration test for TimeEntryKafkaEntityListenerTest
 
   private final static UUID OWNER_ID = UUID.randomUUID();
   private TimeEntry timeEntry;
@@ -62,4 +62,16 @@ class TimeEntryKafkaEntityListenerTest {
             timeEntry,
             KafkaAction.UPDATE);
   }
+
+  @Test
+  void sendKafkaMessageOnDelete_timeEntryEntity_sendMessageMethodInvokedAsExpected() {
+    kafkaEntityListener.sendKafkaMessageOnDelete(timeEntry);
+
+    Mockito.verify(kafkaProducerService)
+        .sendMessage(OWNER_ID.toString(),
+            TimeEntry.class,
+            timeEntry,
+            KafkaAction.DELETE);
+  }
+
 }

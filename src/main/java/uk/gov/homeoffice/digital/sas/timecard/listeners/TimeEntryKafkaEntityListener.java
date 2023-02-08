@@ -2,6 +2,7 @@ package uk.gov.homeoffice.digital.sas.timecard.listeners;
 
 import java.util.Arrays;
 import javax.persistence.PostPersist;
+import javax.persistence.PostRemove;
 import javax.persistence.PostUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -37,6 +38,13 @@ public class TimeEntryKafkaEntityListener extends KafkaEntityListener<TimeEntry>
   private void sendMessageOnUpdate(TimeEntry resource) {
     if (isLocalHost()) {
       super.sendKafkaMessageOnUpdate(resource);
+    }
+  }
+
+  @PostRemove
+  private void sendMessageOnDelete(TimeEntry resource) {
+    if (isLocalHost()) {
+      super.sendKafkaMessageOnDelete(resource);
     }
   }
 

@@ -21,6 +21,11 @@ public abstract class KafkaEntityListener<T> {
     sendMessage(resource, KafkaAction.UPDATE);
   }
 
+  protected void sendKafkaMessageOnDelete(T resource) {
+    sendMessage(resource, KafkaAction.DELETE);
+  }
+
+  @SuppressWarnings("unchecked")
   private void sendMessage(T resource, KafkaAction action) {
     kafkaProducerService.sendMessage(resolveMessageKey(resource),
         (Class<T>) resource.getClass(), resource, action);

@@ -15,7 +15,9 @@ services:
       - "5005:5005"
     volumes:
       - ./:/app
-      - $HOME/.m2:/Users/1000/.m2 # Required for jparest dependencies (artifactory)
+      - $HOME/.m2:/Users/1000/.m2 # Required for jparest dependencies (artifactory) TODO: hardcode $HOME path as it doens't seem to be working
+      - keystore:/keystore
+      - ./repository:/Users/1000/.m2/repository
     environment:
       - DATABASE_NAME=callisto
       - DATABASE_USERNAME=postgres
@@ -24,8 +26,24 @@ services:
       - DATABASE_PORT=5432
       - HOME=/Users/1000
       - MAVEN_USER_HOME=/Users/1000/.m2
+      - SPRING_PROFILES_ACTIVE=localhost
+      - BOOTSTRAP_SERVER=172.22.0.4:9093
+      - KEYSTORE_LOCATION=file://keystore/timecard-restapi/timecard-restapi.keystore.jks
+      - TRUSTSTORE_LOCATION=file://keystore/timecard-restapi/timecard-restapi.truststore.jks
+      - TIMECARD_KEYSTORE_PASSWORD=changeit
     depends_on:
       - timecard-database-migrations
+    networks:
+      - callisto
+
+#  TODO: delete when finished debugging
+  dns-utils:
+    image: tutum/dnsutils
+    entrypoint: [ "sleep", "1h" ]
+
+    working_dir: '/app'
+    volumes:
+      - ./:/app
     networks:
       - callisto
 
@@ -49,4 +67,9 @@ networks:
   callisto:
     name: callisto-localdev_callisto
     driver: bridge
+    external: true
+
+volumes:
+  keystore:
+    name: callisto-localdev_keystore
     external: true
