@@ -37,3 +37,31 @@ env:
         secretKeyRef:
           name: callisto-prod-1
           key: port
+  kafka:
+    - name: BOOTSTRAP_SERVER
+      valueFrom:
+        secretKeyRef:
+          name: callisto-prod-bootstrap
+          key: bootstrap_server1
+    - name: AWS_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: callisto-prod-msk
+          key: certificate_authority_access_keys
+    - name: AWS_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: callisto-prod-msk
+          key: certificate_authority_secret_keys
+    - name: AWS_CERTIFICATE_AUTHORITY_ARN
+      valueFrom:
+        secretKeyRef:
+          name: callisto-prod-msk
+          key: certificate_authority_arn
+    - name: TIMECARD_KEYSTORE_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: callisto-prod-keystore-password
+          key: password
+    - name: TIMECARD_TOPIC
+      value: callisto-timecard-timeentries
