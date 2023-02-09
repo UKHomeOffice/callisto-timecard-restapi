@@ -15,7 +15,7 @@ services:
       - "5005:5005"
     volumes:
       - ./:/app
-      - $HOME/.m2:/Users/1000/.m2 # Required for jparest dependencies (artifactory) TODO: hardcode $HOME path as it doens't seem to be working
+      - $HOME/.m2:/Users/1000/.m2 # Required for jparest dependencies (artifactory)
       - keystore:/keystore
       - ./repository:/Users/1000/.m2/repository
     environment:
@@ -27,9 +27,9 @@ services:
       - HOME=/Users/1000
       - MAVEN_USER_HOME=/Users/1000/.m2
       - SPRING_PROFILES_ACTIVE=localhost
-      - BOOTSTRAP_SERVER=172.22.0.4:9093
-      - KEYSTORE_LOCATION=file://keystore/timecard-restapi/timecard-restapi.keystore.jks
-      - TRUSTSTORE_LOCATION=file://keystore/timecard-restapi/timecard-restapi.truststore.jks
+      - BOOTSTRAP_SERVER=kafka:9093
+      - KEYSTORE_LOCATION=file://keystore/kafka/kafka.keystore.jks #TODO: Change back to timercard-restapi?
+      - TRUSTSTORE_LOCATION=file://keystore/kafka/kafka.truststore.jks
       - TIMECARD_KEYSTORE_PASSWORD=changeit
     depends_on:
       - timecard-database-migrations

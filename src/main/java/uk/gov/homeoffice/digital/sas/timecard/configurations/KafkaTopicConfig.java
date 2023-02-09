@@ -11,6 +11,7 @@ import org.springframework.kafka.config.TopicBuilder;
 @Profile("localhost")
 public class KafkaTopicConfig {
 
+  //TODO: most likeley can delete this config class
   private final String topicName;
 
   public KafkaTopicConfig(@Value("${kafka.topic}") String topicName) {
