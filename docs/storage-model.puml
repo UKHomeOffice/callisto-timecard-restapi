@@ -1,0 +1,92 @@
+@startuml
+
+entity person {
+  * id : number <<PK>>
+  --
+  * fte_value: double 
+  * location_id: varchar <<FK>>
+  * employment_type_id <<FK>>
+}
+
+entity time_entry {
+  * id : number <<PK>>
+  --
+  * version
+  * owner_id: number <<FK>>
+  * start_time: date_time
+  * end_time: date_time
+  * time_period_type_id: number <<FK>>  
+  shift_type: varchar
+  meal_break_allowance: double
+  meal_break_taken: double
+}
+
+entity day_note {
+  * id : number <<PK>>
+  --
+  * content: varchar
+  * author_id: number <<FK>>
+  * date: date
+}
+
+entity flex_change {
+  * id : number <<PK>>
+  --
+  * time_entry_id: number <<FK>>
+  * flex_change_type_id: number <<FK>>
+  * authorised_by_id: number <<FK>>
+  * author_id: number <<FK>>
+  note: varchar
+}
+
+entity time_period_type {
+  * id : number <<PK>>
+  --
+  * name: varchar
+}
+
+entity flex_change_type {
+  * id : number <<PK>>
+  --
+  * name: varchar
+}
+
+entity public_holiday_by_location {
+  * location_id : varchar <<PK>>
+  --
+  * public_holiday_countrycode : string
+}
+
+entity public_holiday {
+  * country_code : varchar <<PK>>
+  * public_holiday_date : date <PK>
+  --
+  * public_holiday_type : enumeration
+}
+
+entity night_hour_range {
+  * employment_type_id : string <<PK>>
+  --
+  * start_time : time
+  * end_time : time
+}
+
+entity ahw_contract_definition {
+  * employment_type_id : string <<PK>>
+  --
+  * min_night_duration : float
+  * premod_nominal_daily rate : float
+  * mod_nominal_daily rate : float
+}
+
+time_entry ||.. person
+time_entry ||.. time_period_type
+flex_change ||.. time_entry
+flex_change ||.. person
+flex_change ||.. flex_change_type
+person ||.. night_hour_range
+person ||.. ahw_contract_definition
+person ||.. public_holiday_by_location
+public_holiday_by_location ||.. public_holiday
+
+@enduml
