@@ -1,6 +1,6 @@
 Feature: Timecard
 
-  Scenario: Create Time Entry
+  Scenario: Create time entry with no end time
 
     Given Trevor is a user
     And the valid time-entries are
@@ -22,6 +22,7 @@ Feature: Timecard
       | actualStartTime | Instant | isEqualTo("2022-11-16T08:00:00Z")                 |
       | actualEndTime   | Instant | isNull()                                          |
 
+
   Scenario: Create time entry with end date before start date
 
     Given Trevor is a user
@@ -42,6 +43,7 @@ Feature: Timecard
       | [0].message | String  | isEqualTo("End time must be after start time") |
       | [0].data    | String  | isNull()                                       |
 
+
   Scenario: Create time entry with invalid date format
 
     Given Trevor is a user
@@ -59,6 +61,7 @@ Feature: Timecard
       | field   | type    | expectation                                                                            |
       | message | String  | startsWith("Cannot deserialize value of type `java.util.Date` from String ""foobar""") |
 
+
   Scenario: Create Time Entry with overlapping entries
 
     Given Trevor is a user
@@ -67,11 +70,11 @@ Feature: Timecard
       {
         "ownerId": "00000000-0000-0000-0000-000000000001",
         "timePeriodTypeId": "00000000-0000-0000-0000-000000000001",
-        "actualStartTime": "2022-11-16T08:00:00Z",
+        "actualStartTime": "2022-11-16T08:10:00Z",
         "actualEndTime": "2022-11-16T10:00:00Z"
       }
       """
-    Given Trevor has previously committed the initial time-entries in the timecard service
+    And Trevor creates the initial time-entries in the timecard service
     And the new time-entries are
       """
       {
@@ -87,7 +90,7 @@ Feature: Timecard
       | field                          | type   | expectation                                                         |
       | [0].field                      | String | isEqualTo("startAndEndTime")                                        |
       | [0].message                    | String | isEqualTo("Time periods must not overlap with another time period") |
-      | [0].data[0].startTime          | String | isEqualTo("2022-11-16T08:00:00.000+00:00")                          |
+      | [0].data[0].startTime          | String | isEqualTo("2022-11-16T08:10:00.000+00:00")                          |
       | [0].data[0].endTime            | String | isEqualTo("2022-11-16T10:00:00.000+00:00")                          |
       | [0].data[0].timePeriodTypeId   | String | isEqualTo("00000000-0000-0000-0000-000000000001")                   |
 
