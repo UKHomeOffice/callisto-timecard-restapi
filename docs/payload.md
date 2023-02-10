@@ -6,12 +6,12 @@ The TimeCard container exposes a number of models to clients. The TimeEntry is a
 
 # Schemas
 
-<h2 id="tocS_Note">Note</h2>
+<h2 id="tocS_DayNote">DayNote</h2>
 <!-- backwards compatibility -->
-<a id="schemanote"></a>
-<a id="schema_Note"></a>
-<a id="tocSnote"></a>
-<a id="tocsnote"></a>
+<a id="schemadaynote"></a>
+<a id="schema_DayNote"></a>
+<a id="tocSdaynote"></a>
+<a id="tocsdaynote"></a>
 
 ```json
 {
@@ -32,7 +32,7 @@ A note is used to carry arbitrary textual information about a date. Notes are im
 |content|string|true|none|Holds the note's text|
 |date|string(date)|true|none|The date that the note is associated with|
 |createdAt|string(date-time)|false|none|Assigned by the TimeCard container when the note is persisted|
-|authorId|number|false|none|The id of the Person who wrote the note's content|
+|authorId|number|true|none|The id of the Person who wrote the note's content|
 
 <h2 id="tocS_TimePeriodType">TimePeriodType</h2>
 <!-- backwards compatibility -->
@@ -79,10 +79,10 @@ A way to categorise time periods (e.g. a shift, a standard rest day). Depending 
   "timeEntryId": 0,
   "version": 0,
   "ownerId": 0,
-  "actualStartTime": "2019-08-24T14:15:22Z",
-  "actualEndTime": "2019-08-24T14:15:22Z",
-  "plannedStartTime": "2019-08-24T14:15:22Z",
-  "plannedEndTime": "2019-08-24T14:15:22Z",
+  "startTime": "2019-08-24T14:15:22Z",
+  "endTime": "2019-08-24T14:15:22Z",
+  "mealBreakAllowance": 0,
+  "mealBreakTaken": 0,
   "shiftType": "string",
   "timePeriodType": {
     "timePeriodTypeId": 0,
@@ -102,10 +102,71 @@ A TimeEntry carries the time periods during which employees have performed a bus
 |timeEntryId|number|false|none|Assigned by the TimeCard container|
 |version|number|false|none|The version of the TimeEntry as assigned by the TimeCard container. This value changes when the resource is created, updated, or deleted.|
 |ownerId|number|true|none|The id of the Person who owns this TimeEntry i.e. the Person who has performed the activity in the given time period|
-|actualStartTime|string(date-time)|true|none|The start time of the activity that was worked (to the minute)|
-|actualEndTime|string(date-time)|false|none|The end time of the activity that was worked (to the minute)|
-|plannedStartTime|string(date-time)|false|none|The start time of the activity that has been planned (to the minute)|
-|plannedEndTime|string(date-time)|false|none|The end time of the activity that has been planned (to the minute)|
+|startTime|string(date-time)|true|none|The start time of the activity that was worked (to the minute)|
+|endTime|string(date-time)|false|none|The end time of the activity that was worked (to the minute)|
+|mealBreakAllowance|integer|false|none|The maximum amount of time that the worker is entitled to take (in minutes)|
+|mealBreakTaken|integer|false|none|The amount of time that the worker has taken for their meal break (in minutes)|
 |shiftType|string|false|none|a descriptor for the shift (eg 'early shift')|
 |timePeriodType|[TimePeriodType](#schematimeperiodtype)|true|none|The type of time entry (e.g. a shift, a standard rest day)|
+
+<h2 id="tocS_FlexChangeType">FlexChangeType</h2>
+<!-- backwards compatibility -->
+<a id="schemaflexchangetype"></a>
+<a id="schema_FlexChangeType"></a>
+<a id="tocSflexchangetype"></a>
+<a id="tocsflexchangetype"></a>
+
+```json
+{
+  "flexChangeTypeId": 0,
+  "name": "string"
+}
+
+```
+
+The type of flexible change. The type drives business rules that govern how much notice the shift worker must have been given. In addition certain types of FlexChange cannot be combined on the same TimeEntry
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|flexChangeTypeId|number|false|none|the identifier for this FlexChangeType|
+|name|string|true|none|the display name of this FlexChangeType|
+
+<h2 id="tocS_FlexChange">FlexChange</h2>
+<!-- backwards compatibility -->
+<a id="schemaflexchange"></a>
+<a id="schema_FlexChange"></a>
+<a id="tocSflexchange"></a>
+<a id="tocsflexchange"></a>
+
+```json
+{
+  "flexChangeType": {
+    "flexChangeTypeId": 0,
+    "name": "string"
+  },
+  "authorisedBy": "string",
+  "note": "string",
+  "createdAt": "2019-08-24T14:15:22Z",
+  "authorId": 0,
+  "timeEntryId": 0,
+  "timeEntryVersion": 0
+}
+
+```
+
+A FlexChange is used to carry details of an alteration to a planned shift. For a FlexChange to be created there are business rules governing how far in advance of the shift the alteration was made
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|flexChangeType|[FlexChangeType](#schemaflexchangetype)|true|none|Holds the note's text|
+|authorisedBy|string|true|none|free text field holding the name of the person who authorised the creation of the flexible change. Authorisation is handled outside of Callisto|
+|note|string|false|none|hold arbitrary information about the flexible change|
+|createdAt|string(date-time)|false|none|Assigned by the TimeCard container when the FlexChange is persisted|
+|authorId|number|true|none|The id of the Person who created the FlexChange|
+|timeEntryId|number|true|none|The id of the TimeEntry associated with the FlexChange|
+|timeEntryVersion|number|true|none|The version of the TimeEntry associated with the FlexChange|
 

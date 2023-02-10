@@ -13,40 +13,6 @@ export AWS_DEFAULT_REGION=eu-west-2
 
 cd $keystore_dir
 
-if test -f "$service_alias-certificate.pem";
-then
-  echo "Certificate already created, checking validity..."
-    if openssl x509 -checkend 86400 -noout -in $service_alias-certificate.pem &&
-      openssl s_client -connect $bootstrap_server_url -key $service_alias-key.pem -cert $service_alias-certificate.pem -brief
-    then
-      echo "Certificate is valid, exiting"; exit 0;
-    fi
-fi
-
-if test -f "$service_alias-key.pem"
-then
-  echo "removing private key"
-  rm $service_alias-key.pem
-fi
-
-if test -f "$service_alias.csr"
-then
-  echo "removing csr"
-  rm $service_alias.csr
-fi
-
-if test -f "$service_alias-certificate.pem"
-then
-  echo "removing certificate"
-  rm $service_alias-certificate.pem
-fi
-
-if test -f "$service_alias.keystore.jks"
- then
-  echo "removing keystore"
-  rm $service_alias.keystore.jks
-fi
-
 #Create private key & csr
 echo "Creating private key & csr"
 if openssl req -newkey rsa:2048 -nodes -keyout $service_alias-key.pem -subj "/CN=$service_alias-producer" -out $service_alias.csr

@@ -1,0 +1,4 @@
+security.protocol=SSL
+ssl.keystore.location=/timecard-restapi-keystore/timecard-restapi.keystore.jks
+ssl.keystore.password=#
+ssl.key.password=#

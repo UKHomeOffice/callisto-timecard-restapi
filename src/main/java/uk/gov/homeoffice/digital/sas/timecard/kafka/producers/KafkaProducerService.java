@@ -21,7 +21,7 @@ public class KafkaProducerService<T> {
 
   public KafkaProducerService(
       KafkaTemplate<String, KafkaEventMessage<T>> kafkaTemplate,
-      @Value("${kafka.topic}") String topicName,
+      @Value("${spring.kafka.template.default-topic}") String topicName,
       @Value("${projectVersion}") String projectVersion) {
     this.kafkaTemplate = kafkaTemplate;
     this.topicName = topicName;
