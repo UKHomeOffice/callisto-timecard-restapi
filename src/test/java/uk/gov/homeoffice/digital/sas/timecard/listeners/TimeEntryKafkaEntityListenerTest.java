@@ -17,7 +17,7 @@ import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerServi
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 
 @ExtendWith(MockitoExtension.class)
-class TimeEntryKafkaEntityListenerTest { //TODO: rename this to just KafkaEntityListenerTest then create a new integration test for TimeEntryKafkaEntityListenerTest
+class TimeEntryKafkaEntityListenerTest {
 
   private final static UUID OWNER_ID = UUID.randomUUID();
   private TimeEntry timeEntry;
