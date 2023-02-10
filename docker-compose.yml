@@ -28,22 +28,11 @@ services:
       - MAVEN_USER_HOME=/Users/1000/.m2
       - SPRING_PROFILES_ACTIVE=localhost
       - BOOTSTRAP_SERVER=kafka:9093
-      - KEYSTORE_LOCATION=file://keystore/kafka/kafka.keystore.jks #TODO: Change back to timercard-restapi?
+      - KEYSTORE_LOCATION=file://keystore/kafka/kafka.keystore.jks
       - TRUSTSTORE_LOCATION=file://keystore/kafka/kafka.truststore.jks
       - TIMECARD_KEYSTORE_PASSWORD=changeit
     depends_on:
       - timecard-database-migrations
-    networks:
-      - callisto
-
-#  TODO: delete when finished debugging
-  dns-utils:
-    image: tutum/dnsutils
-    entrypoint: [ "sleep", "1h" ]
-
-    working_dir: '/app'
-    volumes:
-      - ./:/app
     networks:
       - callisto
 
