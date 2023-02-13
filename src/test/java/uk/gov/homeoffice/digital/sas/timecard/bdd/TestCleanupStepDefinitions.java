@@ -33,23 +33,25 @@ public class TestCleanupStepDefinitions {
   private static void deleteTimeEntries(JpaRestApiClient jpaRestApiClient, Persona admin,
                                 TimeEntry[] timeEntries) {
     for (TimeEntry timeEntry : timeEntries) {
-      System.out.println(timeEntry);
-      var id = timeEntry.getId().toString();
-
-      jpaRestApiClient.delete(admin, "timecard", "time-entries", id);
+      jpaRestApiClient.delete(
+          admin,
+          "timecard",
+          "time-entries",
+          timeEntry.getId().toString());
     }
   }
 
   private static TimeEntry[] getCreatedTimeEntries(JpaRestApiClient jpaRestApiClient,
                                                        HttpResponseManager httpResponseManager,
                                                        ObjectMapper objectMapper, Persona admin) {
-    var apiResponse = jpaRestApiClient.retrieve(admin, "timecard", "time-entries", null);
+    var apiResponse = jpaRestApiClient.retrieve(
+        admin,
+        "timecard",
+        "time-entries",
+        null);
 
-    httpResponseManager.addResponse(apiResponse.getBaseResourceUri(),
-        apiResponse.getResponse());
+    var responseBody = apiResponse.getResponse().getBody().jsonPath().getMap("");
 
-    var root = httpResponseManager.getLastResponse().getBody().jsonPath().getMap("");
-
-    return objectMapper.convertValue(root.get("items"), TimeEntry[].class);
+    return objectMapper.convertValue(responseBody.get("items"), TimeEntry[].class);
   }
 }
