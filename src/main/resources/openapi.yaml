@@ -6,13 +6,13 @@ info:
 paths: {}
 components:
   schemas:
-    Note:
+    DayNote:
       type: object
       description: A note is used to carry arbitrary textual information about a date. Notes are immutable.
       required: 
         - content
         - date
-        - author
+        - authorId
       properties:
         content:
           description: Holds the note's text
@@ -50,7 +50,7 @@ components:
       description: A TimeEntry carries the time periods during which employees have performed a business activity (e.g. PCP, dog handling etc) or HR activity (e.g. leaves, training etc). TimeEntry is the actual recording of hours done by employees as per their roster. Encapsulates day and time (to the minute). The TimeEntry also holds the concept of planned time. In this instance the owner of the TimeEntry has been rostered to perform some work in the future at a specified time. Not all TimeEntry owners are subject to their time being planned out therefore the fields related to planned time are optional. It is also possible to create a TimeEntry with just an actualStartTime and to provide the actualEndTime later. However if planned time is provided then both the start and end must be set.
       type: object
       required:
-        - actualStartTime
+        - startTime
         - timePeriodType
         - ownerId
       properties:
@@ -63,22 +63,20 @@ components:
         ownerId:
             description: The id of the Person who owns this TimeEntry i.e. the Person who has performed the activity in the given time period
             type: number
-        actualStartTime: 
+        startTime: 
           description: The start time of the activity that was worked (to the minute)
           type: string
           format: date-time
-        actualEndTime: 
+        endTime: 
           description: The end time of the activity that was worked (to the minute)
           type: string
           format: date-time
-        plannedStartTime: 
-          description: The start time of the activity that has been planned (to the minute)
-          type: string
-          format: date-time
-        plannedEndTime: 
-          description: The end time of the activity that has been planned (to the minute)
-          type: string
-          format: date-time   
+        mealBreakAllowance: 
+          description: The maximum amount of time that the worker is entitled to take (in minutes)
+          type: integer
+        mealBreakTaken: 
+          description: The amount of time that the worker has taken for their meal break (in minutes)
+          type: integer  
         shiftType:
           description: a descriptor for the shift (eg 'early shift')
           type: string
@@ -86,3 +84,48 @@ components:
             description: The type of time entry (e.g. a shift, a standard rest day)
             allOf:
               - $ref: '#/components/schemas/TimePeriodType'
+    FlexChangeType:
+      type: object
+      description: The type of flexible change. The type drives business rules that govern how much notice the shift worker must have been given. In addition certain types of FlexChange cannot be combined on the same TimeEntry 
+      required:
+            - name
+            - valueType
+      properties:
+        flexChangeTypeId: 
+          description: the identifier for this FlexChangeType
+          type: number
+        name:
+          description: the display name of this FlexChangeType
+          type: string
+    FlexChange:
+      type: object
+      description: A FlexChange is used to carry details of an alteration to a planned shift. For a FlexChange to be created there are business rules governing how far in advance of the shift the alteration was made
+      required: 
+        - flexChangeType
+        - authorisedBy
+        - authorId
+        - timeEntryId
+        - timeEntryVersion
+      properties:
+        flexChangeType:
+          description: Holds the note's text
+          $ref: '#/components/schemas/FlexChangeType'
+        authorisedBy:
+          description: free text field holding the name of the person who authorised the creation of the flexible change. Authorisation is handled outside of Callisto
+          type: string
+        note:
+           description: hold arbitrary information about the flexible change
+           type: string
+        createdAt:
+          description: Assigned by the TimeCard container when the FlexChange is persisted
+          type: string
+          format: date-time
+        authorId:
+            description: The id of the Person who created the FlexChange
+            type: number 
+        timeEntryId:
+            description: The id of the TimeEntry associated with the FlexChange
+            type: number  
+        timeEntryVersion:
+            description: The version of the TimeEntry associated with the FlexChange
+            type: number   

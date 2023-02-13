@@ -31,7 +31,7 @@ services:
 
 
   timecard-database-migrations:
-    image: "340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/timecard-database:latest"
+    image: "liquibase/liquibase:4.15.0"
     volumes:
       - ./db/changelog:/liquibase/changelog
       - ./db/sql:/liquibase/sql
