@@ -52,7 +52,7 @@ Feature: Timecard
       {
         "ownerId":  "00000000-0000-0000-0000-000000000001",
         "timePeriodTypeId": "00000000-0000-0000-0000-000000000001",
-        "actualStartTime": "foobar",
+        "actualStartTime": "foobar"
       }
       """
     When Trevor creates the initial time-entries in the timecard service
@@ -61,6 +61,24 @@ Feature: Timecard
       | field   | type    | expectation                                                                            |
       | message | String  | startsWith("Cannot deserialize value of type `java.util.Date` from String ""foobar""") |
 
+
+  Scenario: Create time entry with no start date
+
+    Given Trevor is a user
+    And the initial time-entries are
+      """
+      {
+        "ownerId":  "00000000-0000-0000-0000-000000000001",
+        "timePeriodTypeId": "00000000-0000-0000-0000-000000000001"
+      }
+      """
+    When Trevor creates the initial time-entries in the timecard service
+    Then the last response should have a status code of 400
+    Then the last response body should contain
+      | field       | type    | expectation                                                                            |
+      | [0].field   | String  | isEqualTo("actualStartTime")                       |
+      | [0].message | String  | isEqualTo("Actual start time should not be empty") |
+      | [0].data    | String  | isNull()                                           |
 
   Scenario: Create time entry with overlapping entries
 
