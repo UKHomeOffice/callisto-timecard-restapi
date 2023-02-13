@@ -53,16 +53,3 @@ public class TestCleanupStepDefinitions {
     return objectMapper.convertValue(root.get("items"), TimeEntry[].class);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
