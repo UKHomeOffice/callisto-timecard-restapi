@@ -4,28 +4,26 @@ import static uk.gov.homeoffice.digital.sas.cucumberjparest.persona.PersonaManag
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.After;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.UUID;
 import uk.gov.homeoffice.digital.sas.cucumberjparest.api.HttpResponseManager;
 import uk.gov.homeoffice.digital.sas.cucumberjparest.api.JpaRestApiClient;
-import uk.gov.homeoffice.digital.sas.cucumberjparest.api.JpaRestApiResourceResponse;
 import uk.gov.homeoffice.digital.sas.cucumberjparest.api.ServiceRegistry;
 import uk.gov.homeoffice.digital.sas.cucumberjparest.persona.Persona;
+import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 
 public class TestCleanupStepDefinitions {
 
   @After
   public static void cleanup() {
-    JpaRestApiClient jpaRestApiClient = new JpaRestApiClient(new ServiceRegistry());
-    HttpResponseManager httpResponseManager = new HttpResponseManager();
-    ObjectMapper objectMapper = new ObjectMapper();
+    var jpaRestApiClient = new JpaRestApiClient(new ServiceRegistry());
+    var httpResponseManager = new HttpResponseManager();
+    var objectMapper = new ObjectMapper();
 
-    UUID tenantId = UUID.fromString(System.getProperty(TENANT_ID_SYSTEM_PROPERTY_NAME));
-    Persona admin = new Persona();
+    var tenantId = UUID.fromString(System.getProperty(TENANT_ID_SYSTEM_PROPERTY_NAME));
+    var admin = new Persona();
     admin.setTenantId(tenantId);
 
-    ArrayList timeEntries =
+    var timeEntries =
         getCreatedTimeEntries(jpaRestApiClient, httpResponseManager, objectMapper, admin);
 
     deleteTimeEntries(jpaRestApiClient, admin, timeEntries);
@@ -33,27 +31,38 @@ public class TestCleanupStepDefinitions {
   }
 
   private static void deleteTimeEntries(JpaRestApiClient jpaRestApiClient, Persona admin,
-                                ArrayList timeEntries) {
-    for (int counter = 0; counter < timeEntries.size(); counter++) {
-      System.out.println(timeEntries.get(counter));
-      String id = (String) ((LinkedHashMap) timeEntries.get(counter)).get("id");
+                                TimeEntry[] timeEntries) {
+    for (TimeEntry timeEntry : timeEntries) {
+      System.out.println(timeEntry);
+      var id = timeEntry.getId().toString();
 
       jpaRestApiClient.delete(admin, "timecard", "time-entries", id);
     }
   }
 
-  private static ArrayList getCreatedTimeEntries(JpaRestApiClient jpaRestApiClient,
-                                        HttpResponseManager httpResponseManager,
-                                        ObjectMapper objectMapper, Persona admin) {
-    JpaRestApiResourceResponse
-        apiResponse = jpaRestApiClient.retrieve(admin, "timecard", "time-entries", null);
+  private static TimeEntry[] getCreatedTimeEntries(JpaRestApiClient jpaRestApiClient,
+                                                       HttpResponseManager httpResponseManager,
+                                                       ObjectMapper objectMapper, Persona admin) {
+    var apiResponse = jpaRestApiClient.retrieve(admin, "timecard", "time-entries", null);
 
     httpResponseManager.addResponse(apiResponse.getBaseResourceUri(),
         apiResponse.getResponse());
 
     var root = httpResponseManager.getLastResponse().getBody().jsonPath().getMap("");
 
-    var testSubject = objectMapper.convertValue(root.get("items"), ArrayList.class);
-    return testSubject;
+    return objectMapper.convertValue(root.get("items"), TimeEntry[].class);
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
