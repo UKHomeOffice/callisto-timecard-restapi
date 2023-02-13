@@ -28,21 +28,21 @@ public class TimeEntryKafkaEntityListener extends KafkaEntityListener<TimeEntry>
   }
 
   @PostPersist
-  private void sendMessageOnCreate(TimeEntry resource) {
+  void sendMessageOnCreate(TimeEntry resource) {
     if (isLocalHost()) {
       super.sendKafkaMessageOnCreate(resource);
     }
   }
 
   @PostUpdate
-  private void sendMessageOnUpdate(TimeEntry resource) {
+  void sendMessageOnUpdate(TimeEntry resource) {
     if (isLocalHost()) {
       super.sendKafkaMessageOnUpdate(resource);
     }
   }
 
   @PostRemove
-  private void sendMessageOnDelete(TimeEntry resource) {
+  void sendMessageOnDelete(TimeEntry resource) {
     if (isLocalHost()) {
       super.sendKafkaMessageOnDelete(resource);
     }
