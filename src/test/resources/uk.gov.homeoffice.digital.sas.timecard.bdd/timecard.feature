@@ -6,7 +6,7 @@ Feature: Timecard
     And the valid time-entries are
       """
       {
-        "ownerId":  "00000000-0000-0000-0000-000000000001",
+        "ownerId": "00000000-0000-0000-0000-000000000001",
         "timePeriodTypeId": "00000000-0000-0000-0000-000000000001",
         "actualStartTime": "2022-11-16T08:00:00Z",
         "actualEndTime": null
@@ -29,7 +29,7 @@ Feature: Timecard
     And the initial time-entries are
       """
       {
-        "ownerId":  "00000000-0000-0000-0000-000000000001",
+        "ownerId": "00000000-0000-0000-0000-000000000001",
         "timePeriodTypeId": "00000000-0000-0000-0000-000000000001",
         "actualStartTime": "2022-11-16T10:00:00Z",
         "actualEndTime": "2022-11-16T10:00:00Z"
@@ -51,7 +51,7 @@ Feature: Timecard
     And the initial time-entries are
       """
       {
-        "ownerId":  "00000000-0000-0000-0000-000000000001",
+        "ownerId": "00000000-0000-0000-0000-000000000001",
         "timePeriodTypeId": "00000000-0000-0000-0000-000000000001",
         "actualStartTime": "2022-11-16T10:00:00Z",
         "actualEndTime": "2022-11-16T08:00:00Z"
@@ -72,7 +72,7 @@ Feature: Timecard
     And the initial time-entries are
       """
       {
-        "ownerId":  "00000000-0000-0000-0000-000000000001",
+        "ownerId": "00000000-0000-0000-0000-000000000001",
         "timePeriodTypeId": "00000000-0000-0000-0000-000000000001",
         "actualStartTime": "foobar"
       }
@@ -90,7 +90,7 @@ Feature: Timecard
     And the initial time-entries are
       """
       {
-        "ownerId":  "00000000-0000-0000-0000-000000000001",
+        "ownerId": "00000000-0000-0000-0000-000000000001",
         "timePeriodTypeId": "00000000-0000-0000-0000-000000000001"
       }
       """
