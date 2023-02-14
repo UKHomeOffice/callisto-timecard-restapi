@@ -1,5 +1,7 @@
 package uk.gov.homeoffice.digital.sas.timecard.listeners;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.createTimeEntry;
 
@@ -38,21 +40,42 @@ class TimeEntryKafkaEntityListenerTest {
 
 
   @Test
-  void sendMessageOnCreate_verifyMethodCall() {
+  void sendMessageOnCreate_activeProfileIsLocalHost_verifyMethodCall() {
     entityListenerSpy.sendMessageOnCreate(timeEntry);
     Mockito.verify((KafkaEntityListener) entityListenerSpy).sendKafkaMessageOnCreate(timeEntry);
   }
 
   @Test
-  void sendMessageOnUpdate_verifyMethodCall() {
+  void sendMessageOnUpdate_activeProfileIsLocalHost_verifyMethodCall() {
     entityListenerSpy.sendMessageOnUpdate(timeEntry);
     Mockito.verify((KafkaEntityListener) entityListenerSpy).sendKafkaMessageOnUpdate(timeEntry);
   }
 
   @Test
-  void sendMessageOnDelete_verifyMethodCall() {
+  void sendMessageOnDelete_activeProfileIsLocalHost_verifyMethodCall() {
     entityListenerSpy.sendMessageOnDelete(timeEntry);
     Mockito.verify((KafkaEntityListener) entityListenerSpy).sendKafkaMessageOnDelete(timeEntry);
+  }
+
+  @Test
+  void sendMessageOnCreate_activeProfileIsNotLocalHost_verifyMethodNotCalled() {
+    when(environment.getActiveProfiles()).thenReturn(new String[]{});
+    entityListenerSpy.sendMessageOnCreate(timeEntry);
+    Mockito.verify((KafkaEntityListener) entityListenerSpy, never()).sendKafkaMessageOnCreate(any());
+  }
+
+  @Test
+  void sendMessageOnUpdate_activeProfileIsNotLocalHost_verifyMethodNotCalled() {
+    when(environment.getActiveProfiles()).thenReturn(new String[]{});
+    entityListenerSpy.sendMessageOnUpdate(timeEntry);
+    Mockito.verify((KafkaEntityListener) entityListenerSpy, never()).sendKafkaMessageOnUpdate(any());
+  }
+
+  @Test
+  void sendMessageOnDelete_activeProfileIsNotLocalHost_verifyMethodNotCalled() {
+    when(environment.getActiveProfiles()).thenReturn(new String[]{});
+    entityListenerSpy.sendMessageOnDelete(timeEntry);
+    Mockito.verify((KafkaEntityListener) entityListenerSpy, never()).sendKafkaMessageOnDelete(any());
   }
 
 }
