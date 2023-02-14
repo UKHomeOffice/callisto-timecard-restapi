@@ -7,12 +7,11 @@ Feature: Timecard
       """
       {
         "ownerId": "00000000-0000-0000-0000-000000000001",
-        "timePeriodTypeId": "00000000-0000-0000-0000-000000000001",
+        "timePeriodTypeId": "#{resourceHelper.getResourceId('Trevor', 'timecard','time-period-types','name=="Shift"')}",
         "actualStartTime": "2022-11-16T08:00:00Z",
         "actualEndTime": null
       }
       """
-
     When Trevor creates the valid time-entries in the timecard service
     Then the last response should have a status code of 200
     Then the 1st of the time-entries in the last response should contain
@@ -29,8 +28,8 @@ Feature: Timecard
     And the initial time-entries are
       """
       {
-        "ownerId": "00000000-0000-0000-0000-000000000001",
-        "timePeriodTypeId": "00000000-0000-0000-0000-000000000001",
+        "ownerId": "00000000-0000-0000-0000-000000000002",
+        "timePeriodTypeId": "#{resourceHelper.getResourceId('Trevor', 'timecard','time-period-types','name=="Shift"')}",
         "actualStartTime": "2022-11-16T10:00:00Z",
         "actualEndTime": "2022-11-16T10:00:00Z"
       }
@@ -40,7 +39,7 @@ Feature: Timecard
     Then the 1st of the time-entries in the last response should contain
       | field           | type    | expectation                                       |
       | id              | String  | isNotNull()                                       |
-      | ownerId         | String  | isEqualTo("00000000-0000-0000-0000-000000000001") |
+      | ownerId         | String  | isEqualTo("00000000-0000-0000-0000-000000000002") |
       | actualStartTime | Instant | isEqualTo("2022-11-16T10:00:00Z")                 |
       | actualEndTime   | Instant | isEqualTo("2022-11-16T10:00:00Z")                 |
 
@@ -51,8 +50,8 @@ Feature: Timecard
     And the initial time-entries are
       """
       {
-        "ownerId": "00000000-0000-0000-0000-000000000001",
-        "timePeriodTypeId": "00000000-0000-0000-0000-000000000001",
+        "ownerId": "00000000-0000-0000-0000-000000000003",
+        "timePeriodTypeId": "#{resourceHelper.getResourceId('Trevor', 'timecard','time-period-types','name=="Shift"')}",
         "actualStartTime": "2022-11-16T10:00:00Z",
         "actualEndTime": "2022-11-16T08:00:00Z"
       }
@@ -72,8 +71,8 @@ Feature: Timecard
     And the initial time-entries are
       """
       {
-        "ownerId": "00000000-0000-0000-0000-000000000001",
-        "timePeriodTypeId": "00000000-0000-0000-0000-000000000001",
+        "ownerId": "00000000-0000-0000-0000-000000000004",
+        "timePeriodTypeId": "#{resourceHelper.getResourceId('Trevor', 'timecard','time-period-types','name=="Shift"')}",
         "actualStartTime": "foobar"
       }
       """
@@ -90,8 +89,8 @@ Feature: Timecard
     And the initial time-entries are
       """
       {
-        "ownerId": "00000000-0000-0000-0000-000000000001",
-        "timePeriodTypeId": "00000000-0000-0000-0000-000000000001"
+        "ownerId": "00000000-0000-0000-0000-000000000005",
+        "timePeriodTypeId": "#{resourceHelper.getResourceId('Trevor', 'timecard','time-period-types','name=="Shift"')}"
       }
       """
     When Trevor creates the initial time-entries in the timecard service
@@ -109,8 +108,8 @@ Feature: Timecard
     And the initial time-entries are
       """
       {
-        "ownerId": "00000000-0000-0000-0000-000000000001",
-        "timePeriodTypeId": "00000000-0000-0000-0000-000000000001",
+        "ownerId": "00000000-0000-0000-0000-000000000006",
+        "timePeriodTypeId": "#{resourceHelper.getResourceId('Trevor', 'timecard','time-period-types','name=="Shift"')}",
         "actualStartTime": "2022-11-16T08:00:00Z",
         "actualEndTime": "2022-11-16T10:00:00Z"
       }
@@ -119,8 +118,8 @@ Feature: Timecard
     And the new time-entries are
       """
       {
-        "ownerId": "00000000-0000-0000-0000-000000000001",
-        "timePeriodTypeId": "00000000-0000-0000-0000-000000000001",
+        "ownerId": "00000000-0000-0000-0000-000000000006",
+        "timePeriodTypeId": "#{resourceHelper.getResourceId('Trevor', 'timecard','time-period-types','name=="Shift"')}",
         "actualStartTime": "2022-11-16T08:30:00Z",
         "actualEndTime": "2022-11-16T10:00:00Z"
       }
@@ -133,6 +132,5 @@ Feature: Timecard
       | [0].message                    | String | isEqualTo("Time periods must not overlap with another time period") |
       | [0].data[0].startTime          | String | isEqualTo("2022-11-16T08:00:00.000+00:00")                          |
       | [0].data[0].endTime            | String | isEqualTo("2022-11-16T10:00:00.000+00:00")                          |
-      | [0].data[0].timePeriodTypeId   | String | isEqualTo("00000000-0000-0000-0000-000000000001")                   |
 
 
