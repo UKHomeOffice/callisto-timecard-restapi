@@ -25,7 +25,7 @@ class KafkaEntityListenerTest {
 
   @Mock
   private KafkaProducerService<TimeEntry> kafkaProducerService;
-  private final TimeEntryKafkaEntityListener kafkaEntityListener =
+  private final KafkaEntityListener<TimeEntry> kafkaEntityListener =
       new TimeEntryKafkaEntityListener();
 
   @BeforeEach
