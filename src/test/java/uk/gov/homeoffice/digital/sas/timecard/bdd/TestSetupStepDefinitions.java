@@ -2,7 +2,7 @@ package uk.gov.homeoffice.digital.sas.timecard.bdd;
 
 import static uk.gov.homeoffice.digital.sas.cucumberjparest.persona.PersonaManager.TENANT_ID_SYSTEM_PROPERTY_NAME;
 
-import io.cucumber.java.Before;
+import io.cucumber.java.BeforeAll;
 import java.util.UUID;
 import uk.gov.homeoffice.digital.sas.cucumberjparest.api.JpaRestApiClient;
 import uk.gov.homeoffice.digital.sas.cucumberjparest.api.ServiceRegistry;
@@ -10,7 +10,7 @@ import uk.gov.homeoffice.digital.sas.cucumberjparest.persona.Persona;
 
 public class TestSetupStepDefinitions {
 
-  @Before
+  @BeforeAll
   public static void setup() {
     UUID tenantId = UUID.randomUUID();
     System.setProperty(TENANT_ID_SYSTEM_PROPERTY_NAME, tenantId.toString());
