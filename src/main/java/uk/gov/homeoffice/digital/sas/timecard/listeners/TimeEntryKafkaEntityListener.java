@@ -1,8 +1,8 @@
 package uk.gov.homeoffice.digital.sas.timecard.listeners;
 
 import java.util.Arrays;
-import javax.persistence.PostPersist;
-import javax.persistence.PostUpdate;
+import jakarta.persistence.PostPersist;
+import jakarta.persistence.PostUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;

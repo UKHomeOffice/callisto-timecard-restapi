@@ -10,10 +10,10 @@ import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.UUID;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
-import javax.validation.ConstraintViolationException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolationException;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
