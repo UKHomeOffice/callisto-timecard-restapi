@@ -1,12 +1,12 @@
 package uk.gov.homeoffice.digital.sas.timecard.validators.timeentry;
 
+import jakarta.persistence.EntityManager;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-import jakarta.persistence.EntityManager;
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
@@ -44,9 +44,9 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
   }
 
   private void addConstraintViolationToContext(ConstraintValidatorContext context,
-                                                      String message,
-                                                      InvalidField clashingProperty,
-                                                      ArrayList<TimeClash> payload) {
+                                               String message,
+                                               InvalidField clashingProperty,
+                                               ArrayList<TimeClash> payload) {
     HibernateConstraintValidatorContext hibernateContext =
         context.unwrap(HibernateConstraintValidatorContext.class);
 
