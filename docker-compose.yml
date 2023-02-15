@@ -17,7 +17,6 @@ services:
       - ./:/app
       - $HOME/.m2:/Users/1000/.m2 # Required for jparest dependencies (artifactory)
       - keystore:/keystore
-      - ./repository:/Users/1000/.m2/repository
     environment:
       - DATABASE_NAME=callisto
       - DATABASE_USERNAME=postgres
