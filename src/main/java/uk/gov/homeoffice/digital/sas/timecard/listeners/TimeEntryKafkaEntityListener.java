@@ -1,8 +1,8 @@
 package uk.gov.homeoffice.digital.sas.timecard.listeners;
 
-import javax.persistence.PostPersist;
-import javax.persistence.PostRemove;
-import javax.persistence.PostUpdate;
+import javax.persistence.PrePersist;
+import javax.persistence.PreRemove;
+import javax.persistence.PreUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -25,19 +25,19 @@ public class TimeEntryKafkaEntityListener extends KafkaEntityListener<TimeEntry>
     super.createProducerService(kafkaProducerService);
   }
 
-  @PostPersist
+  @PrePersist
   void sendMessageOnCreate(TimeEntry resource) {
-    super.sendKafkaMessageOnCreate(resource, topicName);
+    super.sendKafkaMessageOnCreate(resource, resource.getOwnerId().toString());
   }
 
-  @PostUpdate
+  @PreUpdate
   void sendMessageOnUpdate(TimeEntry resource) {
-    super.sendKafkaMessageOnUpdate(resource, topicName);
+    super.sendKafkaMessageOnUpdate(resource, resource.getOwnerId().toString());
   }
 
-  @PostRemove
+  @PreRemove
   void sendMessageOnDelete(TimeEntry resource) {
-    super.sendKafkaMessageOnDelete(resource, topicName);
+    super.sendKafkaMessageOnDelete(resource, resource.getOwnerId().toString());
   }
 
 }

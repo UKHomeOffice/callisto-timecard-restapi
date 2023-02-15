@@ -17,20 +17,20 @@ public abstract class KafkaEntityListener<T> {
     this.kafkaProducerService = kafkaProducerService;
   }
 
-  protected void sendKafkaMessageOnCreate(T resource, String topicName) {
-      sendMessage(resource, KafkaAction.CREATE, topicName);
+  protected void sendKafkaMessageOnCreate(T resource, String ownerId) {
+    sendMessage(resource, KafkaAction.CREATE, ownerId);
   }
 
-  protected void sendKafkaMessageOnUpdate(T resource, String topicName) {
-    sendMessage(resource, KafkaAction.UPDATE, topicName);
+  protected void sendKafkaMessageOnUpdate(T resource, String ownerId) {
+    sendMessage(resource, KafkaAction.UPDATE, ownerId);
   }
 
-  protected void sendKafkaMessageOnDelete(T resource, String topicName) {
-    sendMessage(resource, KafkaAction.DELETE, topicName);
+  protected void sendKafkaMessageOnDelete(T resource, String ownerId) {
+    sendMessage(resource, KafkaAction.DELETE, ownerId);
   }
 
   @SuppressWarnings("unchecked")
-  private void sendMessage(T resource, KafkaAction action, String topicName) {
+  private void sendMessage(T resource, KafkaAction action, String ownerId) {
     TransactionSynchronizationManager.registerSynchronization(
         new TransactionSynchronization() {
           int status = TransactionSynchronization.STATUS_UNKNOWN;
@@ -43,22 +43,21 @@ public abstract class KafkaEntityListener<T> {
           }
 
           @Override
-          public void afterCommit(){
+          public void afterCommit() {
+            log.info(String.format("Database transaction [ %s ] with ownerId [ %s ] was successful",
+                action.toString(), ownerId));
             status = TransactionSynchronization.STATUS_COMMITTED;
           }
 
           @Override
-          public void afterCompletion(int status){
+          public void afterCompletion(int status) {
             if (status == STATUS_COMMITTED) {
-              log.info(String.format("Database transaction successful with messageKey [ %s ] sent" +
-                      " to " +
-                  "topic [ %s ], with action [ %s ]", messageKey, topicName,
-                  action.toString()));
+              log.info(String.format("[ %s ] transaction successful with messageKey [ %s ]",
+                  action.toString(), messageKey));
 
             } else {
-              log.error(String.format("Database transaction failed with messageKey [%s] sent to " +
-                  "topic " +
-                  "[%s], with action [%s]", messageKey, topicName, action.toString()));
+              log.error(String.format("Database transaction [ %s ] with ownerId [ %s ] failed",
+                  ownerId, ownerId));
             }
           }
         }
