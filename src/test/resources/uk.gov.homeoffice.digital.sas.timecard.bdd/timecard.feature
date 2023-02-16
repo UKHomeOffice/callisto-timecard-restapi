@@ -6,7 +6,7 @@ Feature: Timecard
     And the valid time-entries are
       """
       {
-        "ownerId": "00000000-0000-0000-0000-000000000001",
+        "ownerId": "#{personaManager.getPersona('Trevor').id.toString}",
         "timePeriodTypeId": "#{resourceHelper.getResourceId('Trevor', 'timecard','time-period-types','name=="Shift"')}",
         "actualStartTime": "2022-11-16T08:00:00Z",
         "actualEndTime": null
@@ -15,11 +15,12 @@ Feature: Timecard
     When Trevor creates the valid time-entries in the timecard service
     Then the last response should have a status code of 200
     Then the 1st of the time-entries in the last response should contain
-      | field           | type    | expectation                                       |
-      | id              | String  | isNotNull()                                       |
-      | ownerId         | String  | isEqualTo("00000000-0000-0000-0000-000000000001") |
-      | actualStartTime | Instant | isEqualTo("2022-11-16T08:00:00Z")                 |
-      | actualEndTime   | Instant | isNull()                                          |
+      | field            | type    | expectation                                                |
+      | id               | String  | isNotNull()                                                |
+      | ownerId          | String  | isEqualTo(personaManager.getPersona('Trevor').id.toString) |
+      | actualStartTime  | Instant | isEqualTo("2022-11-16T08:00:00Z")                          |
+      | actualEndTime    | Instant | isNull()                                                   |
+      | timePeriodTypeId | String  | isEqualTo(resourceHelper.getResourceId('Trevor', 'timecard','time-period-types','name=="Shift"').toString) |
 
 
   Scenario: Create time entry with end date equal to the start date
@@ -28,7 +29,7 @@ Feature: Timecard
     And the initial time-entries are
       """
       {
-        "ownerId": "00000000-0000-0000-0000-000000000002",
+        "ownerId": "#{personaManager.getPersona('Trevor').id.toString}",
         "timePeriodTypeId": "#{resourceHelper.getResourceId('Trevor', 'timecard','time-period-types','name=="Shift"')}",
         "actualStartTime": "2022-11-16T10:00:00Z",
         "actualEndTime": "2022-11-16T10:00:00Z"
@@ -37,11 +38,11 @@ Feature: Timecard
     When Trevor creates the initial time-entries in the timecard service
     Then the last response should have a status code of 200
     Then the 1st of the time-entries in the last response should contain
-      | field           | type    | expectation                                       |
-      | id              | String  | isNotNull()                                       |
-      | ownerId         | String  | isEqualTo("00000000-0000-0000-0000-000000000002") |
-      | actualStartTime | Instant | isEqualTo("2022-11-16T10:00:00Z")                 |
-      | actualEndTime   | Instant | isEqualTo("2022-11-16T10:00:00Z")                 |
+      | field           | type    | expectation                                                |
+      | id              | String  | isNotNull()                                                |
+      | ownerId         | String  | isEqualTo(personaManager.getPersona('Trevor').id.toString) |
+      | actualStartTime | Instant | isEqualTo("2022-11-16T10:00:00Z")                          |
+      | actualEndTime   | Instant | isEqualTo("2022-11-16T10:00:00Z")                          |
 
 
   Scenario: Create time entry with end date before start date
@@ -50,7 +51,7 @@ Feature: Timecard
     And the initial time-entries are
       """
       {
-        "ownerId": "00000000-0000-0000-0000-000000000003",
+        "ownerId": "#{personaManager.getPersona('Trevor').id.toString}",
         "timePeriodTypeId": "#{resourceHelper.getResourceId('Trevor', 'timecard','time-period-types','name=="Shift"')}",
         "actualStartTime": "2022-11-16T10:00:00Z",
         "actualEndTime": "2022-11-16T08:00:00Z"
@@ -71,7 +72,7 @@ Feature: Timecard
     And the initial time-entries are
       """
       {
-        "ownerId": "00000000-0000-0000-0000-000000000004",
+        "ownerId": "#{personaManager.getPersona('Trevor').id.toString}",
         "timePeriodTypeId": "#{resourceHelper.getResourceId('Trevor', 'timecard','time-period-types','name=="Shift"')}",
         "actualStartTime": "foobar"
       }
@@ -89,7 +90,7 @@ Feature: Timecard
     And the initial time-entries are
       """
       {
-        "ownerId": "00000000-0000-0000-0000-000000000005",
+        "ownerId": "#{personaManager.getPersona('Trevor').id.toString}",
         "timePeriodTypeId": "#{resourceHelper.getResourceId('Trevor', 'timecard','time-period-types','name=="Shift"')}"
       }
       """
@@ -108,7 +109,7 @@ Feature: Timecard
     And the initial time-entries are
       """
       {
-        "ownerId": "00000000-0000-0000-0000-000000000006",
+        "ownerId": "#{personaManager.getPersona('Trevor').id.toString}",
         "timePeriodTypeId": "#{resourceHelper.getResourceId('Trevor', 'timecard','time-period-types','name=="Shift"')}",
         "actualStartTime": "2022-11-16T08:00:00Z",
         "actualEndTime": "2022-11-16T10:00:00Z"
@@ -118,7 +119,7 @@ Feature: Timecard
     And the new time-entries are
       """
       {
-        "ownerId": "00000000-0000-0000-0000-000000000006",
+        "ownerId": "#{personaManager.getPersona('Trevor').id.toString}",
         "timePeriodTypeId": "#{resourceHelper.getResourceId('Trevor', 'timecard','time-period-types','name=="Shift"')}",
         "actualStartTime": "2022-11-16T08:30:00Z",
         "actualEndTime": "2022-11-16T10:00:00Z"
@@ -140,7 +141,7 @@ Feature: Timecard
     And the valid time-entries are
       """
       {
-        "ownerId": "00000000-0000-0000-0000-000000000007",
+        "ownerId": "#{personaManager.getPersona('Trevor').id.toString}",
         "timePeriodTypeId": "00000000-0000-0000-0000-000000000001",
         "actualStartTime": "2022-11-16T08:00:00Z",
         "actualEndTime": null
