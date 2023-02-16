@@ -74,6 +74,18 @@ class TimeEntryValidatorTest {
         assertThat(thrown.getMessage()).contains(ErrorMessage.END_TIME_BEFORE_START_TIME.toString());
     }
 
+    @Test
+    void validate_timeEntryWithNoOwner_noErrorReturned() {
+
+        var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME);
+
+        var timeEntryNew = createTimeEntry(null, newStartTime);
+
+        Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
+        assertPropertyErrorType((ConstraintViolationException) thrown, InvalidField.OWNER_ID);
+        assertThat(thrown.getMessage()).contains(ErrorMessage.NO_OWNER_ID.toString());
+    }
+
     // region clashing_error_tests
 
     // existing: 08:00-, new: 08:00-
