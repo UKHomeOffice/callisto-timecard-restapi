@@ -1,16 +1,16 @@
 package uk.gov.homeoffice.digital.sas.timecard.listeners;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.core.env.Environment;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerService;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 
-import static org.mockito.Mockito.when;
 import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.createTimeEntry;
 
 @ExtendWith(MockitoExtension.class)
@@ -19,24 +19,18 @@ class TimeEntryKafkaEntityListenerTest {
   @Mock
   private KafkaProducerService<TimeEntry> kafkaProducerService;
 
-  @Mock
-  private Environment environment;
-
   private TimeEntry timeEntry;
-
-  private String topicName;
 
   TimeEntryKafkaEntityListener entityListenerSpy;
 
 
   @BeforeEach
   void setup() {
-    topicName = "callisto-test-topic";
     timeEntry = createTimeEntry();
+    TransactionSynchronizationManager.initSynchronization();
     var entityListener = new TimeEntryKafkaEntityListener();
     entityListener.setProducerService(kafkaProducerService);
     entityListenerSpy = Mockito.spy(entityListener);
-    when(environment.getActiveProfiles()).thenReturn(new String[]{"localhost"});
   }
 
 
@@ -59,6 +53,11 @@ class TimeEntryKafkaEntityListenerTest {
     entityListenerSpy.sendMessageOnDelete(timeEntry);
     Mockito.verify((KafkaEntityListener) entityListenerSpy).sendKafkaMessageOnDelete(timeEntry,
         timeEntry.getOwnerId().toString());
+  }
+
+  @AfterEach
+  void clear() {
+    TransactionSynchronizationManager.clear();
   }
 
 }

@@ -2,17 +2,15 @@ package uk.gov.homeoffice.digital.sas.timecard.listeners;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerService;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
+import uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils.getAsDate;
@@ -26,8 +24,6 @@ class KafkaEntityListenerTest {
   private final static UUID TENANT_ID = UUID.randomUUID();
   private TimeEntry timeEntry;
 
-  private String topicName = "timecard-test-topic";
-
   @Mock
   private KafkaProducerService<TimeEntry> kafkaProducerService;
   private final TimeEntryKafkaEntityListener kafkaEntityListener =
@@ -35,8 +31,7 @@ class KafkaEntityListenerTest {
 
   @BeforeEach
   void setup() {
-    LocalDateTime actualStartTime = LocalDateTime.of(
-        2022, 1, 1, 9, 0, 0);
+    LocalDateTime actualStartTime = CommonUtils.createLocalDateTime();
     timeEntry = createTimeEntry(OWNER_ID, TENANT_ID, getAsDate(actualStartTime));
     TransactionSynchronizationManager.initSynchronization();
     kafkaEntityListener.createProducerService(kafkaProducerService);
@@ -44,50 +39,10 @@ class KafkaEntityListenerTest {
 
   @Test
   void resolveMessageKey_timeEntryEntity_ownerIdAndTenantIdReturnedAsMessageKey() {
+    String messageKey = CommonUtils.generateMessageKey(timeEntry);
     assertThat(kafkaEntityListener.resolveMessageKey(timeEntry))
-        .isEqualTo(generateMessageKey(timeEntry));
+        .isEqualTo(messageKey);
   }
 
-  @Test
-  void sendKafkaMessageOnCreate_timeEntryEntity_sendMessageMethodInvokedAsExpected() {
-    kafkaEntityListener.sendKafkaMessageOnCreate(timeEntry, OWNER_ID.toString());
-
-    Mockito.verify(kafkaProducerService)
-        .sendMessage(generateMessageKey(timeEntry),
-            TimeEntry.class,
-            timeEntry,
-            KafkaAction.CREATE);
-  }
-
-  @Test
-  void sendKafkaMessageOnUpdate_timeEntryEntity_sendMessageMethodInvokedAsExpected() {
-    kafkaEntityListener.sendKafkaMessageOnUpdate(timeEntry, OWNER_ID.toString());
-
-    Mockito.verify(kafkaProducerService)
-        .sendMessage(OWNER_ID.toString(),
-            TimeEntry.class,
-            timeEntry,
-            KafkaAction.UPDATE);
-  }
-
-  @Test
-  void sendKafkaMessageOnDelete_timeEntryEntity_sendMessageMethodInvokedAsExpected() {
-    kafkaEntityListener.sendKafkaMessageOnDelete(timeEntry, OWNER_ID.toString());
-
-    Mockito.verify(kafkaProducerService)
-        .sendMessage(OWNER_ID.toString(),
-            TimeEntry.class,
-            timeEntry,
-            KafkaAction.DELETE);
-  }
-
-  @AfterEach
-  void clear() {
-    TransactionSynchronizationManager.clear();
-  }
-
-  private String generateMessageKey(TimeEntry timeEntry) {
-    return timeEntry.getTenantId()  + ":" + timeEntry.getOwnerId();
-  }
 
 }

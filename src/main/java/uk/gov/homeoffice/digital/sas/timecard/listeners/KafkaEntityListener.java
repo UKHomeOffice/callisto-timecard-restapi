@@ -44,7 +44,8 @@ public abstract class KafkaEntityListener<T> {
 
           @Override
           public void afterCommit() {
-            log.info(String.format("Database transaction [ %s ] with ownerId [ %s ] was successful",
+            log.info(String.format(
+                "Database transaction [ %s ] with ownerId [ %s ] was successful",
                 action.toString(), ownerId));
             status = TransactionSynchronization.STATUS_COMMITTED;
           }
@@ -52,12 +53,12 @@ public abstract class KafkaEntityListener<T> {
           @Override
           public void afterCompletion(int status) {
             if (status == STATUS_COMMITTED) {
-              log.info(String.format("[ %s ] transaction successful with messageKey [ %s ]",
-                  action.toString(), messageKey));
+              log.info(String.format(
+                  "Transaction successful with messageKey [ %s ]", messageKey));
 
             } else {
-              log.error(String.format("Database transaction [ %s ] with ownerId [ %s ] failed",
-                  ownerId, ownerId));
+              log.error(String.format(
+                  "Database transaction [ %s ] with ownerId [ %s ] failed", ownerId, ownerId));
             }
           }
         }
