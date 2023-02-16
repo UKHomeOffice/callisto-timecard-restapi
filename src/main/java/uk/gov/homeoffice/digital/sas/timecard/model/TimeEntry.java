@@ -2,22 +2,23 @@ package uk.gov.homeoffice.digital.sas.timecard.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
 import org.springframework.format.annotation.DateTimeFormat;
 import uk.gov.homeoffice.digital.sas.jparest.annotation.Resource;
 import uk.gov.homeoffice.digital.sas.jparest.models.BaseEntity;
@@ -35,11 +36,11 @@ import uk.gov.homeoffice.digital.sas.timecard.validators.timeentry.TimeEntryCons
 public class TimeEntry extends BaseEntity {
 
   @NotNull(message = "Owner ID should not be empty")
-  @Type(type = "uuid-char")
+  @JdbcTypeCode(SqlTypes.CHAR)
   @Column(name = "owner_id")
   private UUID ownerId;
 
-  @Type(type = "uuid-char")
+  @JdbcTypeCode(SqlTypes.CHAR)
   @Column(name = "time_period_type_id")
   private UUID timePeriodTypeId;
 
