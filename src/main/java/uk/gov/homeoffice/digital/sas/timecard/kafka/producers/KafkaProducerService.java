@@ -38,25 +38,26 @@ public class KafkaProducerService<T> {
             kafkaEventMessage
         );
 
-    listenableFutureReporting(resource, kafkaEventMessage, future);
+    listenableFutureReporting(kafkaEventMessage, future, messageKey);
   }
 
   private void listenableFutureReporting(
-      T resource,
       KafkaEventMessage<T> kafkaEventMessage,
-      ListenableFuture<SendResult<String, KafkaEventMessage<T>>> future
+      ListenableFuture<SendResult<String, KafkaEventMessage<T>>> future,
+      String messageKey
   ) {
     future.addCallback(new ListenableFutureCallback<>() {
 
       @Override
       public void onFailure(Throwable ex) {
-        log.error(String.format("Sent message has failed=[ %s ]",
-            kafkaEventMessage), ex);
+        log.error(String.format("Message with key [ %s ] sent to topic [ %s ] with action "
+               + "[%s]", messageKey, topicName, kafkaEventMessage.getAction(), ex));
       }
 
       @Override
       public void onSuccess(SendResult<String, KafkaEventMessage<T>> result) {
-        log.info(String.format("Sent message=[ %s ]", resource));
+        log.info(String.format("Message with key [%s] sent to topic [ %s ] with action "
+            + "[ %s ]", messageKey, topicName, kafkaEventMessage.getAction()));
       }
     });
   }

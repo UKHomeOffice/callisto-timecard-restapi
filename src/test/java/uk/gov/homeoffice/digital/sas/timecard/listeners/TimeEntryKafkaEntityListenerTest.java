@@ -1,28 +1,23 @@
 package uk.gov.homeoffice.digital.sas.timecard.listeners;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.when;
-import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.createTimeEntry;
-
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.core.env.Environment;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerService;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
+
+import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.createTimeEntry;
 
 @ExtendWith(MockitoExtension.class)
 class TimeEntryKafkaEntityListenerTest {
 
   @Mock
   private KafkaProducerService<TimeEntry> kafkaProducerService;
-
-  @Mock
-  private Environment environment;
 
   private TimeEntry timeEntry;
 
@@ -32,50 +27,37 @@ class TimeEntryKafkaEntityListenerTest {
   @BeforeEach
   void setup() {
     timeEntry = createTimeEntry();
+    TransactionSynchronizationManager.initSynchronization();
     var entityListener = new TimeEntryKafkaEntityListener();
-    entityListener.setProducerService(kafkaProducerService, environment);
+    entityListener.setProducerService(kafkaProducerService);
     entityListenerSpy = Mockito.spy(entityListener);
-    when(environment.getActiveProfiles()).thenReturn(new String[]{"localhost"});
   }
 
 
   @Test
-  void sendMessageOnCreate_activeProfileIsLocalHost_verifyMethodCall() {
+  void sendMessageOnCreate_verifyMethodCall() {
     entityListenerSpy.sendMessageOnCreate(timeEntry);
-    Mockito.verify((KafkaEntityListener) entityListenerSpy).sendKafkaMessageOnCreate(timeEntry);
+    Mockito.verify((KafkaEntityListener) entityListenerSpy).sendKafkaMessageOnCreate(timeEntry,
+        timeEntry.getOwnerId().toString());
   }
 
   @Test
-  void sendMessageOnUpdate_activeProfileIsLocalHost_verifyMethodCall() {
+  void sendMessageOnUpdate_verifyMethodCall() {
     entityListenerSpy.sendMessageOnUpdate(timeEntry);
-    Mockito.verify((KafkaEntityListener) entityListenerSpy).sendKafkaMessageOnUpdate(timeEntry);
+    Mockito.verify((KafkaEntityListener) entityListenerSpy).sendKafkaMessageOnUpdate(timeEntry,
+        timeEntry.getOwnerId().toString());
   }
 
   @Test
-  void sendMessageOnDelete_activeProfileIsLocalHost_verifyMethodCall() {
+  void sendMessageOnDelete_verifyMethodCall() {
     entityListenerSpy.sendMessageOnDelete(timeEntry);
-    Mockito.verify((KafkaEntityListener) entityListenerSpy).sendKafkaMessageOnDelete(timeEntry);
+    Mockito.verify((KafkaEntityListener) entityListenerSpy).sendKafkaMessageOnDelete(timeEntry,
+        timeEntry.getOwnerId().toString());
   }
 
-  @Test
-  void sendMessageOnCreate_activeProfileIsNotLocalHost_verifyMethodNotCalled() {
-    when(environment.getActiveProfiles()).thenReturn(new String[]{});
-    entityListenerSpy.sendMessageOnCreate(timeEntry);
-    Mockito.verify((KafkaEntityListener) entityListenerSpy, never()).sendKafkaMessageOnCreate(any());
-  }
-
-  @Test
-  void sendMessageOnUpdate_activeProfileIsNotLocalHost_verifyMethodNotCalled() {
-    when(environment.getActiveProfiles()).thenReturn(new String[]{});
-    entityListenerSpy.sendMessageOnUpdate(timeEntry);
-    Mockito.verify((KafkaEntityListener) entityListenerSpy, never()).sendKafkaMessageOnUpdate(any());
-  }
-
-  @Test
-  void sendMessageOnDelete_activeProfileIsNotLocalHost_verifyMethodNotCalled() {
-    when(environment.getActiveProfiles()).thenReturn(new String[]{});
-    entityListenerSpy.sendMessageOnDelete(timeEntry);
-    Mockito.verify((KafkaEntityListener) entityListenerSpy, never()).sendKafkaMessageOnDelete(any());
+  @AfterEach
+  void clear() {
+    TransactionSynchronizationManager.clear();
   }
 
 }

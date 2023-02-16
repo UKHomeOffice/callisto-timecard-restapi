@@ -1,11 +1,10 @@
 package uk.gov.homeoffice.digital.sas.timecard.listeners;
 
-import java.util.Arrays;
-import javax.persistence.PostPersist;
-import javax.persistence.PostRemove;
-import javax.persistence.PostUpdate;
+import javax.persistence.PrePersist;
+import javax.persistence.PreRemove;
+import javax.persistence.PreUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerService;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
@@ -13,45 +12,32 @@ import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 @Component
 public class TimeEntryKafkaEntityListener extends KafkaEntityListener<TimeEntry> {
 
-  private Environment environment;
+  @Value("${spring.kafka.template.default-topic}")
+  private String topicName;
 
   @Override
   public String resolveMessageKey(TimeEntry timeEntry) {
-    return timeEntry.getOwnerId().toString();
+    return timeEntry.getTenantId().toString() + ":" + timeEntry.getOwnerId().toString();
   }
 
   @Autowired
-  public void setProducerService(KafkaProducerService<TimeEntry> kafkaProducerService,
-                                 Environment environment) {
+  public void setProducerService(KafkaProducerService<TimeEntry> kafkaProducerService) {
     super.createProducerService(kafkaProducerService);
-    this.environment = environment;
   }
 
-  @PostPersist
+  @PrePersist
   void sendMessageOnCreate(TimeEntry resource) {
-    if (isLocalHost()) {
-      super.sendKafkaMessageOnCreate(resource);
-    }
+    super.sendKafkaMessageOnCreate(resource, resource.getOwnerId().toString());
   }
 
-  @PostUpdate
+  @PreUpdate
   void sendMessageOnUpdate(TimeEntry resource) {
-    if (isLocalHost()) {
-      super.sendKafkaMessageOnUpdate(resource);
-    }
+    super.sendKafkaMessageOnUpdate(resource, resource.getOwnerId().toString());
   }
 
-  @PostRemove
+  @PreRemove
   void sendMessageOnDelete(TimeEntry resource) {
-    if (isLocalHost()) {
-      super.sendKafkaMessageOnDelete(resource);
-    }
+    super.sendKafkaMessageOnDelete(resource, resource.getOwnerId().toString());
   }
 
-
-  // temporary check to prevent Kafka in dev environment
-  private boolean isLocalHost() {
-    return Arrays.stream(this.environment.getActiveProfiles()).toList()
-        .contains("localhost");
-  }
 }

@@ -12,16 +12,26 @@ public final class TimeEntryFactory {
   private TimeEntryFactory() {}
 
   public static TimeEntry createTimeEntry() {
-    return createTimeEntry(UUID.randomUUID(), getAsDate(LocalDateTime.now()));
+    return createTimeEntry(UUID.randomUUID(), UUID.randomUUID(), getAsDate(LocalDateTime.now()));
   }
 
   public static TimeEntry createTimeEntry(UUID ownerId, Date actualStartTime) {
-    return createTimeEntry(ownerId, actualStartTime, null);
+    return createTimeEntry(ownerId, UUID.randomUUID(), actualStartTime, null);
   }
 
   public static TimeEntry createTimeEntry(UUID ownerId, Date actualStartTime, Date actualEndTime) {
+    return createTimeEntry(ownerId, UUID.randomUUID(), actualStartTime, actualEndTime);
+  }
+
+  public static TimeEntry createTimeEntry(UUID ownerId, UUID tenantId, Date actualStartTime) {
+    return createTimeEntry(ownerId, tenantId, actualStartTime, null);
+  }
+
+  public static TimeEntry createTimeEntry(UUID ownerId, UUID tenantId, Date actualStartTime,
+                                          Date actualEndTime) {
     var timeEntry = new TimeEntry();
     timeEntry.setOwnerId(ownerId);
+    timeEntry.setTenantId(tenantId);
     timeEntry.setActualStartTime(actualStartTime);
     timeEntry.setActualEndTime(actualEndTime);
     return timeEntry;
