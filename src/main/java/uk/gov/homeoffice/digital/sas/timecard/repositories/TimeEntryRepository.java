@@ -13,18 +13,18 @@ import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 public interface TimeEntryRepository extends JpaRepository<TimeEntry, UUID> {
 
   @Query("SELECT t FROM time_entry t "
-      + "WHERE t.ownerId = cast(:ownerId as org.hibernate.type.UUIDCharType) "
-      + "AND (:id IS NULL OR t.id <> cast(:id as org.hibernate.type.UUIDCharType)) "
-      + "AND (:tenantId IS NULL OR t.tenantId = cast(:tenantId as org.hibernate.type.UUIDCharType))"
+      + "WHERE t.ownerId = :ownerId "
+      + "AND (cast(:id as string) IS NULL OR t.id <> cast(:id as string)) "
+      + "AND (:tenantId IS NULL OR t.tenantId = :tenantId)"
       + "AND ((:newActualStartTime = t.actualStartTime) " // start times are the same
       + "OR ((t.actualStartTime <= :newActualStartTime) "
       + "AND (:newActualStartTime < t.actualEndTime)) " // new start time is in existing entry
       + "OR ((:newActualStartTime <= t.actualStartTime) "
       + "AND (t.actualStartTime < :newActualEndTime)))") // existing start time is in new time entry
 
-  List<TimeEntry> findAllClashingTimeEntries(@Param("ownerId") String ownerId,
-                                             @Param("id") String id,
-                                             @Param("tenantId") String tenantId,
+  List<TimeEntry> findAllClashingTimeEntries(@Param("ownerId") UUID ownerId,
+                                             @Param("id") UUID id,
+                                             @Param("tenantId") UUID tenantId,
                                              @Param("newActualStartTime") Date actualStartTime,
                                              @Param("newActualEndTime") Date actualEndTime);
 }
