@@ -68,9 +68,9 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
     session.setHibernateFlushMode(FlushMode.MANUAL);
 
     var timeEntryClashes = BeanUtil.getBean(TimeEntryRepository.class).findAllClashingTimeEntries(
-        timeEntry.getOwnerId() != null ? timeEntry.getOwnerId().toString() : null,
-        timeEntry.getId() != null ? timeEntry.getId().toString() : null,
-        timeEntry.getTenantId() != null ? timeEntry.getTenantId().toString() : null,
+        timeEntry.getOwnerId() != null ? timeEntry.getOwnerId() : null,
+        timeEntry.getId() != null ? timeEntry.getId(): null,
+        timeEntry.getTenantId() != null ? timeEntry.getTenantId() : null,
         timeEntry.getActualStartTime(),
         timeEntry.getActualEndTime());
 
