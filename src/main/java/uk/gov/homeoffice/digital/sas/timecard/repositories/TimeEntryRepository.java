@@ -14,7 +14,7 @@ public interface TimeEntryRepository extends JpaRepository<TimeEntry, UUID> {
 
   @Query("SELECT t FROM time_entry t "
       + "WHERE t.ownerId = :ownerId "
-      + "AND (cast(:id as string) IS NULL OR t.id <> :id) "
+      + "AND (cast(:id as string) IS NULL OR t.id <> cast(:id as string)) "
       + "AND (:tenantId IS NULL OR t.tenantId = :tenantId)"
       + "AND ((:newActualStartTime = t.actualStartTime) " // start times are the same
       + "OR ((t.actualStartTime <= :newActualStartTime) "
