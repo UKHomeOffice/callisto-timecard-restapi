@@ -13,37 +13,27 @@ import org.hibernate.Session;
 import org.hibernate.validator.engine.HibernateConstraintViolation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.homeoffice.digital.sas.timecard.enums.ErrorMessage;
 import uk.gov.homeoffice.digital.sas.timecard.enums.InvalidField;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerService;
 import uk.gov.homeoffice.digital.sas.timecard.listeners.TimeEntryKafkaEntityListener;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.repositories.TimeEntryRepository;
-import uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils;
-import uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils.getAsDate;
 import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.createTimeEntry;
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
 @Transactional
 @WebAppConfiguration
 @AutoConfigureMockMvc
@@ -51,9 +41,6 @@ import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.
 @EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092",
     "port=9092" })
 class TimeEntryValidatorTest {
-
-    @Autowired
-    private MockMvc mockMvc;
 
     @Autowired
     private TimeEntryRepository timeEntryRepository;
@@ -79,8 +66,11 @@ class TimeEntryValidatorTest {
             2022, 1, 1, 17, 0, 0);
 
     @BeforeEach
-    void setUp() throws Exception {
-      kafkaEntityListener.setProducerService(kafkaProducerService);
+    void saveTimeEntry() {
+        saveEntryAndFlushDatabase(createTimeEntry(
+                OWNER_ID_1, TENANT_ID,
+                getAsDate(EXISTING_SHIFT_START_TIME),
+                getAsDate(EXISTING_SHIFT_END_TIME)));
     }
 
     @Test
@@ -102,30 +92,20 @@ class TimeEntryValidatorTest {
 
     // existing: 08:00-, new: 08:00-
     @Test
-    void validate_newStartTimeIsTheSameAsExistingStartTimeWithNoEndTimes_errorReturned()
-        throws Exception {
+    void validate_newStartTimeIsTheSameAsExistingStartTimeWithNoEndTimes_errorReturned() {
         var time = LocalDateTime.of(
-                2022, 1, 1, 9, 0, 0);
+                2022, 1, 1, 8, 0, 0);
 
-      timeEntry = TimeEntryFactory.createTimeEntry(OWNER_ID_1, TENANT_ID,
-          CommonUtils.getAsDate(EXISTING_SHIFT_START_TIME),
-          CommonUtils.getAsDate(EXISTING_SHIFT_END_TIME));
+        saveEntryAndFlushDatabase(createTimeEntry(
+                OWNER_ID_1, TENANT_ID,
+                getAsDate(time)));
 
-      mockMvc.perform(post("/resources/time-entries?tenantId=" + TENANT_ID.toString())
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(CommonUtils.timeEntryAsJsonString(timeEntry)))
-          .andDo(print())
-          .andExpect(status().isOk());
+        var newStartTime = getAsDate(time);
 
-      TimeEntry timeEntryNew = createTimeEntry(OWNER_ID_1, TENANT_ID, CommonUtils.getAsDate(time));
-
-      mockMvc.perform(post("/resources/time-entries?tenantId=" + TENANT_ID.toString())
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(CommonUtils.timeEntryAsJsonString(timeEntryNew)))
-          .andDo(print())
-          .andExpect(status().is(400));
+        var timeEntryNew = createTimeEntry(OWNER_ID_1, TENANT_ID, newStartTime);
 
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
+
         assertThat(thrown).isInstanceOf(ConstraintViolationException.class);
         assertPropertyErrorType((ConstraintViolationException) thrown, InvalidField.START_TIME);
         assertThat(thrown.getMessage()).contains(ErrorMessage.TIME_PERIOD_CLASH.toString());
@@ -135,27 +115,16 @@ class TimeEntryValidatorTest {
     @Test
     void validate_newStartTimeIsTheSameAsExistingStartTimeWithNoExistingEndTime_errorReturned() throws Exception {
         var time = LocalDateTime.of(
-            2022, 1, 1, 9, 0, 0);
+            2022, 1, 1, 8, 0, 0);
 
-      timeEntry = TimeEntryFactory.createTimeEntry(OWNER_ID_1, TENANT_ID,
-          CommonUtils.getAsDate(EXISTING_SHIFT_START_TIME));
-
-      mockMvc.perform(post("/resources/time-entries?tenantId=" + TENANT_ID.toString())
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(CommonUtils.timeEntryAsJsonString(timeEntry)))
-          .andDo(print())
-          .andExpect(status().isOk());
+        saveEntryAndFlushDatabase(createTimeEntry(
+            OWNER_ID_1, TENANT_ID,
+            getAsDate(time)));
 
         var newStartTime = getAsDate(time);
 
         var timeEntryNew = createTimeEntry(OWNER_ID_1, TENANT_ID, newStartTime,
             getAsDate(time.plusMinutes(1)));
-
-      mockMvc.perform(post("/resources/time-entries?tenantId=" + TENANT_ID.toString())
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(CommonUtils.timeEntryAsJsonString(timeEntryNew)))
-          .andDo(print())
-          .andExpect(status().is(400));
 
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
@@ -166,27 +135,10 @@ class TimeEntryValidatorTest {
 
     // existing: 09:00-17:00, new: 09:00-
     @Test
-    void validate_newStartTimeIsTheSameAsExistingStartTimeAndNoNewEndTime_errorReturned()
-        throws Exception {
+    void validate_newStartTimeIsTheSameAsExistingStartTimeAndNoNewEndTime_errorReturned() {
+        var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME);
 
-      timeEntry = TimeEntryFactory.createTimeEntry(OWNER_ID_1, TENANT_ID,
-          CommonUtils.getAsDate(EXISTING_SHIFT_START_TIME));
-          CommonUtils.getAsDate(EXISTING_SHIFT_END_TIME);
-
-      mockMvc.perform(post("/resources/time-entries?tenantId=" + TENANT_ID.toString())
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(CommonUtils.timeEntryAsJsonString(timeEntry)))
-          .andDo(print())
-          .andExpect(status().isOk());
-
-      var timeEntryNew = createTimeEntry(OWNER_ID_1, TENANT_ID,
-          CommonUtils.getAsDate(EXISTING_SHIFT_START_TIME));
-
-      mockMvc.perform(post("/resources/time-entries?tenantId=" + TENANT_ID.toString())
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(CommonUtils.timeEntryAsJsonString(timeEntry)))
-          .andDo(print())
-          .andExpect(status().is(400));
+        var timeEntryNew = createTimeEntry(OWNER_ID_1, TENANT_ID, newStartTime);
 
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
@@ -196,27 +148,9 @@ class TimeEntryValidatorTest {
 
     // existing: 09:00-17:00, new: 09:01-
     @Test
-    void validate_newStartTimeInBetweenExistingStartAndEndTimeAndNoNewEndTime_errorReturned()
-        throws Exception {
-
-        timeEntry = TimeEntryFactory.createTimeEntry(OWNER_ID_1, TENANT_ID,
-            CommonUtils.getAsDate(EXISTING_SHIFT_START_TIME),
-        CommonUtils.getAsDate(EXISTING_SHIFT_END_TIME));
-
-        mockMvc.perform(post("/resources/time-entries?tenantId=" + TENANT_ID.toString())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(CommonUtils.timeEntryAsJsonString(timeEntry)))
-            .andDo(print())
-            .andExpect(status().isOk());
-
-        TimeEntry timeEntryNew = createTimeEntry(OWNER_ID_1, TENANT_ID,
-            CommonUtils.getAsDate(EXISTING_SHIFT_START_TIME.plusMinutes(1)));
-
-        mockMvc.perform(post("/resources/time-entries?tenantId=" + TENANT_ID.toString())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(CommonUtils.timeEntryAsJsonString(timeEntry)))
-            .andDo(print())
-            .andExpect(status().is(400));
+    void validate_newStartTimeInBetweenExistingStartAndEndTimeAndNoNewEndTime_errorReturned() {
+        var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME.plusMinutes(1));
+        var timeEntryNew = createTimeEntry(OWNER_ID_1, TENANT_ID, newStartTime);
 
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
@@ -226,28 +160,10 @@ class TimeEntryValidatorTest {
 
     // existing: 09:00-17:00, new: 09:01-09:02
     @Test
-    void validate_newStartTimeAndEndTimeInBetweenExistingStartAndEndTime_errorReturned()
-        throws Exception {
-
-      timeEntry = TimeEntryFactory.createTimeEntry(OWNER_ID_1, TENANT_ID,
-          CommonUtils.getAsDate(EXISTING_SHIFT_START_TIME),
-          CommonUtils.getAsDate(EXISTING_SHIFT_END_TIME));
-
-      mockMvc.perform(post("/resources/time-entries?tenantId=" + TENANT_ID.toString())
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(CommonUtils.timeEntryAsJsonString(timeEntry)))
-          .andDo(print())
-          .andExpect(status().isOk());
-
-        var timeEntryNew = createTimeEntry(OWNER_ID_1, TENANT_ID,
-            getAsDate(EXISTING_SHIFT_START_TIME.plusMinutes(1)),
-            getAsDate(EXISTING_SHIFT_START_TIME.plusMinutes(2)));
-
-      mockMvc.perform(post("/resources/time-entries?tenantId=" + TENANT_ID.toString())
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(CommonUtils.timeEntryAsJsonString(timeEntry)))
-          .andDo(print())
-          .andExpect(status().is(400));
+    void validate_newStartTimeAndEndTimeInBetweenExistingStartAndEndTime_errorReturned() {
+        var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME.plusMinutes(1));
+        var newEndTime = getAsDate(EXISTING_SHIFT_START_TIME.plusMinutes(2));
+        var timeEntryNew = createTimeEntry(OWNER_ID_1, TENANT_ID, newStartTime, newEndTime);
 
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
@@ -261,7 +177,7 @@ class TimeEntryValidatorTest {
     void validate_existingStartTimeInBetweenNewStartAndEndTime_errorReturned() {
         var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME.minusMinutes(1));
         var newEndTime = getAsDate(EXISTING_SHIFT_END_TIME.minusMinutes(1));
-        var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime, newEndTime);
+        var timeEntryNew = createTimeEntry(OWNER_ID_1, TENANT_ID, newStartTime, newEndTime);
 
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
 
@@ -274,7 +190,7 @@ class TimeEntryValidatorTest {
     void validate_newStartTimeBeforeExistingEndTime_errorReturned() {
         var newStartTime = getAsDate(EXISTING_SHIFT_END_TIME.minusMinutes(1));
         var newEndTime = getAsDate(EXISTING_SHIFT_END_TIME.plusMinutes(1));
-        var newTimeEntry = createTimeEntry(OWNER_ID_1, newStartTime, newEndTime);
+        var newTimeEntry = createTimeEntry(OWNER_ID_1, TENANT_ID, newStartTime, newEndTime);
 
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
 
@@ -287,7 +203,7 @@ class TimeEntryValidatorTest {
     void validate_newStartAndEndTimeSameAsExistingStartAndEndTime_errorReturned() {
         var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME);
         var newEndTime = getAsDate(EXISTING_SHIFT_END_TIME);
-        var newTimeEntry = createTimeEntry(OWNER_ID_1, newStartTime, newEndTime);
+        var newTimeEntry = createTimeEntry(OWNER_ID_1, TENANT_ID, newStartTime, newEndTime);
 
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
 
@@ -300,7 +216,7 @@ class TimeEntryValidatorTest {
     void validate_newTimeEntryEntirelyOverlapsExistingTimeEntry_errorReturned() {
         var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1));
         var newEndTime = getAsDate(EXISTING_SHIFT_END_TIME.plusHours(1));
-        var newTimeEntry = createTimeEntry(OWNER_ID_1, newStartTime, newEndTime);
+        var newTimeEntry = createTimeEntry(OWNER_ID_1, TENANT_ID, newStartTime, newEndTime);
 
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
 
@@ -315,13 +231,14 @@ class TimeEntryValidatorTest {
             2022, 1, 1, 17, 0, 0));
         var existingEndTime = getAsDate(LocalDateTime.of(
             2022, 1, 1, 20, 0, 0));
-        var existingTimeEntry = createTimeEntry(OWNER_ID_1, existingStartTime, existingEndTime);
+        var existingTimeEntry = createTimeEntry(OWNER_ID_1, TENANT_ID, existingStartTime,
+            existingEndTime);
 
         saveEntryAndFlushDatabase(existingTimeEntry);
 
         var newStartTime = getAsDate(EXISTING_SHIFT_END_TIME.minusHours(1));
         var newEndTime = getAsDate(EXISTING_SHIFT_END_TIME.plusHours(1));
-        var newTimeEntry = createTimeEntry(OWNER_ID_1, newStartTime, newEndTime);
+        var newTimeEntry = createTimeEntry(OWNER_ID_1, TENANT_ID, newStartTime, newEndTime);
 
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
 
@@ -334,14 +251,14 @@ class TimeEntryValidatorTest {
     void validate_timeEntryIdsAreDifferentAndTimesClash_errorReturned() {
 
         var existingTimeEntry = createTimeEntry(
-            OWNER_ID_1,
+            OWNER_ID_1, TENANT_ID,
             getAsDate(EXISTING_SHIFT_START_TIME.minusHours(2)),
             getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
 
         saveEntryAndFlushDatabase(existingTimeEntry);
 
         var newTimeEntry = createTimeEntry(
-            OWNER_ID_1,
+            OWNER_ID_1, TENANT_ID,
             getAsDate(EXISTING_SHIFT_START_TIME.minusHours(3)),
             getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1)));
 
@@ -467,12 +384,12 @@ class TimeEntryValidatorTest {
             2022, 1, 1, 8, 0, 0);
 
         saveEntryAndFlushDatabase(createTimeEntry(
-            OWNER_ID_1,
+            OWNER_ID_1, TENANT_ID,
             getAsDate(time)));
 
         var newStartTime = getAsDate(time);
 
-        var timeEntryNew = createTimeEntry(OWNER_ID_1, newStartTime);
+        var timeEntryNew = createTimeEntry(OWNER_ID_1, TENANT_ID, newStartTime);
 
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
         var constraintViolationException = (ConstraintViolationException) thrown;
@@ -492,7 +409,7 @@ class TimeEntryValidatorTest {
     void validate_newTimeEntryEntirelyOverlapsExistingTimeEntry_dynamicPayloadSet() {
         var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME.minusHours(1));
         var newEndTime = getAsDate(EXISTING_SHIFT_END_TIME.plusHours(1));
-        var newTimeEntry = createTimeEntry(OWNER_ID_1, newStartTime, newEndTime);
+        var newTimeEntry = createTimeEntry(OWNER_ID_1, TENANT_ID, newStartTime, newEndTime);
 
         Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(newTimeEntry));
         var constraintViolationException = (ConstraintViolationException) thrown;
