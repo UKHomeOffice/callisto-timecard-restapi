@@ -69,7 +69,7 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
 
     var timeEntryClashes = BeanUtil.getBean(TimeEntryRepository.class).findAllClashingTimeEntries(
         timeEntry.getOwnerId() != null ? timeEntry.getOwnerId() : null,
-        timeEntry.getId() != null ? timeEntry.getId(): null,
+        timeEntry.getId() != null ? timeEntry.getId() : null,
         timeEntry.getTenantId() != null ? timeEntry.getTenantId() : null,
         timeEntry.getActualStartTime(),
         timeEntry.getActualEndTime());
