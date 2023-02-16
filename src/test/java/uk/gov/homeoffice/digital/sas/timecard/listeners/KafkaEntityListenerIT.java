@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,7 +15,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -36,14 +34,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @DirtiesContext
 @WebAppConfiguration
 @AutoConfigureMockMvc(addFilters = true)
 @EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092",
     "port=9092" })
-public class KafkaEntityListenerIt {
+class KafkaEntityListenerIT {
 
   @Autowired
   private MockMvc mockMvc;
@@ -74,7 +71,7 @@ public class KafkaEntityListenerIt {
   }
 
   @Test
-  public void givenValidRequest_WhenSendingCreateRequest_thenTransactionSyncLogsSuccessMessage()
+  void givenValidRequest_WhenSendingCreateRequest_thenTransactionSyncLogsSuccessMessage()
       throws Exception {
     ListAppender<ILoggingEvent> listAppender = getLoggingEventListAppender();
 
@@ -91,7 +88,7 @@ public class KafkaEntityListenerIt {
   }
 
   @Test
-  public void givenValidRequest_WhenSendingUpdateRequest_thenTransactionSyncLogsSuccessMessage()
+  void givenValidRequest_WhenSendingUpdateRequest_thenTransactionSyncLogsSuccessMessage()
     throws Exception {
     ListAppender<ILoggingEvent> listAppender = getLoggingEventListAppender();
 
@@ -119,7 +116,7 @@ public class KafkaEntityListenerIt {
   }
 
   @Test
-  public void givenValidRequest_WhenSendingDelete_thenTransactionSyncLogsSuccessMessage()
+  void givenValidRequest_WhenSendingDelete_thenTransactionSyncLogsSuccessMessage()
     throws Exception {
     ListAppender<ILoggingEvent> listAppender = getLoggingEventListAppender();
 

@@ -14,16 +14,9 @@ import org.hibernate.validator.engine.HibernateConstraintViolation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.kafka.test.context.EmbeddedKafka;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.web.WebAppConfiguration;
 import uk.gov.homeoffice.digital.sas.timecard.enums.ErrorMessage;
 import uk.gov.homeoffice.digital.sas.timecard.enums.InvalidField;
-import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerService;
-import uk.gov.homeoffice.digital.sas.timecard.listeners.TimeEntryKafkaEntityListener;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.repositories.TimeEntryRepository;
 
@@ -35,11 +28,6 @@ import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.
 
 @SpringBootTest
 @Transactional
-@WebAppConfiguration
-@AutoConfigureMockMvc
-@DirtiesContext
-@EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092",
-    "port=9092" })
 class TimeEntryValidatorTest {
 
     @Autowired
@@ -47,15 +35,6 @@ class TimeEntryValidatorTest {
 
     @PersistenceContext
     private EntityManager entityManager;
-
-    @MockBean
-    private KafkaProducerService kafkaProducerService;
-
-    @MockBean
-    private TimeEntryKafkaEntityListener kafkaEntityListener;
-
-    private TimeEntry timeEntry;
-
 
     private final static UUID OWNER_ID_1 = UUID.fromString("ec703cac-de76-49c8-b1c4-83da6f8b42ce");
     private final static UUID TENANT_ID = UUID.fromString("3fa85f64-5717-4562-b3fc-2c963f66afa6");

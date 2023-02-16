@@ -58,7 +58,7 @@ public abstract class KafkaEntityListener<T> {
 
             } else {
               log.error(String.format(
-                  "Database transaction [ %s ] with ownerId [ %s ] failed", ownerId, ownerId));
+                  "Database transaction [ %s ] with ownerId [ %s ] failed", action, ownerId));
             }
           }
         }
