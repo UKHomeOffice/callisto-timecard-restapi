@@ -5,7 +5,8 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public enum KafkaAction {
   CREATE("create"),
-  UPDATE("update");
+  UPDATE("update"),
+  DELETE("delete");
   private final String stringValue;
 
   @Override
