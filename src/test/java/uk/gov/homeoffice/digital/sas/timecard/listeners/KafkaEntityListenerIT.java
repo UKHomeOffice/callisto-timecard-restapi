@@ -77,14 +77,18 @@ class KafkaEntityListenerIT {
 
     List<ILoggingEvent> logList = listAppender.list;
 
-    createTimeEntry();
+    persistTimeEntry(timeEntry);
+
+    assertEquals(String.format(
+        "Kafka Transaction [ create ] Initialized with message key [ %s ]",
+        messageKey), logList.get(0).getMessage());
 
     assertEquals(String.format(
         "Database transaction [ create ] with ownerId [ %s ] was successful",
-        timeEntry.getOwnerId().toString()), logList.get(0).getMessage());
+        timeEntry.getOwnerId().toString()), logList.get(1).getMessage());
 
     assertEquals(String.format(
-        "Transaction successful with messageKey [ %s ]", messageKey), logList.get(1).getMessage());
+        "Transaction successful with messageKey [ %s ]", messageKey), logList.get(2).getMessage());
   }
 
   @Test
@@ -94,7 +98,7 @@ class KafkaEntityListenerIT {
 
     List<ILoggingEvent> logList = listAppender.list;
 
-    MvcResult result = createTimeEntry();
+    MvcResult result = persistTimeEntry(timeEntry);
     String content = result.getResponse().getContentAsString();
     String id = content.substring(38, 74);
 
@@ -108,11 +112,15 @@ class KafkaEntityListenerIT {
         .andExpect(status().isOk());
 
     assertEquals(String.format(
-        "Database transaction [ update ] with ownerId [ %s ] was successful",
-        timeEntry.getOwnerId().toString()), logList.get(2).getMessage());
+        "Kafka Transaction [ update ] Initialized with message key [ %s ]",
+        messageKey), logList.get(3).getMessage());
 
     assertEquals(String.format(
-        "Transaction successful with messageKey [ %s ]", messageKey), logList.get(3).getMessage());
+        "Database transaction [ update ] with ownerId [ %s ] was successful",
+        timeEntry.getOwnerId().toString()), logList.get(4).getMessage());
+
+    assertEquals(String.format(
+        "Transaction successful with messageKey [ %s ]", messageKey), logList.get(5).getMessage());
   }
 
   @Test
@@ -122,7 +130,7 @@ class KafkaEntityListenerIT {
 
     List<ILoggingEvent> logList = listAppender.list;
 
-    MvcResult result = createTimeEntry();
+    MvcResult result = persistTimeEntry(timeEntry);
     String content = result.getResponse().getContentAsString();
     String id = content.substring(38, 74);
 
@@ -131,15 +139,18 @@ class KafkaEntityListenerIT {
         .andExpect(status().isOk());
 
     assertEquals(String.format(
-        "Database transaction [ create ] with ownerId [ %s ] was successful",
-        timeEntry.getOwnerId().toString()), logList.get(0).getMessage());
+        "Kafka Transaction [ delete ] Initialized with message key [ %s ]",
+        messageKey), logList.get(3).getMessage());
 
     assertEquals(String.format(
-        "Transaction successful with messageKey [ %s ]", messageKey), logList.get(1).getMessage());
+        "Database transaction [ delete ] with ownerId [ %s ] was successful",
+        timeEntry.getOwnerId().toString()), logList.get(4).getMessage());
+
+    assertEquals(String.format(
+        "Transaction successful with messageKey [ %s ]", messageKey), logList.get(5).getMessage());
   }
 
-
-  private MvcResult createTimeEntry() throws Exception {
+  private MvcResult persistTimeEntry(TimeEntry timeEntry) throws Exception {
     return mockMvc.perform(post("/resources/time-entries?tenantId=" + tenantId)
             .contentType(MediaType.APPLICATION_JSON)
             .content(CommonUtils.timeEntryAsJsonString(timeEntry)))

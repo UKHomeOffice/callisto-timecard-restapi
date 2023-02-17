@@ -50,8 +50,8 @@ public class KafkaProducerService<T> {
 
       @Override
       public void onFailure(Throwable ex) {
-        log.error(String.format("Message with key [ %s ] sent to topic [ %s ] with action "
-               + "[%s]", messageKey, topicName, kafkaEventMessage.getAction(), ex));
+        log.error(String.format("Message with key [ %s ] failed sending to topic [ %s ] with "
+           + "action [%s]", messageKey, topicName, kafkaEventMessage.getAction(), ex));
       }
 
       @Override
