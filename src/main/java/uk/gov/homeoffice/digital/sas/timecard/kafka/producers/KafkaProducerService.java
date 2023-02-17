@@ -51,12 +51,12 @@ public class KafkaProducerService<T> {
       @Override
       public void onFailure(Throwable ex) {
         log.error(String.format("Message with key [ %s ] failed sending to topic [ %s ] with "
-           + "action [%s]", messageKey, topicName, kafkaEventMessage.getAction(), ex));
+           + "action [ %s ]", messageKey, topicName, kafkaEventMessage.getAction(), ex));
       }
 
       @Override
       public void onSuccess(SendResult<String, KafkaEventMessage<T>> result) {
-        log.info(String.format("Message with key [%s] sent to topic [ %s ] with action "
+        log.info(String.format("Message with key [ %s ] sent to topic [ %s ] with action "
             + "[ %s ]", messageKey, topicName, kafkaEventMessage.getAction()));
       }
     });

@@ -150,6 +150,25 @@ class KafkaEntityListenerIT {
         "Transaction successful with messageKey [ %s ]", messageKey), logList.get(5).getMessage());
   }
 
+  //@Test
+  //void givenValidRequest_WhenSendingCreateAndDatabaseDown_thenTransactionSyncLogsFailedMessage()
+  //    throws Exception {
+  //  ListAppender<ILoggingEvent> listAppender = getLoggingEventListAppender();
+  //
+  //  List<ILoggingEvent> logList = listAppender.list;
+  //
+  //  assertEquals(String.format(
+  //      "Kafka Transaction [ create ] Initialized with message key [ %s ]",
+  //      messageKey), logList.get(0).getMessage());
+  //
+  //  assertEquals(String.format(
+  //      "Database transaction [ create ] with ownerId [ %s ] was successful",
+  //      timeEntry.getOwnerId().toString()), logList.get(1).getMessage());
+  //
+  //  assertEquals(String.format(
+  //      "Transaction successful with messageKey [ %s ]", messageKey), logList.get(2).getMessage());
+  //}
+
   private MvcResult persistTimeEntry(TimeEntry timeEntry) throws Exception {
     return mockMvc.perform(post("/resources/time-entries?tenantId=" + tenantId)
             .contentType(MediaType.APPLICATION_JSON)

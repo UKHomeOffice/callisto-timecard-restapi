@@ -11,7 +11,7 @@ public abstract class KafkaEntityListener<T> {
 
   protected KafkaProducerService<T> kafkaProducerService;
 
-  public abstract String resolveMessageKey(T resource);
+  protected abstract String resolveMessageKey(T resource);
 
   protected void createProducerService(KafkaProducerService<T> kafkaProducerService) {
     this.kafkaProducerService = kafkaProducerService;
