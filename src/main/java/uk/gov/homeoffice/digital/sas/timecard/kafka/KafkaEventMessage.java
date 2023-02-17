@@ -1,6 +1,6 @@
 package uk.gov.homeoffice.digital.sas.timecard.kafka;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
 

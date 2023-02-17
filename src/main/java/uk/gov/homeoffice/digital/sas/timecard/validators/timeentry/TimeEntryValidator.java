@@ -1,12 +1,12 @@
 package uk.gov.homeoffice.digital.sas.timecard.validators.timeentry;
 
+import jakarta.persistence.EntityManager;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
@@ -68,9 +68,9 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
     session.setHibernateFlushMode(FlushMode.MANUAL);
 
     var timeEntryClashes = BeanUtil.getBean(TimeEntryRepository.class).findAllClashingTimeEntries(
-        timeEntry.getOwnerId() != null ? timeEntry.getOwnerId().toString() : null,
-        timeEntry.getId() != null ? timeEntry.getId().toString() : null,
-        timeEntry.getTenantId() != null ? timeEntry.getTenantId().toString() : null,
+        timeEntry.getOwnerId() != null ? timeEntry.getOwnerId() : null,
+        timeEntry.getId() != null ? timeEntry.getId() : null,
+        timeEntry.getTenantId() != null ? timeEntry.getTenantId() : null,
         timeEntry.getActualStartTime(),
         timeEntry.getActualEndTime());
 
