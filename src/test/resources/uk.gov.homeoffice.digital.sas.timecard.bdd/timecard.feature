@@ -26,7 +26,7 @@ Feature: Timecard
   Scenario: Create time entry with end date equal to the start date
 
     Given Trevor is a user
-    And the initial time-entries are
+    And the invalid time-entries are
       """
       {
         "ownerId": "#{personaManager.getPersona('Trevor').id.toString}",
@@ -35,7 +35,7 @@ Feature: Timecard
         "actualEndTime": "2022-11-16T10:00:00Z"
       }
       """
-    When Trevor creates the initial time-entries in the timecard service
+    When Trevor creates the invalid time-entries in the timecard service
     Then the last response should have a status code of 200
     Then the 1st of the time-entries in the last response should contain
       | field           | type    | expectation                                                |
@@ -48,7 +48,7 @@ Feature: Timecard
   Scenario: Create time entry with end date before start date
 
     Given Trevor is a user
-    And the initial time-entries are
+    And the invalid time-entries are
       """
       {
         "ownerId": "#{personaManager.getPersona('Trevor').id.toString}",
@@ -57,7 +57,7 @@ Feature: Timecard
         "actualEndTime": "2022-11-16T08:00:00Z"
       }
       """
-    When Trevor creates the initial time-entries in the timecard service
+    When Trevor creates the invalid time-entries in the timecard service
     Then the last response should have a status code of 400
     Then the last response body should contain
       | field       | type    | expectation                                    |
@@ -69,7 +69,7 @@ Feature: Timecard
   Scenario: Create time entry with invalid date format
 
     Given Trevor is a user
-    And the initial time-entries are
+    And the invalid time-entries are
       """
       {
         "ownerId": "#{personaManager.getPersona('Trevor').id.toString}",
@@ -77,7 +77,7 @@ Feature: Timecard
         "actualStartTime": "foobar"
       }
       """
-    When Trevor creates the initial time-entries in the timecard service
+    When Trevor creates the invalid time-entries in the timecard service
     Then the last response should have a status code of 400
     Then the last response body should contain
       | field   | type    | expectation                                                                            |
@@ -87,14 +87,14 @@ Feature: Timecard
   Scenario: Create time entry with no start date
 
     Given Trevor is a user
-    And the initial time-entries are
+    And the invalid time-entries are
       """
       {
         "ownerId": "#{personaManager.getPersona('Trevor').id.toString}",
         "timePeriodTypeId": "#{resourceHelper.getResourceId('Trevor', 'timecard','time-period-types','name=="Shift"')}"
       }
       """
-    When Trevor creates the initial time-entries in the timecard service
+    When Trevor creates the invalid time-entries in the timecard service
     Then the last response should have a status code of 400
     Then the last response body should contain
       | field       | type    | expectation                                                                            |
@@ -116,7 +116,7 @@ Feature: Timecard
       }
       """
     And Trevor creates the initial time-entries in the timecard service
-    And the new time-entries are
+    And the clashing time-entries are
       """
       {
         "ownerId": "#{personaManager.getPersona('Trevor').id.toString}",
@@ -125,7 +125,7 @@ Feature: Timecard
         "actualEndTime": "2022-11-16T10:00:00Z"
       }
       """
-    When Trevor creates the new time-entries in the timecard service
+    When Trevor creates the clashing time-entries in the timecard service
     Then the last response should have a status code of 400
     Then the last response body should contain
       | field                          | type   | expectation                                                         |
@@ -138,7 +138,7 @@ Feature: Timecard
   Scenario: Create time entry with time period type outside of tenant
 
     Given Trevor is a user
-    And the valid time-entries are
+    And the invalid time-entries are
       """
       {
         "ownerId": "#{personaManager.getPersona('Trevor').id.toString}",
@@ -147,7 +147,7 @@ Feature: Timecard
         "actualEndTime": null
       }
       """
-    When Trevor creates the valid time-entries in the timecard service
+    When Trevor creates the invalid time-entries in the timecard service
     Then the last response should have a status code of 400
 #    Then the 1st of the time-entries in the last response should contain
 #      | field           | type    | expectation                                       |
