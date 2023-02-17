@@ -39,10 +39,10 @@ public abstract class KafkaEntityListener<T> {
           @Override
           public void beforeCommit(boolean readOnly) {
             log.info(String.format("Kafka Transaction [ %s ] Initialized with message key [ %s ]",
-             action, messageKey));
-            kafkaProducerService.sendMessage(messageKey,
-                (Class<T>) resource.getClass(), resource, action);
-          }
+                action, messageKey));
+              kafkaProducerService.sendMessage(messageKey,
+                  (Class<T>) resource.getClass(), resource, action);
+            }
 
           @Override
           public void afterCommit() {

@@ -3,8 +3,6 @@ package uk.gov.homeoffice.digital.sas.timecard.listeners;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreRemove;
 import jakarta.persistence.PreUpdate;
-import java.util.Arrays;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -19,7 +17,7 @@ public class TimeEntryKafkaEntityListener extends KafkaEntityListener<TimeEntry>
 
   @Override
   public String resolveMessageKey(TimeEntry timeEntry) {
-    return timeEntry.getTenantId().toString() + ":" + timeEntry.getOwnerId().toString();
+    return String.valueOf(timeEntry.getTenantId() + ":" + timeEntry.getOwnerId());
   }
 
   @Autowired
@@ -29,17 +27,17 @@ public class TimeEntryKafkaEntityListener extends KafkaEntityListener<TimeEntry>
 
   @PrePersist
   void sendMessageOnCreate(TimeEntry resource) {
-    super.sendKafkaMessageOnCreate(resource, resource.getOwnerId().toString());
+    super.sendKafkaMessageOnCreate(resource, String.valueOf(resource.getOwnerId()));
   }
 
   @PreUpdate
   void sendMessageOnUpdate(TimeEntry resource) {
-    super.sendKafkaMessageOnUpdate(resource, resource.getOwnerId().toString());
+    super.sendKafkaMessageOnUpdate(resource, String.valueOf(resource.getOwnerId()));
   }
 
   @PreRemove
   void sendMessageOnDelete(TimeEntry resource) {
-    super.sendKafkaMessageOnDelete(resource, resource.getOwnerId().toString());
+    super.sendKafkaMessageOnDelete(resource, String.valueOf(resource.getOwnerId()));
   }
 
 }

@@ -1,23 +1,12 @@
 package uk.gov.homeoffice.digital.sas.timecard.validators.timeentry;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNoException;
-import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
-import static uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils.getAsDate;
-import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.createTimeEntry;
-
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.UUID;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.UUID;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
-import javax.validation.ConstraintViolationException;
-
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.validator.engine.HibernateConstraintViolation;
@@ -25,11 +14,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import uk.gov.homeoffice.digital.sas.timecard.enums.ErrorMessage;
 import uk.gov.homeoffice.digital.sas.timecard.enums.InvalidField;
-import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerService;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.repositories.TimeEntryRepository;
+import static uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils.getAsDate;
+import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.createTimeEntry;
 
 
 @SpringBootTest
@@ -57,7 +50,7 @@ class TimeEntryValidatorTest {
         getAsDate(EXISTING_SHIFT_START_TIME),
         getAsDate(EXISTING_SHIFT_END_TIME)));
   }
-  
+
   @Test
   void validate_startTimeAfterEndTime_errorReturned() {
     var time = LocalDateTime.of(
@@ -72,18 +65,18 @@ class TimeEntryValidatorTest {
     assertPropertyErrorType((ConstraintViolationException) thrown, InvalidField.END_TIME);
     assertThat(thrown.getMessage()).contains(ErrorMessage.END_TIME_BEFORE_START_TIME.toString());
   }
-  
-   @Test
-   void validate_timeEntryWithNoOwner_noErrorReturned() {
 
-     var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME);
+  @Test
+  void validate_timeEntryWithNoOwner_errorReturned() {
 
-      var timeEntryNew = createTimeEntry(null, newStartTime);
+    var newStartTime = getAsDate(EXISTING_SHIFT_START_TIME);
 
-       Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
-       assertPropertyErrorType((ConstraintViolationException) thrown, InvalidField.OWNER_ID);
-       assertThat(thrown.getMessage()).contains(ErrorMessage.NO_OWNER_ID.toString());
-    }
+    var timeEntryNew = createTimeEntry(null, TENANT_ID, newStartTime);
+
+    Throwable thrown = catchThrowable(() -> saveEntryAndFlushDatabase(timeEntryNew));
+    assertPropertyErrorType((ConstraintViolationException) thrown, InvalidField.OWNER_ID);
+    assertThat(thrown.getMessage()).contains(ErrorMessage.NO_OWNER_ID.toString());
+  }
 
   // region clashing_error_tests
 

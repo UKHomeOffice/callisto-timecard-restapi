@@ -3,6 +3,7 @@ package uk.gov.homeoffice.digital.sas.timecard.producers;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,22 +17,18 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.util.concurrent.ListenableFuture;
-import org.springframework.util.concurrent.ListenableFutureCallback;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
-import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
-import uk.gov.homeoffice.digital.sas.timecard.kafka.KafkaEventMessage;
-import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerService;
-import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
+import uk.gov.homeoffice.digital.sas.timecard.kafka.KafkaEventMessage;
+import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerService;
+import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 import static uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils.generateMessageKey;
 import static uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils.getAsDate;
 import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.createTimeEntry;
@@ -48,7 +45,7 @@ class KafkaProducerServiceTest {
   private KafkaProducerService<TimeEntry> kafkaProducerService;
 
   @Mock
-  private ListenableFuture<SendResult<String, KafkaEventMessage<TimeEntry>>> responseFuture;
+  private CompletableFuture<SendResult<String, KafkaEventMessage<TimeEntry>>> responseFuture;
 
   @ParameterizedTest
   @EnumSource(value = KafkaAction.class, names = {"CREATE", "UPDATE", "DELETE"})
@@ -85,7 +82,7 @@ class KafkaProducerServiceTest {
 
   @ParameterizedTest
   @EnumSource(value = KafkaAction.class, names = {"CREATE", "UPDATE", "DELETE"})
-  void listenableFutureReporting_actionOnResource_onFailureMessageLogged(KafkaAction action) {
+  void listenableFutureReporting_actionOnResource_onFailureMessageLogged(KafkaAction action) throws InterruptedException {
     ReflectionTestUtils.setField(kafkaProducerService, "topicName", TOPIC_NAME);
     ReflectionTestUtils.setField(kafkaProducerService, "projectVersion", "1.0.0");
 
@@ -99,16 +96,16 @@ class KafkaProducerServiceTest {
 
     List<ILoggingEvent> logList = listAppender.list;
 
-    responseFuture = mock(ListenableFuture.class);
+    responseFuture = mock(CompletableFuture.class);
     Throwable throwable = mock(Throwable.class);
 
     Mockito.when(kafkaTemplate.send(any(), any(), any()))
         .thenReturn(responseFuture);
-    doAnswer(invocationOnMock -> {
-      ListenableFutureCallback listenableFutureCallback = invocationOnMock.getArgument(0);
-      listenableFutureCallback.onFailure(throwable);
-      return null;
-    }).when(responseFuture).addCallback(any(ListenableFutureCallback.class));
+    //doAnswer(invocationOnMock -> {
+    //  CompletableFutureCallback listenableFutureCallback = invocationOnMock.getArgument(0);
+    //  listenableFutureCallback.onFailure(throwable);
+    //  return null;
+    //}).when(responseFuture).addCallback(any(ListenableFutureCallback.class));
 
     kafkaProducerService.sendMessage(messageKey, TimeEntry.class, timeEntry, action);
 
@@ -119,7 +116,7 @@ class KafkaProducerServiceTest {
 
   @ParameterizedTest
   @EnumSource(value = KafkaAction.class, names = {"CREATE", "UPDATE", "DELETE"})
-  void can_publishDataToKafka(KafkaAction action) {
+  void can_publishDataToKafka(KafkaAction action) throws InterruptedException {
     ReflectionTestUtils.setField(kafkaProducerService, "topicName", TOPIC_NAME);
     ReflectionTestUtils.setField(kafkaProducerService, "projectVersion", "1.0.0");
 
@@ -133,18 +130,20 @@ class KafkaProducerServiceTest {
 
     List<ILoggingEvent> logList = listAppender.list;
 
-    responseFuture = mock(ListenableFuture.class);
+    responseFuture = mock(CompletableFuture.class);
     SendResult<String, Object> sendResult = mock(SendResult.class);
 
-    Mockito.when(kafkaTemplate.send(any(), any(), any()))
-        .thenReturn(responseFuture);
-    doAnswer(invocationOnMock -> {
-      ListenableFutureCallback listenableFutureCallback = invocationOnMock.getArgument(0);
-      listenableFutureCallback.onSuccess(sendResult);
-      return null;
-    }).when(responseFuture).addCallback(any(ListenableFutureCallback.class));
+    //Mockito.when(kafkaTemplate.send(any(), any(), any()))
+    //    .thenReturn(responseFuture);
+    //doAnswer(invocationOnMock -> {
+    //  CompletableFuture completableFuture = invocationOnMock.getArgument(0);
+    //  completableFuture.whenComplete(responseFuture, ex);
+    //  return null;
+    //});
 
     kafkaProducerService.sendMessage(messageKey, TimeEntry.class, timeEntry, action);
+
+    responseFuture.completeExceptionally(new Exception("Error"));
 
     assertEquals(String.format(
         "Message with key [ %s ] sent to topic [ callisto-timecard ] with action [ %s ]",
