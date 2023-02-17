@@ -11,7 +11,7 @@ public abstract class KafkaEntityListener<T> {
 
   protected KafkaProducerService<T> kafkaProducerService;
 
-  public abstract String resolveMessageKey(T resource);
+  protected abstract String resolveMessageKey(T resource);
 
   protected void createProducerService(KafkaProducerService<T> kafkaProducerService) {
     this.kafkaProducerService = kafkaProducerService;
@@ -38,6 +38,8 @@ public abstract class KafkaEntityListener<T> {
 
           @Override
           public void beforeCommit(boolean readOnly) {
+            log.info(String.format("Kafka Transaction [ %s ] Initialized with message key [ %s ]",
+             action, messageKey));
             kafkaProducerService.sendMessage(messageKey,
                 (Class<T>) resource.getClass(), resource, action);
           }
@@ -58,7 +60,7 @@ public abstract class KafkaEntityListener<T> {
 
             } else {
               log.error(String.format(
-                  "Database transaction [ %s ] with ownerId [ %s ] failed", ownerId, ownerId));
+                  "Database transaction [ %s ] with ownerId [ %s ] failed", action, ownerId));
             }
           }
         }

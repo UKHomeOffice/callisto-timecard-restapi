@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerService;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
@@ -26,12 +27,15 @@ class KafkaEntityListenerTest {
 
   @Mock
   private KafkaProducerService<TimeEntry> kafkaProducerService;
+  private TransactionSynchronization sync;
   private final TimeEntryKafkaEntityListener kafkaEntityListener =
       new TimeEntryKafkaEntityListener();
 
   @BeforeEach
   void setup() {
-    LocalDateTime actualStartTime = CommonUtils.createLocalDateTime();
+    kafkaEntityListener.createProducerService(kafkaProducerService);
+    LocalDateTime actualStartTime = LocalDateTime.of(
+        2022, 1, 1, 9, 0, 0);
     timeEntry = createTimeEntry(OWNER_ID, TENANT_ID, getAsDate(actualStartTime));
     TransactionSynchronizationManager.initSynchronization();
     kafkaEntityListener.createProducerService(kafkaProducerService);
@@ -43,6 +47,5 @@ class KafkaEntityListenerTest {
     assertThat(kafkaEntityListener.resolveMessageKey(timeEntry))
         .isEqualTo(messageKey);
   }
-
 
 }
