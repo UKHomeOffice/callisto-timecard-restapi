@@ -39,6 +39,7 @@ public abstract class KafkaEntityListener<T> {
 
           @SneakyThrows
           @Override
+          @SuppressWarnings("squid:S00112")
           public void beforeCommit(boolean readOnly) {
             log.info(String.format("Kafka Transaction [ %s ] Initialized with message key [ %s ]",
                 action, messageKey));
@@ -47,6 +48,7 @@ public abstract class KafkaEntityListener<T> {
           }
 
           @Override
+          @SuppressWarnings("squid:S00112")
           public void afterCommit() {
             log.info(String.format(
                 "Database transaction [ %s ] with ownerId [ %s ] was successful",
@@ -55,6 +57,7 @@ public abstract class KafkaEntityListener<T> {
           }
 
           @Override
+          @SuppressWarnings("squid:S00112")
           public void afterCompletion(int status) {
             if (status == STATUS_COMMITTED) {
               log.info(String.format(
