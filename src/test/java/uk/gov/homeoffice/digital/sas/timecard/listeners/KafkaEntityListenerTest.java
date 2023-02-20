@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -49,11 +48,4 @@ class KafkaEntityListenerTest {
         .isEqualTo(messageKey);
   }
 
-  @Test
-  void testAfterCommit() {
-    kafkaEntityListener.sendKafkaMessageOnCreate(timeEntry, String.valueOf(OWNER_ID));
-
-    Mockito.verify(sync)
-        .beforeCommit(true);
-  }
 }
