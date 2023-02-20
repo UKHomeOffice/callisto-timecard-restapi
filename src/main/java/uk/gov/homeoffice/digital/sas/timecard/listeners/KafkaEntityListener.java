@@ -36,7 +36,7 @@ public abstract class KafkaEntityListener<T> {
         new TransactionSynchronization() {
           int status = TransactionSynchronization.STATUS_UNKNOWN;
           String messageKey = resolveMessageKey(resource);
-
+          //NOSONAR
           @SneakyThrows
           @Override
           @SuppressWarnings("squid:S00112")
@@ -46,9 +46,8 @@ public abstract class KafkaEntityListener<T> {
             kafkaProducerService.sendMessage(messageKey,
                 (Class<T>) resource.getClass(), resource, action);
           }
-
+          //NOSONAR
           @Override
-          @SuppressWarnings("squid:S00112")
           public void afterCommit() {
             log.info(String.format(
                 "Database transaction [ %s ] with ownerId [ %s ] was successful",
