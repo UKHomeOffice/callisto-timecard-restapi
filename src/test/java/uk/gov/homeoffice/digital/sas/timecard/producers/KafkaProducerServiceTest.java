@@ -134,13 +134,12 @@ class KafkaProducerServiceTest {
 
     when(kafkaTemplate.send(any(), any(), any())).thenReturn(responseFuture);
     when(responseFuture.complete(sendResult)).thenReturn(true);
-    assertThat(responseFuture.isDone());
+    when(responseFuture.whenComplete(any())).thenReturn(responseFuture);
 
     kafkaProducerService.sendMessage(messageKey, TimeEntry.class, timeEntry, action);
-
-    //assertEquals(String.format(
-    //    "Message with key [ %s ] sent to topic [ callisto-timecard ] with action [ %s ]",
-    //    messageKey, action.toString().toLowerCase()), logList.get(0).getMessage());
+    assertEquals(String.format(
+        "Message with key [ %s ] sent to topic [ callisto-timecard ] with action [ %s ]",
+        messageKey, action.toString().toLowerCase()), logList.get(0).getMessage());
 
   }
 
