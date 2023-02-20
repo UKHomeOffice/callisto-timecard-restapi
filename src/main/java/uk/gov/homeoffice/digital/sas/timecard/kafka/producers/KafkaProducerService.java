@@ -29,7 +29,7 @@ public class KafkaProducerService<T> {
   }
 
   public void sendMessage(String messageKey, Class<T> resourceType,
-                          T resource, KafkaAction action) throws InterruptedException {
+                          T resource, KafkaAction action) throws InterruptedException, ExecutionException {
     var kafkaEventMessage = new KafkaEventMessage<>(projectVersion, resourceType, resource, action);
     CompletableFuture<SendResult<String, KafkaEventMessage<T>>> future = null;
     try {
@@ -38,24 +38,34 @@ public class KafkaProducerService<T> {
           messageKey,
           kafkaEventMessage
       );
-      if (didKafkaCompleteSuccessfully(future)) {
-        log.info(String.format(
-            "Message with key [ %s ] sent to topic [ %s ] on partition [ %s ] with action [ %s ]",
-            messageKey, topicName, future.get().getProducerRecord().partition(),
-            kafkaEventMessage.getAction()));
-      }
-    } catch (ExecutionException e) {
+      completeKafkaTransaction(future);
+      logKafkaMessage(messageKey, kafkaEventMessage, future);
+    } catch (InterruptedException e) {
       log.error(String.format("Message with key [ %s ] failed sending to topic [ %s ]."
-                  + "action: [ %s ]", messageKey, topicName,
+              + "action: [ %s ]", messageKey, topicName,
           kafkaEventMessage.getAction()), e);
     }
   }
 
-  private boolean didKafkaCompleteSuccessfully(CompletableFuture<SendResult<String,
-      KafkaEventMessage<T>>> future)
-      throws ExecutionException, InterruptedException {
-    return future.complete(future.get());
+  private void logKafkaMessage(
+      String messageKey,
+      KafkaEventMessage<T> kafkaEventMessage,
+      CompletableFuture<SendResult<String,
+          KafkaEventMessage<T>>> future) {
+    future.whenComplete((result, ex) -> {
+      if (ex == null) {
+        log.info(String.format(
+            "Message with key [ %s ] sent to topic [ %s ] on partition [ %s ] with action [ %s ]",
+            messageKey, topicName, result.getProducerRecord().partition(),
+            kafkaEventMessage.getAction()));
+      }
+    });
   }
 
+  private void completeKafkaTransaction(
+      CompletableFuture<SendResult<String, KafkaEventMessage<T>>> future)
+      throws ExecutionException, InterruptedException {
+    future.complete(future.get());
+  }
 }
 
