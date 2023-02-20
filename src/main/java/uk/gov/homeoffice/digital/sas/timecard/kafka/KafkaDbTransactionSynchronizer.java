@@ -21,7 +21,6 @@ public class KafkaDbTransactionSynchronizer {
         new TransactionSynchronization() {
           int status = TransactionSynchronization.STATUS_UNKNOWN;
 
-          //NOSONAR
           @SneakyThrows
           @Override
           public void beforeCommit(boolean readOnly) {
@@ -30,7 +29,6 @@ public class KafkaDbTransactionSynchronizer {
             sendKafkaMessage.accept(action, messageKey);
           }
 
-          //NOSONAR
           @Override
           public void afterCommit() {
             log.info(String.format(
@@ -40,7 +38,6 @@ public class KafkaDbTransactionSynchronizer {
           }
 
           @Override
-          @SuppressWarnings("squid:S00112")
           public void afterCompletion(int status) {
             if (status == STATUS_COMMITTED) {
               log.info(String.format(
