@@ -37,7 +37,8 @@ import static uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils.getAs
 import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.createTimeEntry;
 
 @ExtendWith(SpringExtension.class)
-@EmbeddedKafka
+@EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092",
+    "port=9092" })
 class KafkaProducerServiceTest {
 
   private final static String TOPIC_NAME = "callisto-timecard";
@@ -86,7 +87,7 @@ class KafkaProducerServiceTest {
 
   @ParameterizedTest
   @EnumSource(value = KafkaAction.class, names = {"CREATE", "UPDATE", "DELETE"})
-  void CompletableFutureReporting_actionOnResource_onFailureMessageLogged(KafkaAction action) throws InterruptedException, ExecutionException {
+  void CompletableFutureReporting_actionOnResource_onFailureMessageLogged(KafkaAction action) throws ExecutionException {
     ReflectionTestUtils.setField(kafkaProducerService, "topicName", TOPIC_NAME);
     ReflectionTestUtils.setField(kafkaProducerService, "projectVersion", "1.0.0");
 
@@ -105,10 +106,9 @@ class KafkaProducerServiceTest {
 
     when(kafkaTemplate.send(any(), any(), any()))
         .thenReturn(responseFuture);
-
+    when(responseFuture.complete(any())).thenThrow(new InterruptedException());
 
     kafkaProducerService.sendMessage(messageKey, TimeEntry.class, timeEntry, action);
-
     assertEquals(String.format(
         "Message with key [ %s ] failed sending to topic [ callisto-timecard ] with action [ %s ]",
         messageKey, action.toString().toLowerCase()), logList.get(0).getMessage());

@@ -1,6 +1,5 @@
 package uk.gov.homeoffice.digital.sas.timecard.listeners;
 
-import java.util.concurrent.ExecutionException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -41,12 +40,8 @@ public abstract class KafkaEntityListener<T> {
           public void beforeCommit(boolean readOnly) {
             log.info(String.format("Kafka Transaction [ %s ] Initialized with message key [ %s ]",
                 action, messageKey));
-            try {
-              kafkaProducerService.sendMessage(messageKey,
-                  (Class<T>) resource.getClass(), resource, action);
-            } catch (InterruptedException | ExecutionException e) {
-              throw new RuntimeException(e);
-            }
+            kafkaProducerService.sendMessage(messageKey,
+                (Class<T>) resource.getClass(), resource, action);
           }
 
           @Override
