@@ -1,5 +1,6 @@
 package uk.gov.homeoffice.digital.sas.timecard.kafka;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -20,6 +21,8 @@ public class KafkaDbTransactionSynchronizer {
             new TransactionSynchronization() {
                 int status = TransactionSynchronization.STATUS_UNKNOWN;
 
+                //NOSONAR
+                @SneakyThrows
                 @Override
                 public void beforeCommit(boolean readOnly) {
                     log.info(String.format("Kafka Transaction [ %s ] Initialized with message key [ %s ]",
@@ -27,6 +30,7 @@ public class KafkaDbTransactionSynchronizer {
                     sendKafkaMessage.accept(action, messageKey);
                 }
 
+                //NOSONAR
                 @Override
                 public void afterCommit() {
                     log.info(String.format(
@@ -36,6 +40,7 @@ public class KafkaDbTransactionSynchronizer {
                 }
 
                 @Override
+                @SuppressWarnings("squid:S00112")
                 public void afterCompletion(int status) {
                     if (status == STATUS_COMMITTED) {
                         log.info(String.format(
