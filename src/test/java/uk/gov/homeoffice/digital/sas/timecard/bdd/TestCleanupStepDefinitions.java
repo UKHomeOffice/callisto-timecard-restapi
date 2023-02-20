@@ -5,17 +5,19 @@ import static uk.gov.homeoffice.digital.sas.cucumberjparest.persona.PersonaManag
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.After;
 import io.cucumber.java.AfterAll;
+
 import java.util.UUID;
 import uk.gov.homeoffice.digital.sas.cucumberjparest.api.JpaRestApiClient;
 import uk.gov.homeoffice.digital.sas.cucumberjparest.api.ServiceRegistry;
 import uk.gov.homeoffice.digital.sas.cucumberjparest.persona.Persona;
-import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
-import uk.gov.homeoffice.digital.sas.timecard.model.TimePeriodType;
+import uk.gov.homeoffice.digital.sas.jparest.models.BaseEntity;
 
-public class TestCleanupStepDefinitions {
+public class TestCleanupStepDefinitions<T extends BaseEntity> {
+
+  private static final String SERVICE_NAME = "timecard";
 
   @After
-  public static void cleanup() {
+  public void cleanup() {
     var jpaRestApiClient = new JpaRestApiClient(new ServiceRegistry());
     var objectMapper = new ObjectMapper();
 
@@ -24,13 +26,13 @@ public class TestCleanupStepDefinitions {
     admin.setTenantId(tenantId);
 
     var timeEntries =
-        getCreatedTimeEntries(jpaRestApiClient, objectMapper, admin);
+            getCreatedResources("time-entries", jpaRestApiClient, objectMapper, admin);
 
-    deleteTimeEntries(jpaRestApiClient, admin, timeEntries);
+    deleteResources("time-entries", jpaRestApiClient, admin, timeEntries);
   }
 
   @AfterAll
-  public static void cleanupAll() {
+  public void cleanupAll() {
     var jpaRestApiClient = new JpaRestApiClient(new ServiceRegistry());
     var objectMapper = new ObjectMapper();
 
@@ -38,56 +40,31 @@ public class TestCleanupStepDefinitions {
     var admin = new Persona();
     admin.setTenantId(tenantId);
 
-    var timePeriodTypes = getCreatedTimePeriodTypes(jpaRestApiClient, objectMapper, admin);
+    var timePeriodTypes = getCreatedResources("time-period-types", jpaRestApiClient, objectMapper, admin);
 
-    deleteTimePeriodTypes(jpaRestApiClient, admin, timePeriodTypes);
+    deleteResources("time-period-types", jpaRestApiClient, admin, timePeriodTypes);
   }
 
-  private static TimeEntry[] getCreatedTimeEntries(JpaRestApiClient jpaRestApiClient,
-                                                       ObjectMapper objectMapper, Persona admin) {
+  private T[] getCreatedResources(String resource, JpaRestApiClient jpaRestApiClient,
+                                  ObjectMapper objectMapper, Persona admin) {
     var apiResponse = jpaRestApiClient.retrieve(
-        admin,
-        "timecard",
-        "time-entries",
-        null);
+            admin,
+            SERVICE_NAME,
+            resource,
+            null);
 
     var responseBody = apiResponse.getResponse().getBody().jsonPath().getMap("");
-
-    return objectMapper.convertValue(responseBody.get("items"), TimeEntry[].class);
+    return (T[]) objectMapper.convertValue(responseBody.get("items"), BaseEntity[].class );
   }
 
-  private static TimePeriodType[] getCreatedTimePeriodTypes(JpaRestApiClient jpaRestApiClient,
-                                                            ObjectMapper objectMapper, Persona admin) {
-    var apiResponse = jpaRestApiClient.retrieve(
-        admin,
-        "timecard",
-        "time-period-types",
-        null);
-
-    var responseBody = apiResponse.getResponse().getBody().jsonPath().getMap("");
-
-    return objectMapper.convertValue(responseBody.get("items"), TimePeriodType[].class);
-  }
-
-  private static void deleteTimeEntries(JpaRestApiClient jpaRestApiClient, Persona admin,
-                                        TimeEntry[] timeEntries) {
-    for (TimeEntry timeEntry : timeEntries) {
+  private void deleteResources(String resource, JpaRestApiClient jpaRestApiClient, Persona admin,
+                               T[] entities) {
+    for (T entity : entities) {
       jpaRestApiClient.delete(
-          admin,
-          "timecard",
-          "time-entries",
-          timeEntry.getId().toString());
-    }
-  }
-
-  private static void deleteTimePeriodTypes(JpaRestApiClient jpaRestApiClient, Persona admin,
-                                        TimePeriodType[] timePeriodTypes) {
-    for (TimePeriodType timePeriodType : timePeriodTypes) {
-      jpaRestApiClient.delete(
-          admin,
-          "timecard",
-          "time-period-types",
-          timePeriodType.getId().toString());
+              admin,
+              SERVICE_NAME,
+              resource,
+              entity.getId().toString());
     }
   }
 }
