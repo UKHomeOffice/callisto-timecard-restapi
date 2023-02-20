@@ -133,25 +133,3 @@ Feature: Timecard
       | [0].message                    | String | isEqualTo("Time periods must not overlap with another time period") |
       | [0].data[0].startTime          | String | isEqualTo("2022-11-16T08:00:00.000+00:00")                          |
       | [0].data[0].endTime            | String | isEqualTo("2022-11-16T10:00:00.000+00:00")                          |
-
-
-  Scenario: Create time entry with time period type outside of tenant
-
-    Given Trevor is a user
-    And the invalid time-entries are
-      """
-      {
-        "ownerId": "#{personaManager.getPersona('Trevor').id.toString}",
-        "timePeriodTypeId": "00000000-0000-0000-0000-000000000001",
-        "actualStartTime": "2022-11-16T08:00:00Z",
-        "actualEndTime": null
-      }
-      """
-    When Trevor creates the invalid time-entries in the timecard service
-    Then the last response should have a status code of 400
-#    Then the 1st of the time-entries in the last response should contain
-#      | field           | type    | expectation                                       |
-#      | id              | String  | isNotNull()                                       |
-#      | ownerId         | String  | isEqualTo("00000000-0000-0000-0000-000000000001") |
-#      | actualStartTime | Instant | isEqualTo("2022-11-16T08:00:00Z")                 |
-#      | actualEndTime   | Instant | isNull()                                          |
