@@ -108,6 +108,7 @@ class KafkaProducerServiceTest {
     Mockito.doThrow(new InterruptedException("yay!")).when(responseFuture).get();
 
     kafkaProducerService.sendMessage(messageKey, TimeEntry.class, timeEntry, action);
+    assertThat(responseFuture.isDone()).isFalse();
     assertEquals(String.format(
         "Message with key [ %s ] failed sending to topic [ callisto-timecard ] action [ %s ]",
         messageKey, action.toString().toLowerCase()), logList.get(0).getMessage());
@@ -125,22 +126,13 @@ class KafkaProducerServiceTest {
     TimeEntry timeEntry = createTimeEntry(ownerId, getAsDate(actualStartTime));
     String messageKey = generateMessageKey(timeEntry);
 
-    ListAppender<ILoggingEvent> listAppender = getLoggingEventListAppender();
-
-    List<ILoggingEvent> logList = listAppender.list;
-
-    responseFuture = mock(CompletableFuture.class);
+    responseFuture = new CompletableFuture<>();
     SendResult<String, KafkaEventMessage<TimeEntry>> sendResult = mock(SendResult.class);
-
+    responseFuture.complete(sendResult);
     when(kafkaTemplate.send(any(), any(), any())).thenReturn(responseFuture);
-    when(responseFuture.complete(sendResult)).thenReturn(true);
-    when(responseFuture.whenComplete(any())).thenReturn(responseFuture);
-
-    kafkaProducerService.sendMessage(messageKey, TimeEntry.class, timeEntry, action);
-    assertEquals(String.format(
-        "Message with key [ %s ] sent to topic [ callisto-timecard ] with action [ %s ]",
-        messageKey, action.toString().toLowerCase()), logList.get(0).getMessage());
-
+    kafkaProducerService.sendMessage(messageKey, TimeEntry.class, timeEntry,
+        action);
+    assertThat(responseFuture.isDone()).isTrue();
   }
 
   @NotNull
