@@ -54,10 +54,8 @@ public class KafkaProducerService<T> {
           KafkaEventMessage<T>>> future) {
     future.whenComplete((result, ex) -> {
       if (ex == null) {
-        log.info(String.format(
-            "Message with key [ %s ] sent to topic [ %s ] on partition [ %s ] with action [ %s ]",
-            messageKey, topicName, result.getProducerRecord().partition(),
-            kafkaEventMessage.getAction()));
+        log.info(String.format("Message with key [ %s ] sent to topic [ %s ] with action [ %s ]",
+                messageKey, topicName, kafkaEventMessage.getAction()));
       }
     });
   }
