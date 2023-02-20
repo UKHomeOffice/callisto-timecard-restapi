@@ -26,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.KafkaEventMessage;
@@ -36,8 +37,6 @@ import static uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils.getAs
 import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.createTimeEntry;
 
 @ExtendWith(SpringExtension.class)
-//@EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092",
-//    "port=9092" })
 class KafkaProducerServiceTest {
 
   private final static String TOPIC_NAME = "callisto-timecard";
@@ -101,7 +100,6 @@ class KafkaProducerServiceTest {
     List<ILoggingEvent> logList = listAppender.list;
 
     responseFuture = mock(CompletableFuture.class);
-    Throwable throwable = mock(Throwable.class);
 
     when(kafkaTemplate.send(any(), any(), any()))
         .thenReturn(responseFuture);
@@ -126,13 +124,24 @@ class KafkaProducerServiceTest {
     TimeEntry timeEntry = createTimeEntry(ownerId, getAsDate(actualStartTime));
     String messageKey = generateMessageKey(timeEntry);
 
-    responseFuture = new CompletableFuture<>();
+    ListAppender<ILoggingEvent> listAppender = getLoggingEventListAppender();
+
+    List<ILoggingEvent> logList = listAppender.list;
+
+    responseFuture = spy(CompletableFuture.class);
     SendResult<String, KafkaEventMessage<TimeEntry>> sendResult = mock(SendResult.class);
-    responseFuture.complete(sendResult);
+
     when(kafkaTemplate.send(any(), any(), any())).thenReturn(responseFuture);
+    when(responseFuture.complete(sendResult)).thenReturn(true);
+    assertThat(responseFuture.isDone()).isTrue();
+
     kafkaProducerService.sendMessage(messageKey, TimeEntry.class, timeEntry,
         action);
-    assertThat(responseFuture.isDone()).isTrue();
+
+    assertEquals(String.format(
+        "Message with key [ %s ] sent to topic [ callisto-timecard ] with action [ %s ]",
+        messageKey, action.toString().toLowerCase()), logList.get(0).getMessage());
+
   }
 
   @NotNull
