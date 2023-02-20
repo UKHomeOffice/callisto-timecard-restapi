@@ -1,16 +1,19 @@
 package uk.gov.homeoffice.digital.sas.timecard.listeners;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
+import uk.gov.homeoffice.digital.sas.timecard.kafka.KafkaDbTransactionSynchronizer;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerService;
+
+import java.util.function.BiConsumer;
 
 @Slf4j
 public abstract class KafkaEntityListener<T> {
 
   protected KafkaProducerService<T> kafkaProducerService;
+  @Autowired
+  private KafkaDbTransactionSynchronizer kafkaDbTransactionSynchronizer;
 
   protected abstract String resolveMessageKey(T resource);
 
@@ -32,40 +35,17 @@ public abstract class KafkaEntityListener<T> {
 
   @SuppressWarnings("unchecked")
   private void sendMessage(T resource, KafkaAction action, String ownerId) {
-    TransactionSynchronizationManager.registerSynchronization(
-        new TransactionSynchronization() {
-          int status = TransactionSynchronization.STATUS_UNKNOWN;
-          String messageKey = resolveMessageKey(resource);
-
-          @SneakyThrows
-          @Override
-          public void beforeCommit(boolean readOnly) {
-            log.info(String.format("Kafka Transaction [ %s ] Initialized with message key [ %s ]",
-                action, messageKey));
-            kafkaProducerService.sendMessage(messageKey,
-                (Class<T>) resource.getClass(), resource, action);
+      BiConsumer<KafkaAction, String> sendMessageConsumer = (KafkaAction actionArg, String messageKeyArg) -> {
+          try {
+              kafkaProducerService.sendMessage(
+                      messageKeyArg, (Class<T>) resource.getClass(), resource, actionArg);
+          } catch (InterruptedException e) {
+              throw new RuntimeException("Interruption occurred whilst producing kafka message");
           }
+      };
 
-          @Override
-          public void afterCommit() {
-            log.info(String.format(
-                "Database transaction [ %s ] with ownerId [ %s ] was successful",
-                action.toString(), ownerId));
-            status = TransactionSynchronization.STATUS_COMMITTED;
-          }
+      kafkaDbTransactionSynchronizer.registerSynchronization(
+              action, resolveMessageKey(resource), ownerId, sendMessageConsumer);
 
-          @Override
-          public void afterCompletion(int status) {
-            if (status == STATUS_COMMITTED) {
-              log.info(String.format(
-                  "Transaction successful with messageKey [ %s ]", messageKey));
-
-            } else {
-              log.error(String.format(
-                  "Database transaction [ %s ] with ownerId [ %s ] failed", action, ownerId));
-            }
-          }
-        }
-    );
   }
 }

@@ -29,6 +29,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import uk.gov.homeoffice.digital.sas.timecard.kafka.KafkaDbTransactionSynchronizer;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerService;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils;
@@ -164,7 +166,7 @@ class KafkaEntityListenerIT {
 
   @NotNull
   private static ListAppender<ILoggingEvent> getLoggingEventListAppender() {
-    Logger kafkaLogger = (Logger) LoggerFactory.getLogger(KafkaEntityListener.class);
+    Logger kafkaLogger = (Logger) LoggerFactory.getLogger(KafkaDbTransactionSynchronizer.class);
 
     ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
     listAppender.start();
