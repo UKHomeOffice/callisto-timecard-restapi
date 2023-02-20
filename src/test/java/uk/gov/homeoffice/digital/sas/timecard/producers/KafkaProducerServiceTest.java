@@ -105,7 +105,7 @@ class KafkaProducerServiceTest {
 
     when(kafkaTemplate.send(any(), any(), any()))
         .thenReturn(responseFuture);
-    Mockito.doThrow(new InterruptedException("yay!")).when(responseFuture).get();
+    Mockito.doThrow(ExecutionException.class).when(responseFuture).get();
 
     kafkaProducerService.sendMessage(messageKey, TimeEntry.class, timeEntry, action);
     assertThat(responseFuture.isDone()).isFalse();
