@@ -41,9 +41,9 @@ public class KafkaProducerService<T> {
       completeKafkaTransaction(future);
       logKafkaMessage(messageKey, kafkaEventMessage, future);
     } catch (ExecutionException | InterruptedException e) {
-      log.error(String.format("Message with key [ %s ] failed sending to topic [ %s ]."
-              + "action: [ %s ]", messageKey, topicName,
-          kafkaEventMessage.getAction()), e);
+      log.error(String.format(
+          "Message with key [ %s ] failed sending to topic [ %s ] action [ %s ]",
+          messageKey, topicName, kafkaEventMessage.getAction()), e);
     }
   }
 

@@ -26,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
@@ -87,7 +88,7 @@ class KafkaProducerServiceTest {
 
   @ParameterizedTest
   @EnumSource(value = KafkaAction.class, names = {"CREATE", "UPDATE", "DELETE"})
-  void CompletableFutureReporting_actionOnResource_onFailureMessageLogged(KafkaAction action) throws ExecutionException {
+  void CompletableFutureReporting_actionOnResource_onFailureMessageLogged(KafkaAction action) throws ExecutionException, InterruptedException {
     ReflectionTestUtils.setField(kafkaProducerService, "topicName", TOPIC_NAME);
     ReflectionTestUtils.setField(kafkaProducerService, "projectVersion", "1.0.0");
 
@@ -106,17 +107,17 @@ class KafkaProducerServiceTest {
 
     when(kafkaTemplate.send(any(), any(), any()))
         .thenReturn(responseFuture);
-    when(responseFuture.complete(any())).thenThrow(new InterruptedException());
+    Mockito.doThrow(new InterruptedException("yay!")).when(responseFuture).get();
 
     kafkaProducerService.sendMessage(messageKey, TimeEntry.class, timeEntry, action);
     assertEquals(String.format(
-        "Message with key [ %s ] failed sending to topic [ callisto-timecard ] with action [ %s ]",
+        "Message with key [ %s ] failed sending to topic [ callisto-timecard ] action [ %s ]",
         messageKey, action.toString().toLowerCase()), logList.get(0).getMessage());
   }
 
   @ParameterizedTest
   @EnumSource(value = KafkaAction.class, names = {"CREATE", "UPDATE", "DELETE"})
-  void completableFutureReporting_actionOnResource_onSuccessMessageLogged(KafkaAction action) throws InterruptedException {
+  void completableFutureReporting_actionOnResource_onSuccessMessageLogged(KafkaAction action) throws InterruptedException, ExecutionException {
     ReflectionTestUtils.setField(kafkaProducerService, "topicName", TOPIC_NAME);
     ReflectionTestUtils.setField(kafkaProducerService, "projectVersion", "1.0.0");
 
@@ -131,25 +132,15 @@ class KafkaProducerServiceTest {
     List<ILoggingEvent> logList = listAppender.list;
 
     responseFuture = mock(CompletableFuture.class);
-    SendResult<String, Object> sendResult = mock(SendResult.class);
+    SendResult<String, KafkaEventMessage<TimeEntry>> sendResult = mock(SendResult.class);
 
-    when(kafkaTemplate.send(any(), any(), any()))
-        .thenReturn(responseFuture);
+    when(kafkaTemplate.send(any(), any(), any())).thenReturn(responseFuture);
+    doReturn(responseFuture.get()).when(responseFuture).complete(true);
+    kafkaProducerService.sendMessage(messageKey, TimeEntry.class, timeEntry, action);
 
-
-    //doAnswer(invocationOnMock -> {
-    //  CompletableFuture completableFuture = invocationOnMock.getArgument(0);
-    //  completableFuture.whenComplete(responseFuture, ex);
-    //  return null;
-    //});
-
-    //kafkaProducerService.sendMessage(messageKey, TimeEntry.class, timeEntry, action);
-
-    //responseFuture.completeExceptionally(new Exception("Error"));
-
-    //assertEquals(String.format(
-    //    "Message with key [ %s ] sent to topic [ callisto-timecard ] with action [ %s ]",
-    //    messageKey, action.toString().toLowerCase()), logList.get(0).getMessage());
+    assertEquals(String.format(
+        "Message with key [ %s ] sent to topic [ callisto-timecard ] with action [ %s ]",
+        messageKey, action.toString().toLowerCase()), logList.get(0).getMessage());
 
   }
 
