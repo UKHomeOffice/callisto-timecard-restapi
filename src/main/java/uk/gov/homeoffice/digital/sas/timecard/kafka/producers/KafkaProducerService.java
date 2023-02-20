@@ -29,7 +29,7 @@ public class KafkaProducerService<T> {
   }
 
   public void sendMessage(String messageKey, Class<T> resourceType,
-                          T resource, KafkaAction action) {
+                          T resource, KafkaAction action) throws InterruptedException {
     var kafkaEventMessage = new KafkaEventMessage<>(projectVersion, resourceType, resource, action);
     CompletableFuture<SendResult<String, KafkaEventMessage<T>>> future = null;
     try {
@@ -40,7 +40,7 @@ public class KafkaProducerService<T> {
       );
       completeKafkaTransaction(future);
       logKafkaMessage(messageKey, kafkaEventMessage, future);
-    } catch (ExecutionException | InterruptedException e) {
+    } catch (ExecutionException e) {
       log.error(String.format(
           "Message with key [ %s ] failed sending to topic [ %s ] action [ %s ]",
           messageKey, topicName, kafkaEventMessage.getAction()), e);

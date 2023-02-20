@@ -6,14 +6,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import static org.assertj.core.api.Assertions.assertThat;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerService;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils;
-
-import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils.getAsDate;
 import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.createTimeEntry;
 
@@ -27,6 +27,7 @@ class KafkaEntityListenerTest {
 
   @Mock
   private KafkaProducerService<TimeEntry> kafkaProducerService;
+  @Mock
   private TransactionSynchronization sync;
   private final TimeEntryKafkaEntityListener kafkaEntityListener =
       new TimeEntryKafkaEntityListener();
@@ -48,4 +49,11 @@ class KafkaEntityListenerTest {
         .isEqualTo(messageKey);
   }
 
+  @Test
+  void testAfterCommit() {
+    kafkaEntityListener.sendKafkaMessageOnCreate(timeEntry, String.valueOf(OWNER_ID));
+
+    Mockito.verify(sync)
+        .beforeCommit(true);
+  }
 }

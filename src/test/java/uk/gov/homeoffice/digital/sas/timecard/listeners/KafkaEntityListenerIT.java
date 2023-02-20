@@ -18,21 +18,21 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
-import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerService;
-import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
-import uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils;
-import uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerService;
+import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
+import uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils;
+import uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory;
 
 @SpringBootTest
 @DirtiesContext
@@ -52,6 +52,9 @@ class KafkaEntityListenerIT {
 
   @MockBean
   private KafkaEntityListener kafkaEntityListener;
+
+  @MockBean
+  private TransactionSynchronization sync;
 
   private UUID tenantId;
 
@@ -149,25 +152,6 @@ class KafkaEntityListenerIT {
     assertEquals(String.format(
         "Transaction successful with messageKey [ %s ]", messageKey), logList.get(5).getMessage());
   }
-
-  //@Test
-  //void givenValidRequest_WhenSendingCreateAndDatabaseDown_thenTransactionSyncLogsFailedMessage()
-  //    throws Exception {
-  //  ListAppender<ILoggingEvent> listAppender = getLoggingEventListAppender();
-  //
-  //  List<ILoggingEvent> logList = listAppender.list;
-  //
-  //  assertEquals(String.format(
-  //      "Kafka Transaction [ create ] Initialized with message key [ %s ]",
-  //      messageKey), logList.get(0).getMessage());
-  //
-  //  assertEquals(String.format(
-  //      "Database transaction [ create ] with ownerId [ %s ] was successful",
-  //      timeEntry.getOwnerId().toString()), logList.get(1).getMessage());
-  //
-  //  assertEquals(String.format(
-  //      "Transaction successful with messageKey [ %s ]", messageKey), logList.get(2).getMessage());
-  //}
 
   private MvcResult persistTimeEntry(TimeEntry timeEntry) throws Exception {
     return mockMvc.perform(post("/resources/time-entries?tenantId=" + tenantId)

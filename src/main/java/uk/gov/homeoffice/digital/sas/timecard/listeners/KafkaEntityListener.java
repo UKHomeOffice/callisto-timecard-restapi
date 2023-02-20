@@ -1,5 +1,6 @@
 package uk.gov.homeoffice.digital.sas.timecard.listeners;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -36,6 +37,7 @@ public abstract class KafkaEntityListener<T> {
           int status = TransactionSynchronization.STATUS_UNKNOWN;
           String messageKey = resolveMessageKey(resource);
 
+          @SneakyThrows
           @Override
           public void beforeCommit(boolean readOnly) {
             log.info(String.format("Kafka Transaction [ %s ] Initialized with message key [ %s ]",
