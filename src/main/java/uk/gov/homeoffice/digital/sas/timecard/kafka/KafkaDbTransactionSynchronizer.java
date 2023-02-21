@@ -31,8 +31,8 @@ public class KafkaDbTransactionSynchronizer {
 
           @Override
           public void afterCommit() {
-            log.info(String.format( "Database transaction [ %s ] %swas successful",
-                    action, getDbIdLogText(action, entityId)));
+            log.info(String.format("Database transaction [ %s ] %swas successful",
+                action, getDbIdLogText(action, entityId)));
             status = TransactionSynchronization.STATUS_COMMITTED;
           }
 
@@ -44,7 +44,7 @@ public class KafkaDbTransactionSynchronizer {
 
             } else {
               log.error(String.format("Database transaction [ %s ] %sfailed",
-                      action, getDbIdLogText(action, entityId)));
+                  action, getDbIdLogText(action, entityId)));
             }
           }
         }
@@ -52,8 +52,8 @@ public class KafkaDbTransactionSynchronizer {
   }
 
   private String getDbIdLogText(KafkaAction action, String entityId) {
-     return action.equals(KafkaAction.CREATE) ? ""
-              : String.format("with id [ %s ] ", entityId);
+    return action.equals(KafkaAction.CREATE) ? ""
+        : String.format("with id [ %s ] ", entityId);
   }
 
 }
