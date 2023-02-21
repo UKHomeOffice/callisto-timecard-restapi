@@ -9,14 +9,18 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.KafkaDbTransactionSynchronizer;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerService;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 
+import java.util.UUID;
+
 import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.createTimeEntry;
 
 @ExtendWith(MockitoExtension.class)
+@Transactional
 class TimeEntryKafkaEntityListenerTest {
 
   @Mock
@@ -34,6 +38,8 @@ class TimeEntryKafkaEntityListenerTest {
 
   private TimeEntry timeEntry;
 
+  private static final UUID ID = UUID.randomUUID();
+
 
   @BeforeEach
   void setup() {
@@ -46,22 +52,24 @@ class TimeEntryKafkaEntityListenerTest {
   @Test
   void sendMessageOnCreate_verifyMethodCall() {
     timeEntryEntityListenerSpy.sendMessageOnCreate(timeEntry);
-    Mockito.verify((KafkaEntityListener) timeEntryEntityListenerSpy).sendKafkaMessageOnCreate(timeEntry,
-        timeEntry.getOwnerId().toString());
+    Mockito.verify((KafkaEntityListener) timeEntryEntityListenerSpy).sendKafkaMessageOnCreate(
+            timeEntry, null);
   }
 
   @Test
   void sendMessageOnUpdate_verifyMethodCall() {
+    timeEntry.setId(ID);
     timeEntryEntityListenerSpy.sendMessageOnUpdate(timeEntry);
     Mockito.verify((KafkaEntityListener) timeEntryEntityListenerSpy).sendKafkaMessageOnUpdate(timeEntry,
-        timeEntry.getOwnerId().toString());
+        timeEntry.getId().toString());
   }
 
   @Test
   void sendMessageOnDelete_verifyMethodCall() {
+    timeEntry.setId(ID);
     timeEntryEntityListenerSpy.sendMessageOnDelete(timeEntry);
     Mockito.verify((KafkaEntityListener) timeEntryEntityListenerSpy).sendKafkaMessageOnDelete(timeEntry,
-        timeEntry.getOwnerId().toString());
+        timeEntry.getId().toString());
   }
 
   @AfterEach

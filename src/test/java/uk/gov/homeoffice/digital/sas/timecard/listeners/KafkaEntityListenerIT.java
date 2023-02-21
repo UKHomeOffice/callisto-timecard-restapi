@@ -1,8 +1,12 @@
 package uk.gov.homeoffice.digital.sas.timecard.listeners;
 
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +27,8 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -42,7 +48,7 @@ import uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory;
 @AutoConfigureMockMvc(addFilters = true)
 @EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092",
     "port=9092" })
-class KafkaEntityListenerIT {
+class KafkaEntityListenerIT<T> {
 
   @Autowired
   private MockMvc mockMvc;
@@ -50,10 +56,10 @@ class KafkaEntityListenerIT {
   private TimeEntry timeEntry;
 
   @MockBean
-  private KafkaProducerService kafkaProducerService;
+  private KafkaProducerService<T> kafkaProducerService;
 
   @MockBean
-  private KafkaEntityListener kafkaEntityListener;
+  private KafkaEntityListener<T> kafkaEntityListener;
 
   @MockBean
   private TransactionSynchronization sync;
@@ -88,9 +94,7 @@ class KafkaEntityListenerIT {
         "Kafka Transaction [ create ] Initialized with message key [ %s ]",
         messageKey), logList.get(0).getMessage());
 
-    assertEquals(String.format(
-        "Database transaction [ create ] with ownerId [ %s ] was successful",
-        timeEntry.getOwnerId().toString()), logList.get(1).getMessage());
+    assertEquals("Database transaction [ create ] was successful", logList.get(1).getMessage());
 
     assertEquals(String.format(
         "Transaction successful with messageKey [ %s ]", messageKey), logList.get(2).getMessage());
@@ -103,9 +107,7 @@ class KafkaEntityListenerIT {
 
     List<ILoggingEvent> logList = listAppender.list;
 
-    MvcResult result = persistTimeEntry(timeEntry);
-    String content = result.getResponse().getContentAsString();
-    String id = content.substring(38, 74);
+    String id = persistTimeEntry(timeEntry);
 
     TimeEntry timeEntryUpdate = TimeEntryFactory.createTimeEntry(ownerId, tenantId,
         CommonUtils.getAsDate(LocalDateTime.now().plusHours(1)));
@@ -121,8 +123,8 @@ class KafkaEntityListenerIT {
         messageKey), logList.get(3).getMessage());
 
     assertEquals(String.format(
-        "Database transaction [ update ] with ownerId [ %s ] was successful",
-        timeEntry.getOwnerId().toString()), logList.get(4).getMessage());
+        "Database transaction [ update ] with id [ %s ] was successful",
+            id), logList.get(4).getMessage());
 
     assertEquals(String.format(
         "Transaction successful with messageKey [ %s ]", messageKey), logList.get(5).getMessage());
@@ -135,9 +137,7 @@ class KafkaEntityListenerIT {
 
     List<ILoggingEvent> logList = listAppender.list;
 
-    MvcResult result = persistTimeEntry(timeEntry);
-    String content = result.getResponse().getContentAsString();
-    String id = content.substring(38, 74);
+    String id = persistTimeEntry(timeEntry);
 
     mockMvc.perform(delete("/resources/time-entries/"+ id + "?tenantId=" + tenantId))
         .andDo(print())
@@ -148,20 +148,25 @@ class KafkaEntityListenerIT {
         messageKey), logList.get(3).getMessage());
 
     assertEquals(String.format(
-        "Database transaction [ delete ] with ownerId [ %s ] was successful",
-        timeEntry.getOwnerId().toString()), logList.get(4).getMessage());
+        "Database transaction [ delete ] with id [ %s ] was successful",
+            id), logList.get(4).getMessage());
 
     assertEquals(String.format(
         "Transaction successful with messageKey [ %s ]", messageKey), logList.get(5).getMessage());
   }
 
-  private MvcResult persistTimeEntry(TimeEntry timeEntry) throws Exception {
-    return mockMvc.perform(post("/resources/time-entries?tenantId=" + tenantId)
+  private String persistTimeEntry(TimeEntry timeEntry) throws Exception {
+    MvcResult mvcResult = mockMvc.perform(post("/resources/time-entries?tenantId=" + tenantId)
             .contentType(MediaType.APPLICATION_JSON)
             .content(CommonUtils.timeEntryAsJsonString(timeEntry)))
         .andDo(print())
         .andExpect(status().isOk())
         .andReturn();
+
+    Map<String, List<LinkedHashMap<String, String>>> apiResponseMap =
+            new ObjectMapper().readValue(mvcResult.getResponse().getContentAsString(), Map.class);
+    assertThat(apiResponseMap.get("items")).isNotEmpty();
+    return apiResponseMap.get("items").get(0).get("id");
   }
 
   @NotNull

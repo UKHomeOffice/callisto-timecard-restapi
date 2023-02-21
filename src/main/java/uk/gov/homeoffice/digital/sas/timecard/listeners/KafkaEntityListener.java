@@ -20,27 +20,26 @@ public abstract class KafkaEntityListener<T> {
     this.kafkaProducerService = kafkaProducerService;
   }
 
-  protected void sendKafkaMessageOnCreate(T resource, String ownerId) {
-    sendMessage(resource, KafkaAction.CREATE, ownerId);
+  protected void sendKafkaMessageOnCreate(T resource, String id) {
+    sendMessage(resource, KafkaAction.CREATE, id);
   }
 
-  protected void sendKafkaMessageOnUpdate(T resource, String ownerId) {
-    sendMessage(resource, KafkaAction.UPDATE, ownerId);
+  protected void sendKafkaMessageOnUpdate(T resource, String id) {
+    sendMessage(resource, KafkaAction.UPDATE, id);
   }
 
-  protected void sendKafkaMessageOnDelete(T resource, String ownerId) {
-    sendMessage(resource, KafkaAction.DELETE, ownerId);
+  protected void sendKafkaMessageOnDelete(T resource, String id) {
+    sendMessage(resource, KafkaAction.DELETE, id);
   }
 
   @SuppressWarnings("unchecked")
-  private void sendMessage(T resource, KafkaAction action, String ownerId) {
+  private void sendMessage(T resource, KafkaAction action, String id) {
     BiConsumer<KafkaAction, String> sendMessageConsumer =
-        (KafkaAction actionArg, String messageKeyArg) ->
-          kafkaProducerService.sendMessage(
+        (KafkaAction actionArg, String messageKeyArg) -> kafkaProducerService.sendMessage(
               messageKeyArg, (Class<T>) resource.getClass(), resource, actionArg);
 
     kafkaDbTransactionSynchronizer.registerSynchronization(
-        action, resolveMessageKey(resource), ownerId, sendMessageConsumer);
+        action, resolveMessageKey(resource), id, sendMessageConsumer);
 
   }
 }
