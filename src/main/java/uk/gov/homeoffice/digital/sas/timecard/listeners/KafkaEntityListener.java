@@ -35,14 +35,9 @@ public abstract class KafkaEntityListener<T> {
   @SuppressWarnings("unchecked")
   private void sendMessage(T resource, KafkaAction action, String ownerId) {
     BiConsumer<KafkaAction, String> sendMessageConsumer =
-        (KafkaAction actionArg, String messageKeyArg) -> {
-          try {
-            kafkaProducerService.sendMessage(
-                messageKeyArg, (Class<T>) resource.getClass(), resource, actionArg);
-          } catch (InterruptedException e) {
-            throw new RuntimeException("Interruption occurred whilst producing kafka message");
-          }
-        };
+        (KafkaAction actionArg, String messageKeyArg) ->
+          kafkaProducerService.sendMessage(
+              messageKeyArg, (Class<T>) resource.getClass(), resource, actionArg);
 
     kafkaDbTransactionSynchronizer.registerSynchronization(
         action, resolveMessageKey(resource), ownerId, sendMessageConsumer);

@@ -29,7 +29,7 @@ public class KafkaProducerService<T> {
   }
 
   public void sendMessage(String messageKey, Class<T> resourceType,
-                          T resource, KafkaAction action) throws InterruptedException {
+                          T resource, KafkaAction action) {
     var kafkaEventMessage = new KafkaEventMessage<>(projectVersion, resourceType, resource, action);
     CompletableFuture<SendResult<String, KafkaEventMessage<T>>> future = null;
     try {
@@ -62,8 +62,12 @@ public class KafkaProducerService<T> {
 
   private void completeKafkaTransaction(
       CompletableFuture<SendResult<String, KafkaEventMessage<T>>> future)
-      throws ExecutionException, InterruptedException {
-    future.complete(future.get());
+      throws ExecutionException {
+    try {
+      future.complete(future.get());
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+    }
   }
 }
 
