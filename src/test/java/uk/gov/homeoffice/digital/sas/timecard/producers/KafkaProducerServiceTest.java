@@ -1,5 +1,15 @@
 package uk.gov.homeoffice.digital.sas.timecard.producers;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+import static uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils.generateMessageKey;
+import static uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils.getAsDate;
+import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.createTimeEntry;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -21,20 +31,10 @@ import org.springframework.test.util.ReflectionTestUtils;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNoException;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.KafkaEventMessage;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerService;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
-import static uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils.generateMessageKey;
-import static uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils.getAsDate;
-import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.createTimeEntry;
 
 @ExtendWith(SpringExtension.class)
 class KafkaProducerServiceTest {
@@ -104,6 +104,36 @@ class KafkaProducerServiceTest {
     when(kafkaTemplate.send(any(), any(), any()))
         .thenReturn(responseFuture);
     Mockito.doThrow(ExecutionException.class).when(responseFuture).get();
+
+    kafkaProducerService.sendMessage(messageKey, TimeEntry.class, timeEntry, action);
+    assertThat(responseFuture.isDone()).isFalse();
+    assertEquals(String.format(
+        "Message with key [ %s ] failed sending to topic [ callisto-timecard ] action [ %s ]",
+        messageKey, action.toString().toLowerCase()), logList.get(0).getMessage());
+  }
+
+  @ParameterizedTest
+  @EnumSource(value = KafkaAction.class, names = {"CREATE", "UPDATE", "DELETE"})
+  void CompletableFutureReporting_actionOnResource_onFailureInterruptLogged(KafkaAction action)
+      throws ExecutionException, InterruptedException {
+    ReflectionTestUtils.setField(kafkaProducerService, "topicName", TOPIC_NAME);
+    ReflectionTestUtils.setField(kafkaProducerService, "projectVersion", "1.0.0");
+
+    UUID ownerId = UUID.fromString("ec703cac-de76-49c8-b1c4-83da6f8b42ce");
+    LocalDateTime actualStartTime = LocalDateTime.of(
+        2022, 1, 1, 9, 0, 0);
+    TimeEntry timeEntry = createTimeEntry(ownerId, getAsDate(actualStartTime));
+    String messageKey = generateMessageKey(timeEntry);
+
+    ListAppender<ILoggingEvent> listAppender = getLoggingEventListAppender();
+
+    List<ILoggingEvent> logList = listAppender.list;
+
+    responseFuture = mock(CompletableFuture.class);
+
+    when(kafkaTemplate.send(any(), any(), any()))
+        .thenReturn(responseFuture);
+    Mockito.doThrow(InterruptedException.class).when(responseFuture).get();
 
     kafkaProducerService.sendMessage(messageKey, TimeEntry.class, timeEntry, action);
     assertThat(responseFuture.isDone()).isFalse();
