@@ -22,30 +22,11 @@ Feature: Timecard
       | actualEndTime    | Instant | isNull()                                                   |
       | timePeriodTypeId | String  | isEqualTo(resourceHelper.getResourceId('Trevor', 'timecard','time-period-types','name=="Shift"').toString) |
 
+  Scenario Outline: Time entries are invalid if the end date is not after the start date
 
-  Scenario: Create time entry with end date equal to the start date
-
-    Given Trevor is a user
-    And the new time-entries are
-      """
-      {
-        "ownerId": "#{personaManager.getPersona('Trevor').id.toString}",
-        "timePeriodTypeId": "#{resourceHelper.getResourceId('Trevor', 'timecard','time-period-types','name=="Shift"')}",
-        "actualStartTime": "2022-11-16T10:00:00Z",
-        "actualEndTime": "2022-11-16T10:00:00Z"
-      }
-      """
-    When Trevor creates the new time-entries in the timecard service
-    Then the last response should have a status code of 200
-    Then the 1st of the time-entries in the last response should contain
-      | field           | type    | expectation                                                |
-      | id              | String  | isNotNull()                                                |
-      | ownerId         | String  | isEqualTo(personaManager.getPersona('Trevor').id.toString) |
-      | actualStartTime | Instant | isEqualTo("2022-11-16T10:00:00Z")                          |
-      | actualEndTime   | Instant | isEqualTo("2022-11-16T10:00:00Z")                          |
-
-
-  Scenario: Create time entry with end date before start date
+    If a time entry is created and the actualEndTime is not after the actualStartTime
+    then it is invalid. This means that time entries are also invalid when the
+    actualEndTime is the same as the actualStartTime.
 
     Given Trevor is a user
     And the invalid time-entries are
@@ -53,8 +34,8 @@ Feature: Timecard
       {
         "ownerId": "#{personaManager.getPersona('Trevor').id.toString}",
         "timePeriodTypeId": "#{resourceHelper.getResourceId('Trevor', 'timecard','time-period-types','name=="Shift"')}",
-        "actualStartTime": "2022-11-16T10:00:00Z",
-        "actualEndTime": "2022-11-16T08:00:00Z"
+        "actualStartTime": "<startTime>",
+        "actualEndTime": "<endTime>"
       }
       """
     When Trevor creates the invalid time-entries in the timecard service
@@ -65,6 +46,11 @@ Feature: Timecard
       | [0].message | String  | isEqualTo("End time must be after start time") |
       | [0].data    | String  | isNull()                                       |
 
+    Examples:
+      | startTime             | endTime               |
+      | 2022-11-16T10:00:00Z  | 2022-11-16T08:00:00Z  |
+      | 2022-11-16T10:00:00Z  | 2022-11-16T09:59:59Z  |
+      | 2022-11-16T10:00:00Z  | 2022-11-16T10:00:00Z  |
 
   Scenario: Create time entry with invalid date format
 
