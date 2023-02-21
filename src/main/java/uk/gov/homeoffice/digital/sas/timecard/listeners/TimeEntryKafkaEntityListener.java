@@ -27,17 +27,17 @@ public class TimeEntryKafkaEntityListener extends KafkaEntityListener<TimeEntry>
 
   @PrePersist
   void sendMessageOnCreate(TimeEntry resource) {
-    super.sendKafkaMessageOnCreate(resource, String.valueOf(resource.getOwnerId()));
+    super.sendKafkaMessageOnCreate(resource, null);
   }
 
   @PreUpdate
   void sendMessageOnUpdate(TimeEntry resource) {
-    super.sendKafkaMessageOnUpdate(resource, String.valueOf(resource.getOwnerId()));
+    super.sendKafkaMessageOnUpdate(resource, String.valueOf(resource.getId()));
   }
 
   @PreRemove
   void sendMessageOnDelete(TimeEntry resource) {
-    super.sendKafkaMessageOnDelete(resource, String.valueOf(resource.getOwnerId()));
+    super.sendKafkaMessageOnDelete(resource, String.valueOf(resource.getId()));
   }
 
 }

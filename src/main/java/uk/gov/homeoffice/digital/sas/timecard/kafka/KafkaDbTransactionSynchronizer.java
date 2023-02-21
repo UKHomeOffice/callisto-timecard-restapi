@@ -14,7 +14,7 @@ public class KafkaDbTransactionSynchronizer {
 
   public void registerSynchronization(KafkaAction action,
                                       String messageKey,
-                                      String ownerId,
+                                      String entityId,
                                       BiConsumer<KafkaAction, String> sendKafkaMessage) {
 
     TransactionSynchronizationManager.registerSynchronization(
@@ -31,9 +31,8 @@ public class KafkaDbTransactionSynchronizer {
 
           @Override
           public void afterCommit() {
-            log.info(String.format(
-                "Database transaction [ %s ] with ownerId [ %s ] was successful",
-                action.toString(), ownerId));
+            log.info(String.format( "Database transaction [ %s ] %swas successful",
+                    action, getDbIdLogText(action, entityId)));
             status = TransactionSynchronization.STATUS_COMMITTED;
           }
 
@@ -44,12 +43,17 @@ public class KafkaDbTransactionSynchronizer {
                   "Transaction successful with messageKey [ %s ]", messageKey));
 
             } else {
-              log.error(String.format(
-                  "Database transaction [ %s ] with ownerId [ %s ] failed", action, ownerId));
+              log.error(String.format("Database transaction [ %s ] %sfailed",
+                      action, getDbIdLogText(action, entityId)));
             }
           }
         }
     );
+  }
+
+  private String getDbIdLogText(KafkaAction action, String entityId) {
+     return action.equals(KafkaAction.CREATE) ? ""
+              : String.format("with id [ %s ] ", entityId);
   }
 
 }
