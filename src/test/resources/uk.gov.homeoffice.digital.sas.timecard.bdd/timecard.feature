@@ -26,7 +26,7 @@ Feature: Timecard
   Scenario: Create time entry with end date equal to the start date
 
     Given Trevor is a user
-    And the invalid time-entries are
+    And the new time-entries are
       """
       {
         "ownerId": "#{personaManager.getPersona('Trevor').id.toString}",
@@ -35,7 +35,7 @@ Feature: Timecard
         "actualEndTime": "2022-11-16T10:00:00Z"
       }
       """
-    When Trevor creates the invalid time-entries in the timecard service
+    When Trevor creates the new time-entries in the timecard service
     Then the last response should have a status code of 200
     Then the 1st of the time-entries in the last response should contain
       | field           | type    | expectation                                                |
