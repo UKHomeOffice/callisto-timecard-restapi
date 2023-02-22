@@ -10,7 +10,6 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
 import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.KafkaEventMessage;
-import uk.gov.homeoffice.digital.sas.timecard.kafka.exceptions.KafkaInterruptedException;
 
 @Slf4j
 @Component
@@ -41,7 +40,8 @@ public class KafkaProducerService<T> {
       );
       completeKafkaTransaction(future);
       logKafkaMessage(messageKey, kafkaEventMessage, future);
-    } catch (ExecutionException | KafkaInterruptedException e) {
+    } catch (ExecutionException | InterruptedException e) {
+      Thread.currentThread().interrupt();
       log.error(String.format(
           "Message with key [ %s ] failed sending to topic [ %s ] action [ %s ]",
           messageKey, topicName, kafkaEventMessage.getAction()), e);
@@ -63,15 +63,8 @@ public class KafkaProducerService<T> {
 
   private void completeKafkaTransaction(
       CompletableFuture<SendResult<String, KafkaEventMessage<T>>> future)
-      throws ExecutionException, KafkaInterruptedException {
-    try {
-      future.complete(future.get());
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      if (Thread.interrupted()) {
-        throw new KafkaInterruptedException("Message failed with exception");
-      }
-    }
+      throws ExecutionException, InterruptedException {
+    future.complete(future.get());
   }
 }
 
