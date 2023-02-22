@@ -53,7 +53,7 @@ public class KafkaDbTransactionSynchronizer {
 
   private String getDbIdLogText(KafkaAction action, String entityId) {
     return action.equals(KafkaAction.CREATE) ? ""
-        : String.format("with id [ %s ] ", entityId);
+        : String.format("with entity id [ %s ] ", entityId);
   }
 
 }

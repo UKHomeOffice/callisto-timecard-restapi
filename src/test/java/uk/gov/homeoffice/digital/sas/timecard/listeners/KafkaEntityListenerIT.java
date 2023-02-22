@@ -1,7 +1,6 @@
 package uk.gov.homeoffice.digital.sas.timecard.listeners;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -42,7 +41,7 @@ import uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory;
 @AutoConfigureMockMvc(addFilters = true)
 @EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092",
     "port=9092" })
-class KafkaEntityListenerIT<T> {
+class KafkaEntityListenerIT {
 
   @Autowired
   private MockMvc mockMvc;
@@ -74,14 +73,14 @@ class KafkaEntityListenerIT<T> {
 
     persistTimeEntry(timeEntry);
 
-    assertEquals(String.format(
+    assertThat(String.format(
         "Kafka Transaction [ create ] Initialized with message key [ %s ]",
-        messageKey), logList.get(0).getMessage());
+        messageKey)).isEqualTo(logList.get(0).getMessage());
 
-    assertEquals("Database transaction [ create ] was successful", logList.get(1).getMessage());
+    assertThat(logList.get(1).getMessage()).isEqualTo("Database transaction [ create ] was successful");
+    assertThat(logList.get(2).getMessage()).isEqualTo(String.format(
+        "Transaction successful with messageKey [ %s ]", messageKey));
 
-    assertEquals(String.format(
-        "Transaction successful with messageKey [ %s ]", messageKey), logList.get(2).getMessage());
   }
 
   @Test
@@ -98,20 +97,28 @@ class KafkaEntityListenerIT<T> {
 
     mockMvc.perform(put("/resources/time-entries/"+ id + "?tenantId=" + tenantId)
           .contentType(MediaType.APPLICATION_JSON)
-          .content(CommonUtils.timeEntryAsJsonString(timeEntryUpdate)))
+          .content(CommonUtils.objectAsJsonString(timeEntryUpdate)))
         .andDo(print())
         .andExpect(status().isOk());
 
-    assertEquals(String.format(
+
+    List<ILoggingEvent> filteredList =
+        logList.stream().filter(o -> o.getMessage().equals(
+            String.format(
+        "Database transaction [ update ] with entity id [ %s ] was successful", id))).toList();
+
+    assertThat(filteredList).hasSize(1);
+
+    assertThat(logList.get(3).getMessage()).isEqualTo(String.format(
         "Kafka Transaction [ update ] Initialized with message key [ %s ]",
-        messageKey), logList.get(3).getMessage());
+        messageKey));
 
-    assertEquals(String.format(
-        "Database transaction [ update ] with id [ %s ] was successful",
-            id), logList.get(4).getMessage());
+    assertThat(logList.get(4).getMessage()).isEqualTo(String.format(
+        "Database transaction [ update ] with entity id [ %s ] was successful",
+        id));
 
-    assertEquals(String.format(
-        "Transaction successful with messageKey [ %s ]", messageKey), logList.get(5).getMessage());
+    assertThat(logList.get(5).getMessage()).isEqualTo(String.format(
+        "Transaction successful with messageKey [ %s ]", messageKey));
   }
 
   @Test
@@ -127,22 +134,28 @@ class KafkaEntityListenerIT<T> {
         .andDo(print())
         .andExpect(status().isOk());
 
-    assertEquals(String.format(
-        "Kafka Transaction [ delete ] Initialized with message key [ %s ]",
-        messageKey), logList.get(3).getMessage());
+    List<ILoggingEvent> filteredList =
+        logList.stream().filter(o -> o.getMessage().equals(
+            String.format(
+                "Database transaction [ delete ] with entity id [ %s ] was successful", id))).toList();
 
-    assertEquals(String.format(
-        "Database transaction [ delete ] with id [ %s ] was successful",
-            id), logList.get(4).getMessage());
+    assertThat(filteredList).hasSize(1);
 
-    assertEquals(String.format(
-        "Transaction successful with messageKey [ %s ]", messageKey), logList.get(5).getMessage());
+    assertThat(logList.get(3).getMessage() ).isEqualTo(String.format(
+        "Kafka Transaction [ delete ] Initialized with message key [ %s ]", messageKey));
+
+    assertThat(logList.get(4).getMessage()).isEqualTo(String.format(
+        "Database transaction [ delete ] with entity id [ %s ] was successful",
+        id));
+
+    assertThat(logList.get(5).getMessage()).isEqualTo(String.format(
+        "Transaction successful with messageKey [ %s ]", messageKey));
   }
 
   private String persistTimeEntry(TimeEntry timeEntry) throws Exception {
     MvcResult mvcResult = mockMvc.perform(post("/resources/time-entries?tenantId=" + tenantId)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(CommonUtils.timeEntryAsJsonString(timeEntry)))
+            .content(CommonUtils.objectAsJsonString(timeEntry)))
         .andDo(print())
         .andExpect(status().isOk())
         .andReturn();
