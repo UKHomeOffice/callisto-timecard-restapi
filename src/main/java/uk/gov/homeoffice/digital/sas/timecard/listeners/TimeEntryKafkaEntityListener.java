@@ -17,7 +17,7 @@ public class TimeEntryKafkaEntityListener extends KafkaEntityListener<TimeEntry>
 
   @Override
   public String resolveMessageKey(TimeEntry timeEntry) {
-    return String.valueOf(timeEntry.getTenantId() + ":" + timeEntry.getOwnerId());
+    return timeEntry.getTenantId() + ":" + timeEntry.getOwnerId();
   }
 
   @Autowired

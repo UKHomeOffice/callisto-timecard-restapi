@@ -51,7 +51,7 @@ class KafkaProducerServiceTest {
   private CompletableFuture<SendResult<String, KafkaEventMessage<TimeEntry>>> responseFuture;
 
   @ParameterizedTest
-  @EnumSource(value = KafkaAction.class, names = {"CREATE", "UPDATE", "DELETE"})
+  @EnumSource(value = KafkaAction.class)
   void sendMessage_actionOnResource_messageIsSentWithCorrectArguments(KafkaAction action) {
     ReflectionTestUtils.setField(kafkaProducerService, "topicName", TOPIC_NAME);
     ReflectionTestUtils.setField(kafkaProducerService, "projectVersion", "1.0.0");
@@ -84,8 +84,8 @@ class KafkaProducerServiceTest {
   }
 
   @ParameterizedTest
-  @EnumSource(value = KafkaAction.class, names = {"CREATE", "UPDATE", "DELETE"})
-  void CompletableFutureReporting_actionOnResource_onFailureMessageLogged(KafkaAction action) throws ExecutionException, InterruptedException {
+  @EnumSource(value = KafkaAction.class)
+  void sendMessage_actionOnResource_onFailureMessageLogged(KafkaAction action) throws ExecutionException, InterruptedException {
     ReflectionTestUtils.setField(kafkaProducerService, "topicName", TOPIC_NAME);
     ReflectionTestUtils.setField(kafkaProducerService, "projectVersion", "1.0.0");
 
@@ -113,8 +113,8 @@ class KafkaProducerServiceTest {
   }
 
   @ParameterizedTest
-  @EnumSource(value = KafkaAction.class, names = {"CREATE", "UPDATE", "DELETE"})
-  void CompletableFutureReporting_actionOnResource_onFailureInterruptLogged(KafkaAction action)
+  @EnumSource(value = KafkaAction.class)
+  void sendMessage_actionOnResource_onFailureInterruptLogged(KafkaAction action)
       throws ExecutionException, InterruptedException {
     ReflectionTestUtils.setField(kafkaProducerService, "topicName", TOPIC_NAME);
     ReflectionTestUtils.setField(kafkaProducerService, "projectVersion", "1.0.0");
@@ -143,8 +143,8 @@ class KafkaProducerServiceTest {
   }
 
   @ParameterizedTest
-  @EnumSource(value = KafkaAction.class, names = {"CREATE", "UPDATE", "DELETE"})
-  void completableFutureReporting_actionOnResource_onSuccessMessageLogged(KafkaAction action) throws InterruptedException, ExecutionException {
+  @EnumSource(value = KafkaAction.class)
+  void sendMessage_actionOnResource_onSuccessMessageLogged(KafkaAction action) throws InterruptedException, ExecutionException {
     ReflectionTestUtils.setField(kafkaProducerService, "topicName", TOPIC_NAME);
     ReflectionTestUtils.setField(kafkaProducerService, "projectVersion", "1.0.0");
 
