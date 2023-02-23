@@ -23,8 +23,7 @@ import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.
 
 @SpringBootTest
 @DirtiesContext
-@EmbeddedKafka(partitions = 1, brokerProperties = {
-        "listeners=PLAINTEXT://localhost:9092", "port=9092"})
+@EmbeddedKafka(topics = "callisto-timecard",bootstrapServersProperty = "spring.kafka.bootstrap-servers")
 class KafkaProducerServiceIntegrationTest<T> {
 
   @Autowired
