@@ -16,8 +16,7 @@ public final class CommonUtils {
     return timeEntry.getTenantId()  + ":" + timeEntry.getOwnerId();
   }
 
-  public static  String objectAsJsonString(final Object obj) throws JsonProcessingException {
-    ObjectMapper mapper = new ObjectMapper();
+  public static  String objectAsJsonString(final Object obj, ObjectMapper mapper) throws JsonProcessingException {
     return mapper.writeValueAsString(obj);
   }
 }
