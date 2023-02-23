@@ -2,7 +2,6 @@ package uk.gov.homeoffice.digital.sas.timecard.testutils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
@@ -17,12 +16,8 @@ public final class CommonUtils {
     return timeEntry.getTenantId()  + ":" + timeEntry.getOwnerId();
   }
 
-  public static LocalDateTime createLocalDateTime() {
-    return LocalDateTime.of(2022, 1, 1, 9, 0, 0);
-  }
-
-  public static  String timeEntryAsJsonString(final Object obj) throws JsonProcessingException {
-    ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+  public static  String objectAsJsonString(final Object obj) throws JsonProcessingException {
+    ObjectMapper mapper = new ObjectMapper();
     return mapper.writeValueAsString(obj);
   }
 }

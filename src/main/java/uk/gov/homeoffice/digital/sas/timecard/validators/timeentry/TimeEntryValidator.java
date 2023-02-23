@@ -44,9 +44,9 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
   }
 
   private void addConstraintViolationToContext(ConstraintValidatorContext context,
-                                                      String message,
-                                                      InvalidField clashingProperty,
-                                                      ArrayList<TimeClash> payload) {
+                                               String message,
+                                               InvalidField clashingProperty,
+                                               ArrayList<TimeClash> payload) {
     HibernateConstraintValidatorContext hibernateContext =
         context.unwrap(HibernateConstraintValidatorContext.class);
 
@@ -68,9 +68,9 @@ public class TimeEntryValidator implements ConstraintValidator<TimeEntryConstrai
     session.setHibernateFlushMode(FlushMode.MANUAL);
 
     var timeEntryClashes = BeanUtil.getBean(TimeEntryRepository.class).findAllClashingTimeEntries(
-        timeEntry.getOwnerId() != null ? timeEntry.getOwnerId() : null,
-        timeEntry.getId() != null ? timeEntry.getId() : null,
-        timeEntry.getTenantId() != null ? timeEntry.getTenantId() : null,
+        timeEntry.getOwnerId(),
+        timeEntry.getId(),
+        timeEntry.getTenantId(),
         timeEntry.getActualStartTime(),
         timeEntry.getActualEndTime());
 

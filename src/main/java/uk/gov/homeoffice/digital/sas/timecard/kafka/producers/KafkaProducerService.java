@@ -1,5 +1,8 @@
 package uk.gov.homeoffice.digital.sas.timecard.kafka.producers;
 
+import static uk.gov.homeoffice.digital.sas.timecard.kafka.constants.Constants.KAFKA_FAILED_MESSAGE;
+import static uk.gov.homeoffice.digital.sas.timecard.kafka.constants.Constants.KAFKA_SUCCESS_MESSAGE;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +13,6 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
 import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.KafkaEventMessage;
-import uk.gov.homeoffice.digital.sas.timecard.kafka.exceptions.KafkaInterruptedException;
 
 @Slf4j
 @Component
@@ -41,9 +43,12 @@ public class KafkaProducerService<T> {
       );
       completeKafkaTransaction(future);
       logKafkaMessage(messageKey, kafkaEventMessage, future);
-    } catch (ExecutionException | KafkaInterruptedException e) {
+    } catch (ExecutionException | InterruptedException e) {
+      if  (Thread.interrupted()) {
+        Thread.currentThread().interrupt();
+      }
       log.error(String.format(
-          "Message with key [ %s ] failed sending to topic [ %s ] action [ %s ]",
+          KAFKA_FAILED_MESSAGE,
           messageKey, topicName, kafkaEventMessage.getAction()), e);
     }
   }
@@ -55,7 +60,7 @@ public class KafkaProducerService<T> {
           KafkaEventMessage<T>>> future) {
     future.whenComplete((result, ex) -> {
       if (ex == null) {
-        log.info(String.format("Message with key [ %s ] sent to topic [ %s ] with action [ %s ]",
+        log.info(String.format(KAFKA_SUCCESS_MESSAGE,
                 messageKey, topicName, kafkaEventMessage.getAction()));
       }
     });
@@ -63,15 +68,8 @@ public class KafkaProducerService<T> {
 
   private void completeKafkaTransaction(
       CompletableFuture<SendResult<String, KafkaEventMessage<T>>> future)
-      throws ExecutionException, KafkaInterruptedException {
-    try {
-      future.complete(future.get());
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      if (Thread.interrupted()) {
-        throw new KafkaInterruptedException("Message failed with exception");
-      }
-    }
+      throws ExecutionException, InterruptedException {
+    future.complete(future.get());
   }
 }
 

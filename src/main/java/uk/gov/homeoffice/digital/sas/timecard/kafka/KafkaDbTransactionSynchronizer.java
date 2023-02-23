@@ -1,5 +1,11 @@
 package uk.gov.homeoffice.digital.sas.timecard.kafka;
 
+import static uk.gov.homeoffice.digital.sas.timecard.kafka.constants.Constants.DATABASE_TRANSACTION_FAILED;
+import static uk.gov.homeoffice.digital.sas.timecard.kafka.constants.Constants.DATABASE_TRANSACTION_SUCCESSFUL;
+import static uk.gov.homeoffice.digital.sas.timecard.kafka.constants.Constants.KAFKA_TRANSACTION_INITIALIZED;
+import static uk.gov.homeoffice.digital.sas.timecard.kafka.constants.Constants.TRANSACTION_SUCCESSFUL;
+import static uk.gov.homeoffice.digital.sas.timecard.kafka.constants.Constants.WITH_ENTITY_ID;
+
 import java.util.function.BiConsumer;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -24,14 +30,14 @@ public class KafkaDbTransactionSynchronizer {
           @SneakyThrows
           @Override
           public void beforeCommit(boolean readOnly) {
-            log.info(String.format("Kafka Transaction [ %s ] Initialized with message key [ %s ]",
+            log.info(String.format(KAFKA_TRANSACTION_INITIALIZED,
                 action, messageKey));
             sendKafkaMessage.accept(action, messageKey);
           }
 
           @Override
           public void afterCommit() {
-            log.info(String.format("Database transaction [ %s ] %swas successful",
+            log.info(String.format(DATABASE_TRANSACTION_SUCCESSFUL,
                 action, getDbIdLogText(action, entityId)));
             status = TransactionSynchronization.STATUS_COMMITTED;
           }
@@ -40,10 +46,11 @@ public class KafkaDbTransactionSynchronizer {
           public void afterCompletion(int status) {
             if (status == STATUS_COMMITTED) {
               log.info(String.format(
-                  "Transaction successful with messageKey [ %s ]", messageKey));
+                  TRANSACTION_SUCCESSFUL, messageKey));
 
             } else {
-              log.error(String.format("Database transaction [ %s ] %sfailed",
+              log.error(String.format(
+                  DATABASE_TRANSACTION_FAILED,
                   action, getDbIdLogText(action, entityId)));
             }
           }
@@ -53,7 +60,7 @@ public class KafkaDbTransactionSynchronizer {
 
   private String getDbIdLogText(KafkaAction action, String entityId) {
     return action.equals(KafkaAction.CREATE) ? ""
-        : String.format("with id [ %s ] ", entityId);
+        : String.format(WITH_ENTITY_ID, entityId);
   }
 
 }

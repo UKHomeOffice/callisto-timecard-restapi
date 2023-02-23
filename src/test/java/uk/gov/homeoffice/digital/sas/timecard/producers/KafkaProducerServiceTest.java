@@ -2,20 +2,21 @@ package uk.gov.homeoffice.digital.sas.timecard.producers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils.generateMessageKey;
 import static uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils.getAsDate;
+import static uk.gov.homeoffice.digital.sas.timecard.testutils.TestConstants.MESSAGE_FAILED_SENDING_TO_TOPIC;
+import static uk.gov.homeoffice.digital.sas.timecard.testutils.TestConstants.MESSAGE_SENT_TO_TOPIC_CALLISTO;
 import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.createTimeEntry;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -41,6 +42,12 @@ class KafkaProducerServiceTest {
 
   private final static String TOPIC_NAME = "callisto-timecard";
 
+  private UUID ownerId;
+
+  private TimeEntry timeEntry;
+
+  private String messageKey;
+
   @Mock
   private KafkaTemplate<String, KafkaEventMessage<TimeEntry>> kafkaTemplate;
 
@@ -50,17 +57,20 @@ class KafkaProducerServiceTest {
   @Mock
   private CompletableFuture<SendResult<String, KafkaEventMessage<TimeEntry>>> responseFuture;
 
-  @ParameterizedTest
-  @EnumSource(value = KafkaAction.class, names = {"CREATE", "UPDATE", "DELETE"})
-  void sendMessage_actionOnResource_messageIsSentWithCorrectArguments(KafkaAction action) {
+  @BeforeEach
+  void setUp() {
     ReflectionTestUtils.setField(kafkaProducerService, "topicName", TOPIC_NAME);
     ReflectionTestUtils.setField(kafkaProducerService, "projectVersion", "1.0.0");
-
-    UUID ownerId = UUID.fromString("ec703cac-de76-49c8-b1c4-83da6f8b42ce");
+    ownerId = UUID.fromString("ec703cac-de76-49c8-b1c4-83da6f8b42ce");
     LocalDateTime actualStartTime = LocalDateTime.of(
         2022, 1, 1, 9, 0, 0);
-    TimeEntry timeEntry = createTimeEntry(ownerId, getAsDate(actualStartTime));
+    timeEntry = createTimeEntry(ownerId, getAsDate(actualStartTime));
+    messageKey = generateMessageKey(timeEntry);
+  }
 
+  @ParameterizedTest
+  @EnumSource(value = KafkaAction.class)
+  void sendMessage_actionOnResource_messageIsSentWithCorrectArguments(KafkaAction action) {
     when(kafkaTemplate.send(any(), any(), any()))
         .thenReturn(responseFuture);
 
@@ -84,17 +94,8 @@ class KafkaProducerServiceTest {
   }
 
   @ParameterizedTest
-  @EnumSource(value = KafkaAction.class, names = {"CREATE", "UPDATE", "DELETE"})
-  void CompletableFutureReporting_actionOnResource_onFailureMessageLogged(KafkaAction action) throws ExecutionException, InterruptedException {
-    ReflectionTestUtils.setField(kafkaProducerService, "topicName", TOPIC_NAME);
-    ReflectionTestUtils.setField(kafkaProducerService, "projectVersion", "1.0.0");
-
-    UUID ownerId = UUID.fromString("ec703cac-de76-49c8-b1c4-83da6f8b42ce");
-    LocalDateTime actualStartTime = LocalDateTime.of(
-        2022, 1, 1, 9, 0, 0);
-    TimeEntry timeEntry = createTimeEntry(ownerId, getAsDate(actualStartTime));
-    String messageKey = generateMessageKey(timeEntry);
-
+  @EnumSource(value = KafkaAction.class)
+  void sendMessage_actionOnResource_onFailureMessageLogged(KafkaAction action) throws ExecutionException, InterruptedException {
     ListAppender<ILoggingEvent> listAppender = getLoggingEventListAppender();
 
     List<ILoggingEvent> logList = listAppender.list;
@@ -107,24 +108,15 @@ class KafkaProducerServiceTest {
 
     kafkaProducerService.sendMessage(messageKey, TimeEntry.class, timeEntry, action);
     assertThat(responseFuture.isDone()).isFalse();
-    assertEquals(String.format(
-        "Message with key [ %s ] failed sending to topic [ callisto-timecard ] action [ %s ]",
-        messageKey, action.toString().toLowerCase()), logList.get(0).getMessage());
+    assertThat(String.format(
+        MESSAGE_FAILED_SENDING_TO_TOPIC,
+        messageKey, action.toString().toLowerCase())).isEqualTo(logList.get(0).getMessage());
   }
 
   @ParameterizedTest
-  @EnumSource(value = KafkaAction.class, names = {"CREATE", "UPDATE", "DELETE"})
-  void CompletableFutureReporting_actionOnResource_onFailureInterruptLogged(KafkaAction action)
+  @EnumSource(value = KafkaAction.class)
+  void sendMessage_actionOnResource_onFailureInterruptLogged(KafkaAction action)
       throws ExecutionException, InterruptedException {
-    ReflectionTestUtils.setField(kafkaProducerService, "topicName", TOPIC_NAME);
-    ReflectionTestUtils.setField(kafkaProducerService, "projectVersion", "1.0.0");
-
-    UUID ownerId = UUID.fromString("ec703cac-de76-49c8-b1c4-83da6f8b42ce");
-    LocalDateTime actualStartTime = LocalDateTime.of(
-        2022, 1, 1, 9, 0, 0);
-    TimeEntry timeEntry = createTimeEntry(ownerId, getAsDate(actualStartTime));
-    String messageKey = generateMessageKey(timeEntry);
-
     ListAppender<ILoggingEvent> listAppender = getLoggingEventListAppender();
 
     List<ILoggingEvent> logList = listAppender.list;
@@ -137,23 +129,14 @@ class KafkaProducerServiceTest {
 
     kafkaProducerService.sendMessage(messageKey, TimeEntry.class, timeEntry, action);
     assertThat(responseFuture.isDone()).isFalse();
-    assertEquals(String.format(
-        "Message with key [ %s ] failed sending to topic [ callisto-timecard ] action [ %s ]",
-        messageKey, action.toString().toLowerCase()), logList.get(0).getMessage());
+    assertThat(String.format(
+        MESSAGE_FAILED_SENDING_TO_TOPIC,
+        messageKey, action.toString().toLowerCase())).isEqualTo(logList.get(0).getMessage());
   }
 
   @ParameterizedTest
-  @EnumSource(value = KafkaAction.class, names = {"CREATE", "UPDATE", "DELETE"})
-  void completableFutureReporting_actionOnResource_onSuccessMessageLogged(KafkaAction action) throws InterruptedException, ExecutionException {
-    ReflectionTestUtils.setField(kafkaProducerService, "topicName", TOPIC_NAME);
-    ReflectionTestUtils.setField(kafkaProducerService, "projectVersion", "1.0.0");
-
-    UUID ownerId = UUID.fromString("ec703cac-de76-49c8-b1c4-83da6f8b42ce");
-    LocalDateTime actualStartTime = LocalDateTime.of(
-        2022, 1, 1, 9, 0, 0);
-    TimeEntry timeEntry = createTimeEntry(ownerId, getAsDate(actualStartTime));
-    String messageKey = generateMessageKey(timeEntry);
-
+  @EnumSource(value = KafkaAction.class)
+  void sendMessage_actionOnResource_onSuccessMessageLogged(KafkaAction action) throws InterruptedException, ExecutionException {
     ListAppender<ILoggingEvent> listAppender = getLoggingEventListAppender();
 
     List<ILoggingEvent> logList = listAppender.list;
@@ -168,13 +151,12 @@ class KafkaProducerServiceTest {
     kafkaProducerService.sendMessage(messageKey, TimeEntry.class, timeEntry,
         action);
 
-    assertEquals(String.format(
-        "Message with key [ %s ] sent to topic [ callisto-timecard ] with action [ %s ]",
-        messageKey, action.toString().toLowerCase()), logList.get(0).getMessage());
+    assertThat(String.format(
+        MESSAGE_SENT_TO_TOPIC_CALLISTO,
+        messageKey, action.toString().toLowerCase())).isEqualTo(logList.get(0).getMessage());
 
   }
 
-  @NotNull
   private static ListAppender<ILoggingEvent> getLoggingEventListAppender() {
     Logger kafkaLogger = (Logger) LoggerFactory.getLogger(KafkaProducerService.class);
 
