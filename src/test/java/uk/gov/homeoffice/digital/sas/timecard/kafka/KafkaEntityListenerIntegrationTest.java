@@ -37,7 +37,6 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
-import uk.gov.homeoffice.digital.sas.timecard.kafka.KafkaDbTransactionSynchronizer;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 import uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils;
 import uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory;
