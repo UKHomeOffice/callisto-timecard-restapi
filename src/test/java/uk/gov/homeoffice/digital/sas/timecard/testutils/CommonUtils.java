@@ -8,6 +8,8 @@ import java.util.Date;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 
 public final class CommonUtils {
+
+  private static ObjectMapper mapper = new ObjectMapper();
   public static Date getAsDate(LocalDateTime dateTime) {
     return Date.from(dateTime.toInstant(ZoneOffset.UTC));
   }
@@ -16,7 +18,7 @@ public final class CommonUtils {
     return timeEntry.getTenantId()  + ":" + timeEntry.getOwnerId();
   }
 
-  public static  String objectAsJsonString(final Object obj, ObjectMapper mapper) throws JsonProcessingException {
+  public static  String objectAsJsonString(final Object obj) throws JsonProcessingException {
     return mapper.writeValueAsString(obj);
   }
 }

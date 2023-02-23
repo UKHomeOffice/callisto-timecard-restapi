@@ -57,7 +57,6 @@ class KafkaEntityListenerIntegrationTest {
 
   private String messageKey;
 
-  private ObjectMapper mapper = new ObjectMapper();
 
   @BeforeEach
   void setUp() {
@@ -104,7 +103,7 @@ class KafkaEntityListenerIntegrationTest {
 
     mockMvc.perform(put("/resources/time-entries/"+ id + "?tenantId=" + tenantId)
           .contentType(MediaType.APPLICATION_JSON)
-          .content(CommonUtils.objectAsJsonString(timeEntryUpdate, mapper)))
+          .content(CommonUtils.objectAsJsonString(timeEntryUpdate)))
         .andDo(print())
         .andExpect(status().isOk());
 
@@ -163,7 +162,7 @@ class KafkaEntityListenerIntegrationTest {
   private String persistTimeEntry(TimeEntry timeEntry) throws Exception {
     MvcResult mvcResult = mockMvc.perform(post("/resources/time-entries?tenantId=" + tenantId)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(CommonUtils.objectAsJsonString(timeEntry, mapper)))
+            .content(CommonUtils.objectAsJsonString(timeEntry)))
         .andDo(print())
         .andExpect(status().isOk())
         .andReturn();
