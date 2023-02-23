@@ -2,6 +2,7 @@ package uk.gov.homeoffice.digital.sas.timecard.kafka.producers;
 
 import static uk.gov.homeoffice.digital.sas.timecard.kafka.constants.Constants.KAFKA_FAILED_MESSAGE;
 import static uk.gov.homeoffice.digital.sas.timecard.kafka.constants.Constants.KAFKA_SUCCESS_MESSAGE;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import lombok.extern.slf4j.Slf4j;
