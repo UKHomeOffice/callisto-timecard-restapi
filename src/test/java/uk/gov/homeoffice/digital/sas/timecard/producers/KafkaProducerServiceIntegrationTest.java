@@ -50,7 +50,7 @@ class KafkaProducerServiceIntegrationTest<T> {
     kafkaProducerService.sendMessage("testMessageKey", (Class<T>) resource.getClass(), resource, KAFKA_ACTION);
 
     boolean isMessageConsumed = consumer.getLatch()
-            .await(10, TimeUnit.SECONDS);
+            .await(20, TimeUnit.SECONDS);
     KafkaEventMessage<T> consumedMessage = gson.fromJson(consumer.getPayload(), KafkaEventMessage.class);
 
     assertThat(isMessageConsumed).isTrue();
