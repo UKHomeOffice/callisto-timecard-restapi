@@ -23,7 +23,7 @@ import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.
 
 @SpringBootTest
 @DirtiesContext
-@EmbeddedKafka(topics = "callisto-timecard",bootstrapServersProperty = "spring.kafka.bootstrap-servers")
+@EmbeddedKafka(bootstrapServersProperty = "spring.kafka.bootstrap-servers")
 class KafkaProducerServiceIntegrationTest<T> {
 
   @Autowired
@@ -50,13 +50,13 @@ class KafkaProducerServiceIntegrationTest<T> {
     kafkaProducerService.sendMessage("testMessageKey", (Class<T>) resource.getClass(), resource, KAFKA_ACTION);
 
     boolean isMessageConsumed = consumer.getLatch()
-            .await(30, TimeUnit.SECONDS);
+            .await(10, TimeUnit.SECONDS);
     KafkaEventMessage<T> consumedMessage = gson.fromJson(consumer.getPayload(), KafkaEventMessage.class);
 
     assertThat(isMessageConsumed).isTrue();
     assertThat(consumedMessage.getAction()).isEqualTo(KAFKA_ACTION);
     assertThat(consumedMessage.getSchema()).contains(resource.getClass().getName()).contains(projectVersion);
-    assertThat(consumer.getPayload()).contains(CommonUtils.timeEntryAsJsonString(resource));
+    assertThat(consumer.getPayload()).contains(CommonUtils.objectAsJsonString(resource));
 
   }
 

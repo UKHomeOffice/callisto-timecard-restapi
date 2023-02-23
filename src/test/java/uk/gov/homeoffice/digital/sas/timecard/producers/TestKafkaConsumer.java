@@ -22,7 +22,6 @@ public class TestKafkaConsumer<T> {
     public void receive(ConsumerRecord<?, T> consumerRecord) {
         payload = consumerRecord.value();
         latch.countDown();
-        log.info("receiving payload from topic.");
     }
 
     public void resetLatch() {
