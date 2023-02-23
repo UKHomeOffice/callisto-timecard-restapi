@@ -62,9 +62,6 @@ class KafkaEntityListenerIntegrationTest {
 
   @BeforeEach
   void setUp() {
-    //String brokerAddress = broker.getBrokersAsString();
-    //System.setProperty("spring.kafka.bootstrap-servers", brokerAddress);
-    //String property = System.getProperty("spring.kafka.bootstrap-servers");
     ownerId = UUID.randomUUID();
     timeEntry = TimeEntryFactory.createTimeEntry(ownerId,
         CommonUtils.getAsDate(LocalDateTime.now()));
