@@ -41,7 +41,7 @@ import uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory;
 @AutoConfigureMockMvc(addFilters = true)
 @EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092",
     "port=9092" })
-class KafkaEntityListenerIT {
+class KafkaEntityListenerIntegrationTest {
 
   @Autowired
   private MockMvc mockMvc;
