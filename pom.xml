@@ -15,6 +15,7 @@
     <description>Callisto timecard service backend rest api project</description>
     <properties>
         <spring.boot.version>${parent.version}</spring.boot.version>
+        <spring.kafka.version>3.0.2</spring.kafka.version>
         <java.version>17</java.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
@@ -78,7 +79,7 @@
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
-            <version>3.0.2</version>
+            <version>${spring.kafka.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -162,7 +163,7 @@
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka-test</artifactId>
-            <version>3.0.2</version>
+            <version>${spring.kafka.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

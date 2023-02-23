@@ -45,8 +45,8 @@ import uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory;
 @DirtiesContext
 @WebAppConfiguration
 @AutoConfigureMockMvc(addFilters = true)
-@EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092",
-    "port=9092"})
+@EmbeddedKafka(topics = "callisto-timecard",
+    bootstrapServersProperty = "spring.kafka.bootstrap-servers")
 class KafkaEntityListenerIntegrationTest {
 
   @Autowired
@@ -62,6 +62,9 @@ class KafkaEntityListenerIntegrationTest {
 
   @BeforeEach
   void setUp() {
+    //String brokerAddress = broker.getBrokersAsString();
+    //System.setProperty("spring.kafka.bootstrap-servers", brokerAddress);
+    //String property = System.getProperty("spring.kafka.bootstrap-servers");
     ownerId = UUID.randomUUID();
     timeEntry = TimeEntryFactory.createTimeEntry(ownerId,
         CommonUtils.getAsDate(LocalDateTime.now()));
