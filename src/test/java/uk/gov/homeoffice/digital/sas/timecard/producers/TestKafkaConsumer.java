@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.CountDownLatch;
 
-@Slf4j
 @Component
 public class TestKafkaConsumer<T> {
 
