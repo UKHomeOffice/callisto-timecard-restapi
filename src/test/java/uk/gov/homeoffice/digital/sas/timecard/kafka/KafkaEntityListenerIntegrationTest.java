@@ -67,7 +67,6 @@ class KafkaEntityListenerIntegrationTest {
         CommonUtils.getAsDate(LocalDateTime.now()));
     tenantId = timeEntry.getTenantId();
     messageKey = CommonUtils.generateMessageKey(timeEntry);
-    TransactionSynchronizationManager.initSynchronization();
   }
 
   @Test
@@ -78,6 +77,7 @@ class KafkaEntityListenerIntegrationTest {
     List<ILoggingEvent> logList = listAppender.list;
 
     persistTimeEntry(timeEntry);
+    TransactionSynchronizationManager.initSynchronization();
 
     assertThat(String.format(
         KAFKA_TRANSACTION_CREATE_INITIALIZED,
@@ -97,6 +97,7 @@ class KafkaEntityListenerIntegrationTest {
     List<ILoggingEvent> logList = listAppender.list;
 
     String id = persistTimeEntry(timeEntry);
+    TransactionSynchronizationManager.initSynchronization();
 
     TimeEntry timeEntryUpdate = TimeEntryFactory.createTimeEntry(ownerId, tenantId,
         CommonUtils.getAsDate(LocalDateTime.now().plusHours(1)));
@@ -135,6 +136,7 @@ class KafkaEntityListenerIntegrationTest {
     List<ILoggingEvent> logList = listAppender.list;
 
     String id = persistTimeEntry(timeEntry);
+    TransactionSynchronizationManager.initSynchronization();
 
     mockMvc.perform(delete("/resources/time-entries/"+ id + "?tenantId=" + tenantId))
         .andDo(print())

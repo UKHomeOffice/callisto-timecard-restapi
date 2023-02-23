@@ -27,7 +27,6 @@ import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
-import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import ch.qos.logback.classic.Logger;
@@ -39,8 +38,6 @@ import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerServi
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
 
 @ExtendWith(SpringExtension.class)
-@EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9093",
-    "port=9093"})
 class KafkaProducerServiceTest {
 
   private final static String TOPIC_NAME = "callisto-timecard";
