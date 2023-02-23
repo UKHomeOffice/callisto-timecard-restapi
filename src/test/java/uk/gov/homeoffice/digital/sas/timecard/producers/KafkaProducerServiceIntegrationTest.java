@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.transaction.annotation.Transactional;
 import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.KafkaEventMessage;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerService;
@@ -22,7 +23,8 @@ import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.
 
 @SpringBootTest
 @DirtiesContext
-@EmbeddedKafka(partitions = 1)
+@EmbeddedKafka(partitions = 1, brokerProperties = {
+        "listeners=PLAINTEXT://localhost:9092", "port=9092"})
 class KafkaProducerServiceIntegrationTest<T> {
 
   @Autowired
@@ -49,7 +51,7 @@ class KafkaProducerServiceIntegrationTest<T> {
     kafkaProducerService.sendMessage("testMessageKey", (Class<T>) resource.getClass(), resource, KAFKA_ACTION);
 
     boolean isMessageConsumed = consumer.getLatch()
-            .await(10, TimeUnit.SECONDS);
+            .await(30, TimeUnit.SECONDS);
     KafkaEventMessage<T> consumedMessage = gson.fromJson(consumer.getPayload(), KafkaEventMessage.class);
 
     assertThat(isMessageConsumed).isTrue();

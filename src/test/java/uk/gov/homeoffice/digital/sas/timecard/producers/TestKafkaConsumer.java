@@ -1,12 +1,14 @@
 package uk.gov.homeoffice.digital.sas.timecard.producers;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.CountDownLatch;
 
+@Slf4j
 @Component
 public class TestKafkaConsumer<T> {
 
@@ -20,6 +22,7 @@ public class TestKafkaConsumer<T> {
     public void receive(ConsumerRecord<?, T> consumerRecord) {
         payload = consumerRecord.value();
         latch.countDown();
+        log.debug("receiving payload from topic.");
     }
 
     public void resetLatch() {
