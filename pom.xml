@@ -21,13 +21,10 @@
         <jacoco.version>0.8.7</jacoco.version>
         <sonar.language>java</sonar.language>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-        <sonar.coverage.exclusions>
-            **/configurations/*,
-            **/kafka/KafkaDbTransactionSynchronizer.java
-        </sonar.coverage.exclusions>
         <checkstyle-maven-plugin.version>3.2.0</checkstyle-maven-plugin.version>
         <cucumber.version>7.8.1</cucumber.version>
         <jparest.version>0.1.1</jparest.version>
+        <kafka.version>3.0.2</kafka.version>
     </properties>
 
     <dependencyManagement>
@@ -82,7 +79,7 @@
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
-            <version>3.0.2</version>
+            <version>${kafka.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -166,7 +163,7 @@
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka-test</artifactId>
-            <version>3.0.2</version>
+            <version>${kafka.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

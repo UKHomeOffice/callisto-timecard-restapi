@@ -8,6 +8,8 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils.generateMessageKey;
 import static uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils.getAsDate;
+import static uk.gov.homeoffice.digital.sas.timecard.testutils.TestConstants.MESSAGE_FAILED_SENDING_TO_TOPIC;
+import static uk.gov.homeoffice.digital.sas.timecard.testutils.TestConstants.MESSAGE_SENT_TO_TOPIC_CALLISTO;
 import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.createTimeEntry;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -107,7 +109,7 @@ class KafkaProducerServiceTest {
     kafkaProducerService.sendMessage(messageKey, TimeEntry.class, timeEntry, action);
     assertThat(responseFuture.isDone()).isFalse();
     assertThat(String.format(
-        "Message with key [ %s ] failed sending to topic [ callisto-timecard ] action [ %s ]",
+        MESSAGE_FAILED_SENDING_TO_TOPIC,
         messageKey, action.toString().toLowerCase())).isEqualTo(logList.get(0).getMessage());
   }
 
@@ -128,7 +130,7 @@ class KafkaProducerServiceTest {
     kafkaProducerService.sendMessage(messageKey, TimeEntry.class, timeEntry, action);
     assertThat(responseFuture.isDone()).isFalse();
     assertThat(String.format(
-        "Message with key [ %s ] failed sending to topic [ callisto-timecard ] action [ %s ]",
+        MESSAGE_FAILED_SENDING_TO_TOPIC,
         messageKey, action.toString().toLowerCase())).isEqualTo(logList.get(0).getMessage());
   }
 
@@ -150,7 +152,7 @@ class KafkaProducerServiceTest {
         action);
 
     assertThat(String.format(
-        "Message with key [ %s ] sent to topic [ callisto-timecard ] with action [ %s ]",
+        MESSAGE_SENT_TO_TOPIC_CALLISTO,
         messageKey, action.toString().toLowerCase())).isEqualTo(logList.get(0).getMessage());
 
   }

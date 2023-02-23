@@ -1,4 +1,4 @@
-package uk.gov.homeoffice.digital.sas.timecard.listeners;
+package uk.gov.homeoffice.digital.sas.timecard.kafka;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -6,6 +6,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.homeoffice.digital.sas.timecard.testutils.TestConstants.DATABASE_TRANSACTION_CREATE_WAS_SUCCESSFUL;
+import static uk.gov.homeoffice.digital.sas.timecard.testutils.TestConstants.DATABASE_TRANSACTION_DELETE_WAS_SUCCESSFUL;
+import static uk.gov.homeoffice.digital.sas.timecard.testutils.TestConstants.DATABASE_TRANSACTION_UPDATE_WAS_SUCCESSFUL;
+import static uk.gov.homeoffice.digital.sas.timecard.testutils.TestConstants.KAFKA_TRANSACTION_CREATE_INITIALIZED;
+import static uk.gov.homeoffice.digital.sas.timecard.testutils.TestConstants.KAFKA_TRANSACTION_DELETE_INITIALIZED;
+import static uk.gov.homeoffice.digital.sas.timecard.testutils.TestConstants.KAFKA_TRANSACTION_UPDATE_INITIALIZED;
+import static uk.gov.homeoffice.digital.sas.timecard.testutils.TestConstants.TRANSACTION_SUCCESSFUL_WITH_MESSAGE_KEY;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -39,8 +46,7 @@ import uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory;
 @DirtiesContext
 @WebAppConfiguration
 @AutoConfigureMockMvc(addFilters = true)
-@EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092",
-    "port=9092" })
+@EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092"})
 class KafkaEntityListenerIntegrationTest {
 
   @Autowired
@@ -74,12 +80,12 @@ class KafkaEntityListenerIntegrationTest {
     persistTimeEntry(timeEntry);
 
     assertThat(String.format(
-        "Kafka Transaction [ create ] Initialized with message key [ %s ]",
+        KAFKA_TRANSACTION_CREATE_INITIALIZED,
         messageKey)).isEqualTo(logList.get(0).getMessage());
 
-    assertThat(logList.get(1).getMessage()).isEqualTo("Database transaction [ create ] was successful");
+    assertThat(logList.get(1).getMessage()).isEqualTo(DATABASE_TRANSACTION_CREATE_WAS_SUCCESSFUL);
     assertThat(logList.get(2).getMessage()).isEqualTo(String.format(
-        "Transaction successful with messageKey [ %s ]", messageKey));
+        TRANSACTION_SUCCESSFUL_WITH_MESSAGE_KEY, messageKey));
 
   }
 
@@ -105,20 +111,20 @@ class KafkaEntityListenerIntegrationTest {
     List<ILoggingEvent> filteredList =
         logList.stream().filter(o -> o.getMessage().equals(
             String.format(
-        "Database transaction [ update ] with entity id [ %s ] was successful", id))).toList();
+                DATABASE_TRANSACTION_UPDATE_WAS_SUCCESSFUL, id))).toList();
 
     assertThat(filteredList).hasSize(1);
 
     assertThat(logList.get(3).getMessage()).isEqualTo(String.format(
-        "Kafka Transaction [ update ] Initialized with message key [ %s ]",
+        KAFKA_TRANSACTION_UPDATE_INITIALIZED,
         messageKey));
 
     assertThat(logList.get(4).getMessage()).isEqualTo(String.format(
-        "Database transaction [ update ] with entity id [ %s ] was successful",
+        DATABASE_TRANSACTION_UPDATE_WAS_SUCCESSFUL,
         id));
 
     assertThat(logList.get(5).getMessage()).isEqualTo(String.format(
-        "Transaction successful with messageKey [ %s ]", messageKey));
+        TRANSACTION_SUCCESSFUL_WITH_MESSAGE_KEY, messageKey));
   }
 
   @Test
@@ -137,19 +143,19 @@ class KafkaEntityListenerIntegrationTest {
     List<ILoggingEvent> filteredList =
         logList.stream().filter(o -> o.getMessage().equals(
             String.format(
-                "Database transaction [ delete ] with entity id [ %s ] was successful", id))).toList();
+                DATABASE_TRANSACTION_DELETE_WAS_SUCCESSFUL, id))).toList();
 
     assertThat(filteredList).hasSize(1);
 
     assertThat(logList.get(3).getMessage() ).isEqualTo(String.format(
-        "Kafka Transaction [ delete ] Initialized with message key [ %s ]", messageKey));
+        KAFKA_TRANSACTION_DELETE_INITIALIZED, messageKey));
 
     assertThat(logList.get(4).getMessage()).isEqualTo(String.format(
-        "Database transaction [ delete ] with entity id [ %s ] was successful",
+        DATABASE_TRANSACTION_DELETE_WAS_SUCCESSFUL,
         id));
 
     assertThat(logList.get(5).getMessage()).isEqualTo(String.format(
-        "Transaction successful with messageKey [ %s ]", messageKey));
+      TRANSACTION_SUCCESSFUL_WITH_MESSAGE_KEY, messageKey));
   }
 
   private String persistTimeEntry(TimeEntry timeEntry) throws Exception {

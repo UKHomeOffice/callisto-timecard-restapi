@@ -1,5 +1,7 @@
 package uk.gov.homeoffice.digital.sas.timecard.kafka.producers;
 
+import static uk.gov.homeoffice.digital.sas.timecard.kafka.constants.Constants.KAFKA_FAILED_MESSAGE;
+import static uk.gov.homeoffice.digital.sas.timecard.kafka.constants.Constants.KAFKA_SUCCESS_MESSAGE;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +47,7 @@ public class KafkaProducerService<T> {
         Thread.currentThread().interrupt();
       }
       log.error(String.format(
-          "Message with key [ %s ] failed sending to topic [ %s ] action [ %s ]",
+          KAFKA_FAILED_MESSAGE,
           messageKey, topicName, kafkaEventMessage.getAction()), e);
     }
   }
@@ -57,7 +59,7 @@ public class KafkaProducerService<T> {
           KafkaEventMessage<T>>> future) {
     future.whenComplete((result, ex) -> {
       if (ex == null) {
-        log.info(String.format("Message with key [ %s ] sent to topic [ %s ] with action [ %s ]",
+        log.info(String.format(KAFKA_SUCCESS_MESSAGE,
                 messageKey, topicName, kafkaEventMessage.getAction()));
       }
     });
