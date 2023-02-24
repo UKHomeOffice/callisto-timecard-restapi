@@ -1,6 +1,5 @@
 package uk.gov.homeoffice.digital.sas.timecard.listeners;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,8 +8,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.KafkaDbTransactionSynchronizer;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.producers.KafkaProducerService;
 import uk.gov.homeoffice.digital.sas.timecard.model.TimeEntry;
@@ -20,7 +17,6 @@ import java.util.UUID;
 import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.createTimeEntry;
 
 @ExtendWith(MockitoExtension.class)
-@Transactional
 class TimeEntryKafkaEntityListenerTest {
 
   @Mock
@@ -28,9 +24,6 @@ class TimeEntryKafkaEntityListenerTest {
 
   @Mock
   private KafkaDbTransactionSynchronizer kafkaDbTransactionSynchronizer;
-
-  @Mock
-  private TimeEntryKafkaEntityListener timeEntryKafkaEntityListener;
 
   @InjectMocks
   @Spy
@@ -40,14 +33,10 @@ class TimeEntryKafkaEntityListenerTest {
 
   private static final UUID ID = UUID.randomUUID();
 
-
   @BeforeEach
   void setup() {
     timeEntry = createTimeEntry();
-    TransactionSynchronizationManager.initSynchronization();
-    timeEntryKafkaEntityListener.setProducerService(kafkaProducerService);
   }
-
 
   @Test
   void sendMessageOnCreate_verifyMethodCall() {
@@ -71,10 +60,4 @@ class TimeEntryKafkaEntityListenerTest {
     Mockito.verify((KafkaEntityListener) timeEntryEntityListenerSpy).sendKafkaMessageOnDelete(timeEntry,
         timeEntry.getId().toString());
   }
-
-  @AfterEach
-  void clear() {
-    TransactionSynchronizationManager.clear();
-  }
-
 }

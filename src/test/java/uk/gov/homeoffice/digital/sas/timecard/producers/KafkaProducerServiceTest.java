@@ -6,10 +6,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static uk.gov.homeoffice.digital.sas.timecard.kafka.constants.Constants.KAFKA_FAILED_MESSAGE;
+import static uk.gov.homeoffice.digital.sas.timecard.kafka.constants.Constants.KAFKA_SUCCESS_MESSAGE;
 import static uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils.generateMessageKey;
 import static uk.gov.homeoffice.digital.sas.timecard.testutils.CommonUtils.getAsDate;
-import static uk.gov.homeoffice.digital.sas.timecard.testutils.TestConstants.MESSAGE_FAILED_SENDING_TO_TOPIC;
-import static uk.gov.homeoffice.digital.sas.timecard.testutils.TestConstants.MESSAGE_SENT_TO_TOPIC_CALLISTO;
 import static uk.gov.homeoffice.digital.sas.timecard.testutils.TimeEntryFactory.createTimeEntry;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -109,8 +109,8 @@ class KafkaProducerServiceTest {
     kafkaProducerService.sendMessage(messageKey, TimeEntry.class, timeEntry, action);
     assertThat(responseFuture.isDone()).isFalse();
     assertThat(String.format(
-        MESSAGE_FAILED_SENDING_TO_TOPIC,
-        messageKey, action.toString().toLowerCase())).isEqualTo(logList.get(0).getMessage());
+        KAFKA_FAILED_MESSAGE,
+        messageKey, "callisto-timecard", action.toString().toLowerCase())).isEqualTo(logList.get(0).getMessage());
   }
 
   @ParameterizedTest
@@ -130,8 +130,8 @@ class KafkaProducerServiceTest {
     kafkaProducerService.sendMessage(messageKey, TimeEntry.class, timeEntry, action);
     assertThat(responseFuture.isDone()).isFalse();
     assertThat(String.format(
-        MESSAGE_FAILED_SENDING_TO_TOPIC,
-        messageKey, action.toString().toLowerCase())).isEqualTo(logList.get(0).getMessage());
+        KAFKA_FAILED_MESSAGE,
+        messageKey, "callisto-timecard",action.toString().toLowerCase())).isEqualTo(logList.get(0).getMessage());
   }
 
   @ParameterizedTest
@@ -152,8 +152,9 @@ class KafkaProducerServiceTest {
         action);
 
     assertThat(String.format(
-        MESSAGE_SENT_TO_TOPIC_CALLISTO,
-        messageKey, action.toString().toLowerCase())).isEqualTo(logList.get(0).getMessage());
+        KAFKA_SUCCESS_MESSAGE,
+        messageKey, "callisto-timecard",
+        action.toString().toLowerCase())).isEqualTo(logList.get(0).getMessage());
 
   }
 
