@@ -1,13 +1,16 @@
 package uk.gov.homeoffice.digital.sas.timecard.kafka.producers;
 
+import static uk.gov.homeoffice.digital.sas.timecard.kafka.constants.Constants.KAFKA_FAILED_MESSAGE;
+import static uk.gov.homeoffice.digital.sas.timecard.kafka.constants.Constants.KAFKA_SUCCESS_MESSAGE;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
-import org.springframework.util.concurrent.ListenableFuture;
-import org.springframework.util.concurrent.ListenableFutureCallback;
 import uk.gov.homeoffice.digital.sas.timecard.enums.KafkaAction;
 import uk.gov.homeoffice.digital.sas.timecard.kafka.KafkaEventMessage;
 
@@ -31,33 +34,42 @@ public class KafkaProducerService<T> {
   public void sendMessage(String messageKey, Class<T> resourceType,
                           T resource, KafkaAction action) {
     var kafkaEventMessage = new KafkaEventMessage<>(projectVersion, resourceType, resource, action);
-    ListenableFuture<SendResult<String, KafkaEventMessage<T>>> future =
-        kafkaTemplate.send(
-            topicName,
-            messageKey,
-            kafkaEventMessage
-        );
-
-    listenableFutureReporting(resource, kafkaEventMessage, future);
+    CompletableFuture<SendResult<String, KafkaEventMessage<T>>> future = null;
+    try {
+      future = kafkaTemplate.send(
+          topicName,
+          messageKey,
+          kafkaEventMessage
+      );
+      completeKafkaTransaction(future);
+      logKafkaMessage(messageKey, kafkaEventMessage, future);
+    } catch (ExecutionException | InterruptedException e) {
+      if  (Thread.interrupted()) {
+        Thread.currentThread().interrupt();
+      }
+      log.error(String.format(
+          KAFKA_FAILED_MESSAGE,
+          messageKey, topicName, kafkaEventMessage.getAction()), e);
+    }
   }
 
-  private void listenableFutureReporting(
-      T resource,
+  private void logKafkaMessage(
+      String messageKey,
       KafkaEventMessage<T> kafkaEventMessage,
-      ListenableFuture<SendResult<String, KafkaEventMessage<T>>> future
-  ) {
-    future.addCallback(new ListenableFutureCallback<>() {
-
-      @Override
-      public void onFailure(Throwable ex) {
-        log.error(String.format("Sent message has failed=[ %s ]",
-            kafkaEventMessage), ex);
-      }
-
-      @Override
-      public void onSuccess(SendResult<String, KafkaEventMessage<T>> result) {
-        log.info(String.format("Sent message=[ %s ]", resource));
+      CompletableFuture<SendResult<String,
+          KafkaEventMessage<T>>> future) {
+    future.whenComplete((result, ex) -> {
+      if (ex == null) {
+        log.info(String.format(KAFKA_SUCCESS_MESSAGE,
+                messageKey, topicName, kafkaEventMessage.getAction()));
       }
     });
   }
+
+  private void completeKafkaTransaction(
+      CompletableFuture<SendResult<String, KafkaEventMessage<T>>> future)
+      throws ExecutionException, InterruptedException {
+    future.complete(future.get());
+  }
 }
+
