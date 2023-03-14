@@ -254,7 +254,7 @@ steps:
     settings:
       namespace: callisto-dev
       mode: upgrade
-      add_repos: https://ukhomeoffice.github.io/callisto-helm-charts
+      add_repos: repo_name=https://ukhomeoffice.github.io/callisto-helm-charts/
       chart: callisto-base-service
       values:
         - image.tag=${DRONE_COMMIT_SHA}
