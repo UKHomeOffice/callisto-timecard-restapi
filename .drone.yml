@@ -254,6 +254,7 @@ steps:
     settings:
       namespace: callisto-dev
       mode: upgrade
+      debug: true
       add_repos: test=https://ukhomeoffice.github.io/callisto-helm-charts/
       chart: test/callisto-base-service
       values:
