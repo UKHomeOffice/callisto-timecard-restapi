@@ -23,11 +23,8 @@ steps:
   - name: lint_helm_files
     image: pelotech/drone-helm3
     settings:
-      mode: upgrade
+      mode: lint
       chart: ./helm
-      release:
-      kube_api_server:
-      kube_token:
       values_files:
         - ./helm/values/dev-values.yaml
         - ./helm/values/test-values.yaml
