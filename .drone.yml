@@ -387,108 +387,108 @@ steps:
 #        from_secret: prod_kube_token
 #
 #---
-kind: pipeline
-type: kubernetes
-name: build notifications
-
-trigger:
-  status:
-    - success
-    - failure
-  exclude:
-    event:
-      - pull_request
-
-depends_on:
-  - callisto-timecard-restapi-build
-  - callisto-timecard-restapi-dev-deploy
-  - callisto-timecard-restapi-test-deploy
-  - callisto-timecard-restapi-prod-deploy
-
-slack: &slack
-  image: plugins/slack
-  settings:
-    webhook:
-      from_secret: slack_webhook_url
-    channel: callisto-tech-notifications
-    username: Drone
-
-steps:
-  - name: slack
-    <<: *slack
-    settings:
-      template: |
-        {{#success build.status}}
-          <${DRONE_BUILD_LINK}|Build #{{ build.number }}> succeeded! :tada:
-        {{else}}
-          <${DRONE_BUILD_LINK}|Build #{{ build.number }}> failed :broken_heart:
-        {{/success}}
-        Commit: <${DRONE_REPO_LINK}/commit/{{ build.commit }}|{{ truncate build.commit 8 }}> - {{{ trim build.message }}}
-        Repo: {{ repo.name }}
-        Branch: <${DRONE_REPO_LINK}/commits/{{ build.branch }}|{{ build.branch }}>
-        Author: {{ build.author }}
-        <https://sonarcloud.io/dashboard?id=callisto-timecard-restapi&branch={{ build.branch }}&resolved=false|SonarCloud Analysis Report>
-    when:
-      event:
-        - push
-
-  - name: slack_promotion
-    <<: *slack
-    settings:
-      template: >
-        {{#success build.status}}
-          :rocket: Successful *{{uppercasefirst build.deployTo}}* deployment for *{{repo.name}}* <${DRONE_BUILD_LINK}| build #{{build.number}}>.
-        {{else}}
-          :zombie: Problem *{{uppercasefirst build.deployTo}}* deployment failed for *{{repo.name}}* <${DRONE_BUILD_LINK}| build #{{build.number}}>.
-        {{/success}}
-    when:
-      event:
-        - promote
-
----
-kind: pipeline
-type: kubernetes
-name: urgent notifications
-
-trigger:
-  status:
-    - failure
-  event:
-    exclude:
-      - pull_request
-
-depends_on:
-  - callisto-timecard-restapi-build
-  - callisto-timecard-restapi-dev-deploy
-  - callisto-timecard-restapi-test-deploy
-  - callisto-timecard-restapi-prod-deploy
-
-slack: &slack
-  image: plugins/slack
-  settings:
-    webhook:
-      from_secret: slack_urgent_webhook_url
-    channel: callisto-urgent-tech-notifications
-    username: Drone
-
-steps:
-  - name: slack_build_urgent
-    <<: *slack
-    settings:
-      template: |
-        <${DRONE_BUILD_LINK}|Build #{{build.number}}> failed :this-is-fine-fire:
-        Commit: <${DRONE_REPO_LINK}/commit/{{ build.commit }}|{{ truncate build.commit 8 }}> - {{{ trim build.message }}}
-        Repo: {{ repo.name }}
-        Author: {{ build.author }}
-    when:
-      branch:
-        - main
-
-  - name: slack_promote_urgent
-    <<: *slack
-    settings:
-      template: |
-        :alert: Problem *{{uppercasefirst build.deployTo}}* deployment failed for *{{repo.name}}* <${DRONE_BUILD_LINK}| build #{{build.number}}>.
-    when:
-      event:
-        - promote
+#kind: pipeline
+#type: kubernetes
+#name: build notifications
+#
+#trigger:
+#  status:
+#    - success
+#    - failure
+#  exclude:
+#    event:
+#      - pull_request
+#
+#depends_on:
+#  - callisto-timecard-restapi-build
+#  - callisto-timecard-restapi-dev-deploy
+#  - callisto-timecard-restapi-test-deploy
+#  - callisto-timecard-restapi-prod-deploy
+#
+#slack: &slack
+#  image: plugins/slack
+#  settings:
+#    webhook:
+#      from_secret: slack_webhook_url
+#    channel: callisto-tech-notifications
+#    username: Drone
+#
+#steps:
+#  - name: slack
+#    <<: *slack
+#    settings:
+#      template: |
+#        {{#success build.status}}
+#          <${DRONE_BUILD_LINK}|Build #{{ build.number }}> succeeded! :tada:
+#        {{else}}
+#          <${DRONE_BUILD_LINK}|Build #{{ build.number }}> failed :broken_heart:
+#        {{/success}}
+#        Commit: <${DRONE_REPO_LINK}/commit/{{ build.commit }}|{{ truncate build.commit 8 }}> - {{{ trim build.message }}}
+#        Repo: {{ repo.name }}
+#        Branch: <${DRONE_REPO_LINK}/commits/{{ build.branch }}|{{ build.branch }}>
+#        Author: {{ build.author }}
+#        <https://sonarcloud.io/dashboard?id=callisto-timecard-restapi&branch={{ build.branch }}&resolved=false|SonarCloud Analysis Report>
+#    when:
+#      event:
+#        - push
+#
+#  - name: slack_promotion
+#    <<: *slack
+#    settings:
+#      template: >
+#        {{#success build.status}}
+#          :rocket: Successful *{{uppercasefirst build.deployTo}}* deployment for *{{repo.name}}* <${DRONE_BUILD_LINK}| build #{{build.number}}>.
+#        {{else}}
+#          :zombie: Problem *{{uppercasefirst build.deployTo}}* deployment failed for *{{repo.name}}* <${DRONE_BUILD_LINK}| build #{{build.number}}>.
+#        {{/success}}
+#    when:
+#      event:
+#        - promote
+#
+#---
+#kind: pipeline
+#type: kubernetes
+#name: urgent notifications
+#
+#trigger:
+#  status:
+#    - failure
+#  event:
+#    exclude:
+#      - pull_request
+#
+#depends_on:
+#  - callisto-timecard-restapi-build
+#  - callisto-timecard-restapi-dev-deploy
+#  - callisto-timecard-restapi-test-deploy
+#  - callisto-timecard-restapi-prod-deploy
+#
+#slack: &slack
+#  image: plugins/slack
+#  settings:
+#    webhook:
+#      from_secret: slack_urgent_webhook_url
+#    channel: callisto-urgent-tech-notifications
+#    username: Drone
+#
+#steps:
+#  - name: slack_build_urgent
+#    <<: *slack
+#    settings:
+#      template: |
+#        <${DRONE_BUILD_LINK}|Build #{{build.number}}> failed :this-is-fine-fire:
+#        Commit: <${DRONE_REPO_LINK}/commit/{{ build.commit }}|{{ truncate build.commit 8 }}> - {{{ trim build.message }}}
+#        Repo: {{ repo.name }}
+#        Author: {{ build.author }}
+#    when:
+#      branch:
+#        - main
+#
+#  - name: slack_promote_urgent
+#    <<: *slack
+#    settings:
+#      template: |
+#        :alert: Problem *{{uppercasefirst build.deployTo}}* deployment failed for *{{repo.name}}* <${DRONE_BUILD_LINK}| build #{{build.number}}>.
+#    when:
+#      event:
+#        - promote
