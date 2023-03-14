@@ -11,7 +11,7 @@ deploymentAnnotations:
 
 kafka:
   defaultTopic: callisto-timecard-timeentries
-  indentity: timecard-restapi
+  identity: timecard-restapi
   mskSecretKeyRefName: callisto-dev-msk
   bootstrapSecretKeyRefName: callisto-dev-bootstrap
 
