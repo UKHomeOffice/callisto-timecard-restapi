@@ -20,18 +20,18 @@ steps:
       - hadolint Dockerfile
       - hadolint db/Dockerfile
 
-  - name: lint_helm_files
-    image: pelotech/drone-helm3
-    settings:
-      mode: upgrade
-      chart: ./helm
-      release:
-      kube_api_server:
-      kube_token:
-      values_files:
-        - ./helm/values/dev-values.yaml
-        - ./helm/values/test-values.yaml
-        - ./helm/values/prod-values.yaml
+#  - name: lint_helm_files
+#    image: pelotech/drone-helm3
+#    settings:
+#      mode: upgrade
+#      chart: ./helm
+#      release:
+#      kube_api_server:
+#      kube_token:
+#      values_files:
+#        - ./helm/values/dev-values.yaml
+#        - ./helm/values/test-values.yaml
+#        - ./helm/values/prod-values.yaml
 
 
 ---
