@@ -1,6 +1,7 @@
 package uk.gov.homeoffice.digital.sas.timecard.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
@@ -17,7 +18,8 @@ import uk.gov.homeoffice.digital.sas.jparest.models.BaseEntity;
 @Setter
 public class TimePeriodType extends BaseEntity {
 
+  @Column(name = "name")
   @NotEmpty
-  private String name;
+  private String updatedName;
 
 }
