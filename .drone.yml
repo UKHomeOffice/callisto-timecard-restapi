@@ -254,7 +254,7 @@ steps:
     settings:
       namespace: callisto-dev
       mode: upgrade
-      chart: https://ukhomeoffice.github.io/callisto-helm-charts/callisto-base-service
+      chart: https://github.com/UKHomeOffice/callisto-helm-charts/releases/download/callisto-base-service-0.1.0/callisto-base-service-0.1.0.tgz
       values:
         - image.tag=${DRONE_COMMIT_SHA}
         - branch=${DRONE_SOURCE_BRANCH%%/*}
