@@ -11,14 +11,7 @@ deploymentAnnotations:
 
 kafka:
   defaultTopic: callisto-timecard-timeentries
-  createTopics:
-    - callisto-timecard-timeentries
   indentity: timecard-restapi
-  permissions: |-    
-    # Timecard prefix permissions
-    --topic timecard --resource-pattern-type prefixed
-    User:timecard-restapi     Write       Allow
-    User:timecard-restapi     Describe    Allow
   mskSecretKeyRefName: callisto-dev-msk
   bootstrapSecretKeyRefName: callisto-dev-bootstrap
 
