@@ -268,7 +268,7 @@ steps:
       kube_token:
         from_secret: dev_kube_token
 
----
+#---
 #kind: pipeline
 #type: kubernetes
 #name: callisto-timecard-restapi-dev-deploy
