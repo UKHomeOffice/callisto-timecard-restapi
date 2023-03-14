@@ -1,4 +1,0 @@
-# Timecard prefix permissions
---topic timecard --resource-pattern-type prefixed
-User:timecard-restapi-producer     Write       Allow
-User:timecard-restapi-producer     Describe    Allow

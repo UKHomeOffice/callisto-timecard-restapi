@@ -1,67 +1,32 @@
-environment: dev
-branch: main #overridden for branch deploys
+image:
+  repository: quay.io/ukhomeofficedigital/callisto-timecard-restapi
+  tag: latest
+  pullPolicy: Always
 
 service:
-  port: 3000
+  port: 9090
 
-replicaCount: 1
+deploymentAnnotations:
+  downscaler/uptime: Mon-Fri 08:00-20:00 Europe/London
 
-image:
-  repo: quay.io/ukhomeofficedigital/
-  tag: latest # this value will be overridden by drone.yml
+kafka:
+  defaultTopic: callisto-timecard-timeentries
+  createTopics:
+    - callisto-timecard-timeentries
+  indentity: timecard-restapi
+  permissions: |-    
+    # Timecard prefix permissions
+    --topic timecard --resource-pattern-type prefixed
+    User:timecard-restapi     Write       Allow
+    User:timecard-restapi     Describe    Allow
+  mskSecretKeyRefName: callisto-dev-msk
+  bootstrapSecretKeyRefName: callisto-dev-bootstrap
 
-env:
-  database:
-    - name: DATABASE_NAME
-      valueFrom:
-        secretKeyRef:
-          name: callistodev-rds
-          key: db_name
-    - name: DATABASE_USERNAME
-      valueFrom:
-        secretKeyRef:
-          name: callistodev-rds
-          key: username
-    - name: DATABASE_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: callistodev-rds
-          key: password
-    - name: DATABASE_ENDPOINT
-      valueFrom:
-        secretKeyRef:
-          name: callistodev-rds
-          key: endpoint
-    - name: DATABASE_PORT
-      valueFrom:
-        secretKeyRef:
-          name: callistodev-rds
-          key: port
-  kafka:
-    - name: BOOTSTRAP_SERVER
-      valueFrom:
-        secretKeyRef:
-          name: callisto-dev-bootstrap
-          key: bootstrap_server1
-    - name: AWS_ACCESS_KEY
-      valueFrom:
-        secretKeyRef:
-          name: callisto-dev-msk
-          key: certificate_authority_access_keys
-    - name: AWS_SECRET_KEY
-      valueFrom:
-        secretKeyRef:
-          name: callisto-dev-msk
-          key: certificate_authority_secret_keys
-    - name: AWS_CERTIFICATE_AUTHORITY_ARN
-      valueFrom:
-        secretKeyRef:
-          name: callisto-dev-msk
-          key: certificate_authority_arn
-    - name: TIMECARD_KEYSTORE_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: callisto-dev-timecard-keystore
-          key: password
-    - name: TIMECARD_TOPIC
-      value: callisto-timecard-timeentries
+resources:
+  requests:
+    memory: '512Mi'
+    cpu: '500m'
+  limits:
+    memory: '1Gi'
+
+
