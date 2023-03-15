@@ -108,7 +108,7 @@ function apply_permissions() {
         details=($line)
 
         # if first argument is --topic assume a new list of permissions are being specified
-        if [ "${details[0]}" =~ "--" ] ]
+        if [[ "${details[0]}" =~ "--" ]]
         then
             # if permissions have already been specified for a previous topic
             # apply them.
