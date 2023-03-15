@@ -112,7 +112,7 @@ function apply_permissions() {
         then
             # if permissions have already been specified for a previous topic
             # apply them.
-            if [ -n "$commandd_args" ]
+            if [ -n "$command_args" ]
             then
                 IFS=$'\n'
                 set_permissions "${command_args[@]}" "${permissions[*]/%/$'\n'}"
