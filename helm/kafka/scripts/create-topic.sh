@@ -10,8 +10,6 @@ set -e
 # get_current_acl timecard literal
 get_current_acl() {
 
-    local topic=$1
-    local type=$2
     local acls
 
     # Call the kafka-acl script with relevant arguments and grep only the lines
@@ -35,7 +33,7 @@ set_permissions() {
     echo Applying desired permissions for "${parameters[@]}"
 
     # get the current ACL for given topic and pattern type
-    local current_acl=($(get_current_acl $topic $type))
+    local current_acl=($(get_current_acl "${parameters[@]}"))
 
     # Iterate the current ACL to see if each existing permission
     # is still required. Remove any that are not desired
