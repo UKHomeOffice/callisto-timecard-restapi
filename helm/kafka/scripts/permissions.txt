@@ -2,3 +2,7 @@
 --topic timecard --resource-pattern-type prefixed
 User:timecard-restapi-producer     Write       Allow
 User:timecard-restapi-producer     Describe    Allow
+User:balance-calculator   Read        Allow
+
+--group console-consumer --resource-pattern-type prefixed
+User:balance-calculator      All            Allow
