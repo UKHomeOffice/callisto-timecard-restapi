@@ -25,11 +25,11 @@ services:
       - DATABASE_PORT=5432
       - HOME=/Users/1000
       - MAVEN_USER_HOME=/Users/1000/.m2
-      - SPRING_PROFILES_ACTIVE=localdev
       - BOOTSTRAP_SERVER=kafka:9093
       - KEYSTORE_LOCATION=file://keystore/kafka/kafka.keystore.jks
       - TRUSTSTORE_LOCATION=file://keystore/kafka/kafka.truststore.jks
       - TIMECARD_KEYSTORE_PASSWORD=changeit
+      - TIMECARD_TRUSTSTORE_PASSWORD=changeit
     depends_on:
       - timecard-database-migrations
     networks:
