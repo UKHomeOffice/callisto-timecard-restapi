@@ -18,18 +18,20 @@ services:
       - $HOME/.m2:/Users/1000/.m2 # Required for jparest dependencies (artifactory)
       - keystore:/keystore
     environment:
-      - DATABASE_NAME=callisto
-      - DATABASE_USERNAME=postgres
-      - DATABASE_PASSWORD=Welcome
-      - DATABASE_ENDPOINT=postgres
-      - DATABASE_PORT=5432
-      - HOME=/Users/1000
-      - MAVEN_USER_HOME=/Users/1000/.m2
-      - SPRING_PROFILES_ACTIVE=localdev
-      - BOOTSTRAP_SERVER=kafka:9093
-      - KEYSTORE_LOCATION=file://keystore/kafka/kafka.keystore.jks
-      - TRUSTSTORE_LOCATION=file://keystore/kafka/kafka.truststore.jks
-      - TIMECARD_KEYSTORE_PASSWORD=changeit
+      DATABASE_NAME: callisto
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: Welcome
+      DATABASE_ENDPOINT: postgres
+      DATABASE_PORT: 5432
+      HOME: /Users/1000
+      MAVEN_USER_HOME: /Users/1000/.m2
+      BOOTSTRAP_SERVER: kafka:9093
+      KEYSTORE_LOCATION: file://keystore/kafka/kafka.keystore.jks
+      TIMECARD_KEYSTORE_PASSWORD: changeit
+      SPRING_APPLICATION_JSON: '{
+        "spring.kafka.ssl.trust-store-location": "file://keystore/timecard-restapi/timecard-restapi.truststore.jks",
+        "spring.kafka.ssl.trust-store-password": "changeit"
+      }'
     depends_on:
       - timecard-database-migrations
     networks:
