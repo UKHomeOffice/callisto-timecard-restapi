@@ -60,7 +60,7 @@ class KafkaProducerServiceTest {
   @BeforeEach
   void setUp() {
     ReflectionTestUtils.setField(kafkaProducerService, "topicName", TOPIC_NAME);
-    ReflectionTestUtils.setField(kafkaProducerService, "projectVersion", "1.0.0");
+    ReflectionTestUtils.setField(kafkaProducerService, "schemaVersion", "1.0.0");
     ownerId = UUID.fromString("ec703cac-de76-49c8-b1c4-83da6f8b42ce");
     LocalDateTime actualStartTime = LocalDateTime.of(
         2022, 1, 1, 9, 0, 0);

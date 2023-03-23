@@ -32,8 +32,8 @@ class KafkaProducerServiceIntegrationTest<T> {
   @Autowired
   private TestKafkaConsumer<String> consumer;
 
-  @Value("${projectVersion}")
-  private String projectVersion;
+  @Value("${schemaVersion}")
+  private String schemaVersion;
 
   private final Gson gson = new GsonBuilder().create();
   private static final KafkaAction KAFKA_ACTION = KafkaAction.CREATE;
@@ -55,7 +55,7 @@ class KafkaProducerServiceIntegrationTest<T> {
 
     assertThat(isMessageConsumed).isTrue();
     assertThat(consumedMessage.getAction()).isEqualTo(KAFKA_ACTION);
-    assertThat(consumedMessage.getSchema()).contains(resource.getClass().getName()).contains(projectVersion);
+    assertThat(consumedMessage.getSchema()).contains(resource.getClass().getName()).contains(schemaVersion);
     assertThat(consumer.getPayload()).contains(CommonUtils.objectAsJsonString(resource));
 
   }
