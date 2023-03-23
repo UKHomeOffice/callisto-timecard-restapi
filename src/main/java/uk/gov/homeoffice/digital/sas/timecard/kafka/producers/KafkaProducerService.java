@@ -20,20 +20,20 @@ import uk.gov.homeoffice.digital.sas.timecard.kafka.KafkaEventMessage;
 public class KafkaProducerService<T> {
   private final KafkaTemplate<String, KafkaEventMessage<T>> kafkaTemplate;
   private final String topicName;
-  private final String projectVersion;
+  private final String schemaVersion;
 
   public KafkaProducerService(
       KafkaTemplate<String, KafkaEventMessage<T>> kafkaTemplate,
       @Value("${spring.kafka.template.default-topic}") String topicName,
-      @Value("${projectVersion}") String projectVersion) {
+      @Value("${schemaVersion}") String schemaVersion) {
     this.kafkaTemplate = kafkaTemplate;
     this.topicName = topicName;
-    this.projectVersion = projectVersion;
+    this.schemaVersion = schemaVersion;
   }
 
   public void sendMessage(String messageKey, Class<T> resourceType,
                           T resource, KafkaAction action) {
-    var kafkaEventMessage = new KafkaEventMessage<>(projectVersion, resourceType, resource, action);
+    var kafkaEventMessage = new KafkaEventMessage<>(schemaVersion, resourceType, resource, action);
     CompletableFuture<SendResult<String, KafkaEventMessage<T>>> future = null;
     try {
       future = kafkaTemplate.send(
