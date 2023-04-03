@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.example</groupId>
     <artifactId>callisto-timecard-restapi</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>callisto-timecard-restapi</name>
     <description>Callisto timecard service backend rest api project</description>
     <properties>

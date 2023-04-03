@@ -39,5 +39,4 @@ public class TimeEntryKafkaEntityListener extends KafkaEntityListener<TimeEntry>
   void sendMessageOnDelete(TimeEntry resource) {
     super.sendKafkaMessageOnDelete(resource, String.valueOf(resource.getId()));
   }
-
 }
