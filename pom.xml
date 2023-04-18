@@ -24,7 +24,7 @@
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <checkstyle-maven-plugin.version>3.2.0</checkstyle-maven-plugin.version>
         <cucumber.version>7.8.1</cucumber.version>
-        <jparest.version>0.1.11-EAHW-2511-SNAPSHOT</jparest.version>
+        <jparest.version>0.1.11</jparest.version>
         <kafka.commons.version>0.1.11</kafka.commons.version>
     </properties>
 
