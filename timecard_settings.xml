@@ -10,32 +10,4 @@
             <password>${env.GITHUB_TOKEN}</password>
         </server>
     </servers>
-
-    <profiles>
-        <profile>
-            <id>github</id>
-            <repositories>
-                <repository>
-                    <id>github-packages</id>
-                    <name>Callisto jparest</name>
-                    <url>https://maven.pkg.github.com/UKHomeOffice/callisto-jparest</url>
-                    <snapshots>
-                        <enabled>true</enabled>
-                    </snapshots>
-                </repository>
-                <repository>
-                    <id>github-packages</id>
-                    <name>Callisto kafka commons</name>
-                    <url>https://maven.pkg.github.com/UKHomeOffice/callisto-kafka-commons</url>
-                    <snapshots>
-                        <enabled>true</enabled>
-                    </snapshots>
-                </repository>
-            </repositories>
-        </profile>
-    </profiles>
-
-    <activeProfiles>
-        <activeProfile>github</activeProfile>
-    </activeProfiles>
 </settings>
