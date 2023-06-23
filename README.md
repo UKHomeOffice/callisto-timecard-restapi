@@ -2,11 +2,17 @@
 
 ## Running locally
 
-### Authenticate with the Home Office private Maven repository (Artifactory)
+### Github Package dependencies
+In order to pull in Github package dependencies you will need a Github Personal Access Token.
+This token will need the minimum of 'packages:read' permissions.
 
-In order to retrieve private Maven packages, you’ll need to [configure authentication for Artifactory](https://collaboration.homeoffice.gov.uk/display/EAHW/Artifactory).
+Assign the value of the token to an environment variable with the name GITHUB_TOKEN
 
-Running it on **minikube** ? This is problematic, as it doesn't support VPN connections out of the box. 
+Then run the following to build the project
+
+```sh
+$ mvn -s ./timecard_settings.xml clean install
+```
 
 ### Create database
 

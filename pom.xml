@@ -24,8 +24,8 @@
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <checkstyle-maven-plugin.version>3.2.0</checkstyle-maven-plugin.version>
         <cucumber.version>7.8.1</cucumber.version>
-        <jparest.version>0.1.11</jparest.version>
-        <kafka.commons.version>0.1.11</kafka.commons.version>
+        <jparest.version>0.1.14</jparest.version>
+        <kafka.commons.version>0.2.0</kafka.commons.version>
     </properties>
 
     <dependencyManagement>
@@ -113,7 +113,7 @@
         </dependency>
         <dependency>
             <groupId>uk.gov.homeoffice.digital.sas</groupId>
-            <artifactId>kafka-commons</artifactId>
+            <artifactId>callisto-kafka-commons</artifactId>
             <version>${kafka.commons.version}</version>
         </dependency>
         <dependency>

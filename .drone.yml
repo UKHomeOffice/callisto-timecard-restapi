@@ -121,8 +121,8 @@ steps:
     depends_on:
       - fetch
     environment:
-      ARTIFACTORY_TOKEN:
-        from_secret: artifactory_token
+      GITHUB_TOKEN:
+        from_secret: github_token
     commands:
       - mvn -s ./timecard_settings.xml clean verify
 
