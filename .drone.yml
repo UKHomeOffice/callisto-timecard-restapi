@@ -359,11 +359,11 @@ platform:
 depends_on:
   - promotion-check
 
-trigger:
-  event:
-    - promote
+when:
   target:
-    - production
+    exclude:
+      - production
+
 
 steps:
   - name: deploy_to_prod
