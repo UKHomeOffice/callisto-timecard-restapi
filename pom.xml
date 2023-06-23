@@ -13,6 +13,18 @@
     <version>0.0.1</version>
     <name>callisto-timecard-restapi</name>
     <description>Callisto timecard service backend rest api project</description>
+
+    <repositories>
+        <repository>
+            <id>github-packages</id>
+            <name>Callisto github packages</name>
+            <url>https://maven.pkg.github.com/UKHomeOffice/*</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <properties>
         <spring.boot.version>${project.parent.version}</spring.boot.version>
         <spring.kafka.version>3.0.2</spring.kafka.version>
