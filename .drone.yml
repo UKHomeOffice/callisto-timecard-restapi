@@ -359,11 +359,11 @@ platform:
 depends_on:
   - promotion-check
 
-when:
+trigger:
+  event:
+    - promote
   target:
-    exclude:
-      - production
-
+    - production
 
 steps:
   - name: deploy_to_prod
@@ -383,6 +383,10 @@ steps:
         from_secret: prod_kube_api_url
       kube_token:
         from_secret: prod_kube_token
+      when:
+        target:
+          exclude:
+            - production
 
 ---
 kind: pipeline
