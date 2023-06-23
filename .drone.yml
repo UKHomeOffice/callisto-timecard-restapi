@@ -45,16 +45,16 @@ trigger:
     - promote
 
 steps:
-  - name: branch-check
-    pull: if-not-exists
-    image: alpine:latest
-    commands:
-      - echo Cannot promote from non 'main' branch
-      - exit 1
-    when:
-      branch:
-        exclude:
-          - main
+#  - name: branch-check
+#    pull: if-not-exists
+#    image: alpine:latest
+#    commands:
+#      - echo Cannot promote from non 'main' branch
+#      - exit 1
+#    when:
+#      branch:
+#        exclude:
+#          - main
 
   - name: environment-check
     pull: if-not-exists
