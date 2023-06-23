@@ -386,7 +386,7 @@ steps:
       when:
         target:
           exclude:
-            - production
+          - production
 
 ---
 kind: pipeline
