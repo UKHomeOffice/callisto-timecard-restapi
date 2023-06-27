@@ -5,13 +5,13 @@ The best way to run the service is to leverage the LocalDev solution.
 
 ## Running as part of the LocalDev environment
 
-1. Download LocalDev repository from https://github.com/UKHomeOffice/callisto-localdev and run it locally as described in [Scenario 1](https://github.com/UKHomeOffice/callisto-localdev#scenario-1-running-callisto-without-need-to-edit-code-base-eg-demo-purposes).
+1. Clone LocalDev repository from https://github.com/UKHomeOffice/callisto-localdev and run it locally as described in [Scenario 1](https://github.com/UKHomeOffice/callisto-localdev#scenario-1-running-callisto-without-need-to-edit-code-base-eg-demo-purposes).
 
 2. From the LocalDev project root, stop the service by running `docker compose stop <service_name>` command.
 
 3. Ensure you have configured your [Authentication for GitHub Packages](#authentication-for-github-packages)
 
-4. Pull the service repository, and from its root directory run command `docker compose up -d`
+4. Clone the service repository, and from its root directory run command `docker compose up -d`
 
 After successful start, you should be able to work with the service code, and see all changes without restaring the docker container.
 
