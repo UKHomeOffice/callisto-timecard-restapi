@@ -29,7 +29,7 @@ E.g.
   <server>
       <id>github-packages</id>
       <username>[Insert GitHub username here]</username>
-      <password>${env.GITHUB_TOKEN}</password>
+      <password>{[Insert GitHub Personal Access Token here]}</password>
   </server>
 </servers>
 ```
