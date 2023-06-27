@@ -28,7 +28,7 @@ E.g.
 <servers>
   <server>
       <id>github-packages</id>
-      <username>DummyUser</username>
+      <username>[Insert GitHub username here]</username>
       <password>${env.GITHUB_TOKEN}</password>
   </server>
 </servers>
