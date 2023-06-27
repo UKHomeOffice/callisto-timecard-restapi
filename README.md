@@ -20,7 +20,9 @@ After successful start, you should be able to work with the service code, and se
 In order to pull in Github package dependencies you will need a Github Personal Access Token.
 This token will need the minimum of 'packages:read' permissions.
 
-Update your .m2/settings.xml file to contain the <servers><server> tags
+This can be configured in your .m2/settings.xml file.
+
+E.g.
 
 ```xml
 <servers>
