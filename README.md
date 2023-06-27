@@ -1,13 +1,13 @@
 # Callisto Timecard REST API
 
 Callisto Timecard REST API is a part of Callisto project.
-The best way to run the service is to leverage the LocalDev solution.
+The best way to run the service is to leverage the [callisto-localdev solution](https://github.com/UKHomeOffice/callisto-localdev).
 
 ## Running as part of the LocalDev environment
 
 1. Clone LocalDev repository from https://github.com/UKHomeOffice/callisto-localdev and run it locally as described in [Scenario 1](https://github.com/UKHomeOffice/callisto-localdev#scenario-1-running-callisto-without-need-to-edit-code-base-eg-demo-purposes).
 
-2. From the LocalDev project root, stop the service by running `docker compose stop <service_name>` command.
+2. From the LocalDev project root, stop the service by running `docker compose stop callisto-timecard-restapi` command.
 
 3. Ensure you have configured your [Authentication for GitHub Packages](#authentication-for-github-packages)
 
@@ -20,14 +20,16 @@ After successful start, you should be able to work with the service code, and se
 In order to pull in Github package dependencies you will need a Github Personal Access Token.
 This token will need the minimum of 'packages:read' permissions.
 
-Update your .m2/settings.xml file to contain the <servers><server> tags
+This can be configured in your .m2/settings.xml file.
+
+E.g.
 
 ```xml
 <servers>
   <server>
       <id>github-packages</id>
-      <username>DummyUser</username>
-      <password>${env.GITHUB_TOKEN}</password>
+      <username>[Insert GitHub username here]</username>
+      <password>{[Insert GitHub Personal Access Token here]}</password>
   </server>
 </servers>
 ```
@@ -39,7 +41,7 @@ Then run the following to build the project
 
 ## Debugging
 
-Assuming you know how to debug java service, the principal is the same when using LocalDev solution.When running using docker compose, the debugger is exposed on the default port (5005). In the case of the debugger port conflicts, change both the ports and the entrypoint section in the docker-compose.yml
+Assuming you know how to debug java service, the principal is the same when using [callisto-localdev solution](https://github.com/UKHomeOffice/callisto-localdev). When running using docker compose, the debugger is exposed on the default port (5005). In the case of the debugger port conflicts, change both the ports and the entrypoint section in the docker-compose.yml
 
 ## Kafka
 
