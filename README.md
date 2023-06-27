@@ -1,7 +1,7 @@
 # Callisto Timecard REST API
 
 Callisto Timecard REST API is a part of Callisto project.
-The best way to run the service is to leverage the LocalDev solution.
+The best way to run the service is to leverage the [callisto-localdev solution](https://github.com/UKHomeOffice/callisto-localdev).
 
 ## Running as part of the LocalDev environment
 
