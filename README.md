@@ -7,7 +7,7 @@ The best way to run the service is to leverage the [callisto-localdev solution](
 
 1. Clone LocalDev repository from https://github.com/UKHomeOffice/callisto-localdev and run it locally as described in [Scenario 1](https://github.com/UKHomeOffice/callisto-localdev#scenario-1-running-callisto-without-need-to-edit-code-base-eg-demo-purposes).
 
-2. From the LocalDev project root, stop the service by running `docker compose stop <service_name>` command.
+2. From the LocalDev project root, stop the service by running `docker compose stop callisto-timecard-restapi` command.
 
 3. Ensure you have configured your [Authentication for GitHub Packages](#authentication-for-github-packages)
 
