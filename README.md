@@ -37,10 +37,6 @@ For more info see:
 
 Then run the following to build the project
 
-```sh
-$ mvn clean install
-```
-
 ## Debugging
 
 Assuming you know how to debug java service, the principal is the same when using LocalDev solution.When running using docker compose, the debugger is exposed on the default port (5005). In the case of the debugger port conflicts, change both the ports and the entrypoint section in the docker-compose.yml
