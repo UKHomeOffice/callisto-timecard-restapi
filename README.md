@@ -54,3 +54,4 @@ All Kafka settings can be found in application.properties file.
 The database is configured to run on Postgres. Liquibase is used to manage database changesets. The docker-compose.yml ensures that the changesets are applied.
 
 A separate docker image is created on top of the Liquibase image that contains all the changesets. This image is used to deploy the database to other environments.
+
