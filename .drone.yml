@@ -335,12 +335,13 @@ depends_on:
   - callisto-timecard-restapi-dev-deploy
 
 trigger:
-  exclude:
-    - push
-    - pull_request
-    - tag
-    - promote
-    - rollback
+  event:
+    exclude:
+      - push
+      - pull_request
+      - tag
+      - promote
+      - rollback
   #to reinstate test deploy on pull requests change trigger to
   #trigger:
   # event:
